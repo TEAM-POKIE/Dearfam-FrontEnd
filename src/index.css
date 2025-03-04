@@ -4,48 +4,68 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    /* 메인 색상 */
+    --main-1: 245 117 30; /* #F5751E */
+    --main-2: 154 122 80; /* #9A7A50 */
+    --main-3: 137 137 137; /* #898989 */
+
+    /* 그레이 스케일 */
+    --gray-1: 0 0 0; /* #000000 */
+    --gray-2: 31 31 31; /* #1F1F1F */
+    --gray-3: 67 67 67; /* #434343 */
+    --gray-4: 101 101 101; /* #656565 */
+    --gray-5: 214 214 214; /* #D6D6D6 */
+    --gray-6: 248 248 248; /* #F8F8F8 */
+    --gray-7: 255 255 255; /* #FFFFFF */
+
+    /* 배경 색상 */
+    --bg-1: 229 225 215; /* #E5E1D7 */
+    --bg-2: 221 213 191; /* #DDD5BF */
+    --bg-3: 192 189 181; /* #C0BDB5 */
+
+    /* 시스템 색상 */
+    --background: var(--gray-7);
+    --foreground: var(--gray-1);
+    --card: var(--gray-7);
+    --card-foreground: var(--gray-1);
+    --popover: var(--gray-7);
+    --popover-foreground: var(--gray-1);
+    --primary: var(--main-1);
+    --primary-foreground: var(--gray-7);
+    --secondary: var(--main-2);
+    --secondary-foreground: var(--gray-7);
+    --muted: var(--bg-1);
+    --muted-foreground: var(--gray-3);
+    --accent: var(--bg-2);
+    --accent-foreground: var(--gray-1);
+    --destructive: 0 84 100;
+    --destructive-foreground: var(--gray-7);
+    --border: var(--gray-5);
+    --input: var(--gray-5);
+    --ring: var(--main-1);
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background: var(--gray-1);
+    --foreground: var(--gray-6);
+    --card: var(--gray-2);
+    --card-foreground: var(--gray-6);
+    --popover: var(--gray-2);
+    --popover-foreground: var(--gray-6);
+    --primary: var(--main-1);
+    --primary-foreground: var(--gray-7);
+    --secondary: var(--main-2);
+    --secondary-foreground: var(--gray-7);
+    --muted: var(--bg-3);
+    --muted-foreground: var(--gray-4);
+    --accent: var(--bg-3);
+    --accent-foreground: var(--gray-6);
+    --destructive: 0 63 75;
+    --destructive-foreground: var(--gray-7);
+    --border: var(--gray-3);
+    --input: var(--gray-3);
+    --ring: var(--main-1);
   }
 }
 
@@ -53,4 +73,86 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.dark body {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* 직접 정의한 색상 클래스 */
+.text-main-1 {
+  color: #f5751e !important;
+}
+.text-main-2 {
+  color: #9a7a50 !important;
+}
+.text-main-3 {
+  color: #898989 !important;
+}
+
+.bg-main-1 {
+  background-color: #f5751e !important;
+}
+.bg-main-2 {
+  background-color: #9a7a50 !important;
+}
+.bg-main-3 {
+  background-color: #898989 !important;
+}
+
+.text-gray-1 {
+  color: #000000 !important;
+}
+.text-gray-2 {
+  color: #1f1f1f !important;
+}
+.text-gray-3 {
+  color: #434343 !important;
+}
+.text-gray-4 {
+  color: #656565 !important;
+}
+.text-gray-5 {
+  color: #d6d6d6 !important;
+}
+.text-gray-6 {
+  color: #f8f8f8 !important;
+}
+.text-gray-7 {
+  color: #ffffff !important;
+}
+
+.bg-gray-1 {
+  background-color: #000000 !important;
+}
+.bg-gray-2 {
+  background-color: #1f1f1f !important;
+}
+.bg-gray-3 {
+  background-color: #434343 !important;
+}
+.bg-gray-4 {
+  background-color: #656565 !important;
+}
+.bg-gray-5 {
+  background-color: #d6d6d6 !important;
+}
+.bg-gray-6 {
+  background-color: #f8f8f8 !important;
+}
+.bg-gray-7 {
+  background-color: #ffffff !important;
+}
+
+.bg-bg-1 {
+  background-color: #e5e1d7 !important;
+}
+.bg-bg-2 {
+  background-color: #ddd5bf !important;
+}
+.bg-bg-3 {
+  background-color: #c0bdb5 !important;
 }

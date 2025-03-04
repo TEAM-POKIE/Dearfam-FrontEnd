@@ -13,7 +13,7 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="bg-blue-600 text-white">
+    <nav className="bg-main-1 text-gray-7">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
@@ -30,8 +30,8 @@ export function Navigation() {
                   to={item.path}
                   className={`px-3 py-2 rounded-md text-sm font-medium ${
                     location.pathname === item.path
-                      ? "bg-blue-700 text-white"
-                      : "text-white hover:bg-blue-500"
+                      ? "bg-main-2 text-gray-7"
+                      : "text-gray-7 hover:bg-main-2/80"
                   }`}
                 >
                   {item.label}
@@ -51,8 +51,8 @@ export function Navigation() {
               to={item.path}
               className={`px-2 py-1 rounded-md text-xs font-medium ${
                 location.pathname === item.path
-                  ? "bg-blue-700 text-white"
-                  : "text-white hover:bg-blue-500"
+                  ? "bg-main-2 text-gray-7"
+                  : "text-gray-7 hover:bg-main-2/80"
               }`}
             >
               {item.label}
