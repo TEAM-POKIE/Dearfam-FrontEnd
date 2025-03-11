@@ -1,3 +1,6 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -71,15 +74,16 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  background-color: #ffffff;
-  color: #000000;
+  font-family: "Pretendard", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+  background-color: rgb(var(--gray-7) / 1);
+  color: rgb(var(--gray-1) / 1);
 }
 
 .dark body {
-  background-color: #000000;
-  color: #ffffff;
+  background-color: rgb(var(--gray-1) / 1);
+  color: rgb(var(--gray-7) / 1);
 }
 
 /* 직접 정의한 색상 클래스 */
@@ -155,4 +159,156 @@ body {
 }
 .bg-bg-3 {
   background-color: #c0bdb5 !important;
+}
+
+/* 폰트 스타일 클래스 */
+.font-pretendard {
+  font-family: "Pretendard", sans-serif !important;
+}
+.font-heading {
+  font-family: "Pretendard", sans-serif !important;
+}
+.font-body {
+  font-family: "Pretendard", sans-serif !important;
+}
+.font-mono {
+  font-family: "JetBrains Mono", monospace !important;
+}
+
+.text-h1 {
+  font-size: 32pt !important;
+  font-weight: 700 !important;
+}
+.text-h2 {
+  font-size: 28pt !important;
+  font-weight: 700 !important;
+}
+.text-h3 {
+  font-size: 24pt !important;
+  font-weight: 700 !important;
+}
+.text-h4 {
+  font-size: 20pt !important;
+  font-weight: 700 !important;
+}
+.text-h5 {
+  font-size: 16pt !important;
+  font-weight: 700 !important;
+}
+.text-body1 {
+  font-size: 20pt !important;
+  font-weight: 400 !important;
+}
+.text-body2 {
+  font-size: 16pt !important;
+  font-weight: 400 !important;
+}
+.text-body3 {
+  font-size: 14pt !important;
+  font-weight: 400 !important;
+}
+.text-caption2 {
+  font-size: 12pt !important;
+  font-weight: 400 !important;
+}
+.text-caption3 {
+  font-size: 8pt !important;
+  font-weight: 400 !important;
+}
+
+/* 앱 크기 고정 및 중앙 정렬 */
+#root {
+  width: 390px;
+  height: 844px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  background-color: #e5e1d7;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+/* 모바일 화면 스타일링 */
+.mobile-container {
+  width: 390px;
+  height: 844px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  background-color: #e5e1d7;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* 스크롤바 스타일링 */
+.mobile-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mobile-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mobile-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+/* 모바일 상태바 스타일링 */
+.status-bar {
+  height: 44px;
+  width: 100%;
+  background-color: #e5e1d7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.status-bar-time {
+  font-weight: 600;
+}
+
+.status-bar-icons {
+  display: flex;
+  gap: 4px;
+}
+
+.status-bar-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* 하단 네비게이션 바 고정 */
+.bottom-nav-container {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 390px;
+  z-index: 50;
+}
+
+/* 활성 아이콘 필터 */
+.filter-orange {
+  filter: invert(56%) sepia(75%) saturate(1619%) hue-rotate(346deg)
+    brightness(98%) contrast(96%);
+}
+
+/* 네비게이션 링크 스타일 */
+.bottom-nav-container a {
+  text-decoration: none;
 }

@@ -1,0 +1,37 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 노트 배경 -->
+  <rect width="240" height="240" rx="8" fill="#FFFBEB"/>
+  
+  <!-- 노트 헤더 -->
+  <rect width="240" height="40" rx="8" fill="#FFEB3B"/>
+  <text x="20" y="25" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">은수의 그림 일기</text>
+  <text x="220" y="25" font-family="Arial" font-size="14" fill="#333333" text-anchor="end">✨</text>
+  
+  <!-- 날짜 -->
+  <text x="20" y="60" font-family="Arial" font-size="12" fill="#666666">2020년 11월 27일 토요일</text>
+  <text x="20" y="80" font-family="Arial" font-size="12" fill="#666666">날씨: 눈 오다</text>
+  
+  <!-- 내용 -->
+  <text x="20" y="120" font-family="Arial" font-size="14" fill="#333333">겨울이네! 마지막 목도리를</text>
+  <text x="20" y="140" font-family="Arial" font-size="14" fill="#333333">둘렀더니 눈이 보였다!</text>
+  <text x="20" y="160" font-family="Arial" font-size="14" fill="#333333">좋겠다.</text>
+  <text x="20" y="180" font-family="Arial" font-size="14" fill="#333333">겨울이 나는 좋다.</text>
+  
+  <!-- 그림 (간단한 겨울 장면) -->
+  <rect x="140" y="100" width="80" height="100" rx="4" fill="#E3F2FD"/>
+  <path d="M160 120 L160 180 L170 180 L170 120 Z" fill="#90CAF9"/>
+  <path d="M190 130 L190 180 L200 180 L200 130 Z" fill="#90CAF9"/>
+  <path d="M140 180 L220 180 L220 190 L140 190 Z" fill="#795548"/>
+  <circle cx="180" cy="120" r="15" fill="#FFECB3"/>
+  <circle cx="180" cy="120" r="10" fill="#FFC107"/>
+  
+  <!-- 눈송이 -->
+  <circle cx="150" cy="110" r="2" fill="white"/>
+  <circle cx="170" cy="105" r="2" fill="white"/>
+  <circle cx="190" cy="115" r="2" fill="white"/>
+  <circle cx="210" cy="110" r="2" fill="white"/>
+  <circle cx="155" cy="130" r="2" fill="white"/>
+  <circle cx="175" cy="140" r="2" fill="white"/>
+  <circle cx="195" cy="135" r="2" fill="white"/>
+  <circle cx="215" cy="145" r="2" fill="white"/>
+</svg> 

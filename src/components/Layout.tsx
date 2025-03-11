@@ -1,20 +1,36 @@
-import { Outlet } from "react-router-dom";
-import { Navigation } from "./Navigation";
+import { Outlet, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { BottomNavbar, NavItem } from "./BottomNavbar";
+import { HeaderBar, HeaderMode } from "./HeaderBar";
 
 export function Layout() {
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-7 text-gray-1 dark:bg-gray-2 dark:text-gray-6">
-      <Navigation />
+  const location = useLocation();
+  const [headerMode, setHeaderMode] = useState<HeaderMode>("default");
 
-      <main className="flex-grow">
+  // 현재 경로에 따라 활성 네비게이션 항목 결정
+  const getActiveNavItem = (): NavItem => {
+    const path = location.pathname;
+
+    if (path === "/") return "home";
+    if (path.includes("/bookshelf")) return "bookshelf";
+    if (path.includes("/write")) return "write";
+    if (path.includes("/goods")) return "goods";
+    if (path.includes("/family")) return "family";
+
+    return "home"; // 기본값
+  };
+
+  return (
+    <div className="mobile-container flex flex-col">
+      <HeaderBar mode={headerMode} onModeChange={setHeaderMode} />
+
+      <main className="flex-grow overflow-y-auto pb-16">
         <Outlet />
       </main>
 
-      <footer className="bg-bg-1 py-4 mt-8">
-        <div className="container mx-auto px-4 text-center text-gray-3">
-          <p>© 2024 DearFam - PVVM 패턴 예제</p>
-        </div>
-      </footer>
+      <div className="bottom-nav-container">
+        <BottomNavbar activeItem={getActiveNavItem()} />
+      </div>
     </div>
   );
 }

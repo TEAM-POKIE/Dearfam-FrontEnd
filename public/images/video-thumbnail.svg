@@ -1,0 +1,13 @@
+<svg width="240" height="180" viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 비디오 썸네일 배경 -->
+  <rect width="240" height="180" rx="8" fill="#FFEFC3"/>
+  
+  <!-- 재생 버튼 -->
+  <circle cx="120" cy="90" r="30" fill="#F5751E"/>
+  <path d="M110 70L110 110L140 90L110 70Z" fill="white"/>
+  
+  <!-- 진행 바 -->
+  <rect x="40" y="140" width="160" height="6" rx="3" fill="#E0E0E0"/>
+  <rect x="40" y="140" width="60" height="6" rx="3" fill="#F5751E"/>
+  <circle cx="100" cy="143" r="6" fill="#F5751E"/>
+</svg> 

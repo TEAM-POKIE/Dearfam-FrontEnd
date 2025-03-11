@@ -1,0 +1,24 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 첫 번째 프레임 (왼쪽 위) -->
+  <rect x="20" y="40" width="80" height="100" rx="4" fill="#333333" stroke="#444444" stroke-width="2"/>
+  <rect x="25" y="45" width="70" height="90" rx="2" fill="#666666"/>
+  
+  <!-- 두 번째 프레임 (오른쪽 위, 기울어짐) -->
+  <g transform="translate(140, 30) rotate(15)">
+    <rect width="80" height="100" rx="4" fill="#444444" stroke="#555555" stroke-width="2"/>
+    <rect x="5" y="5" width="70" height="90" rx="2" fill="#777777"/>
+  </g>
+  
+  <!-- 세 번째 프레임 (오른쪽 아래) -->
+  <rect x="130" y="120" width="90" height="70" rx="4" fill="#555555" stroke="#666666" stroke-width="2"/>
+  <rect x="135" y="125" width="80" height="60" rx="2" fill="#888888"/>
+  
+  <!-- 장식 요소들 -->
+  <circle cx="180" cy="50" r="5" fill="#9B59B6"/>
+  <circle cx="60" cy="160" r="4" fill="#E74C3C"/>
+  <circle cx="200" cy="180" r="6" fill="#3498DB"/>
+  
+  <!-- 플러스 기호 (노란색) -->
+  <path d="M110 80 L110 100 L90 100 L90 110 L110 110 L110 130 L120 130 L120 110 L140 110 L140 100 L120 100 L120 80 Z" fill="#F1C40F"/>
+  <path d="M200 120 L200 140 L180 140 L180 150 L200 150 L200 170 L210 170 L210 150 L230 150 L230 140 L210 140 L210 120 Z" fill="#F1C40F"/>
+</svg> 
