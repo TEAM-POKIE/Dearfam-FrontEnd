@@ -6,8 +6,6 @@ export default {
     extend: {
       fontFamily: {
         pretendard: ["Pretendard", "sans-serif"],
-        heading: ["Pretendard", "sans-serif"],
-        body: ["Pretendard", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       fontSize: {
@@ -17,12 +15,18 @@ export default {
         h4: ["20pt", { fontWeight: "700" }],
         h5: ["16pt", { fontWeight: "700" }],
         body1: ["20pt", { fontWeight: "400" }],
-        body2: ["16pt", { fontWeight: "400" }],
-        body3: ["14pt", { fontWeight: "400" }],
-        caption2: ["12pt", { fontWeight: "400" }],
-        caption3: ["8pt", { fontWeight: "400" }],
+        body2: ["18pt", { fontWeight: "400" }],
+        body3: ["16pt", { fontWeight: "400" }],
+        body4: ["14pt", { fontWeight: "400" }],
+        caption1: ["12pt", { fontWeight: "400" }],
+        caption2: ["8pt", { fontWeight: "400" }],
       },
       colors: {
+        logo: {
+          1: "#F5751E",
+          2: "#689F72",
+          3: "#9A7A50",
+        },
         main: {
           1: "#F5751E", // 주황색
           2: "#9A7A50", // 갈색
@@ -46,10 +50,6 @@ export default {
     },
   },
   safelist: [
-    "font-pretendard",
-    "font-heading",
-    "font-body",
-    "font-mono",
     "text-h1",
     "text-h2",
     "text-h3",
@@ -58,8 +58,9 @@ export default {
     "text-body1",
     "text-body2",
     "text-body3",
+    "text-body4",
+    "text-caption1",
     "text-caption2",
-    "text-caption3",
     "text-main-1",
     "text-main-2",
     "text-main-3",
@@ -83,18 +84,5 @@ export default {
     "bg-bg-1",
     "bg-bg-2",
     "bg-bg-3",
-  ],
-  plugins: [
-    function ({ addUtilities }) {
-      const newUtilities = {
-        ".text-main-1": { color: "#F5751E" },
-        ".text-main-2": { color: "#9A7A50" },
-        ".text-main-3": { color: "#898989" },
-        ".bg-main-1": { backgroundColor: "#F5751E" },
-        ".bg-main-2": { backgroundColor: "#9A7A50" },
-        ".bg-main-3": { backgroundColor: "#898989" },
-      };
-      addUtilities(newUtilities);
-    },
   ],
 };

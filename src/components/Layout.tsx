@@ -24,11 +24,11 @@ export function Layout() {
     <div className="mobile-container flex flex-col">
       <HeaderBar mode={headerMode} onModeChange={setHeaderMode} />
 
-      <main className="flex-grow overflow-y-auto pb-16">
+      <main className="flex-grow overflow-y-auto ">
         <Outlet />
       </main>
 
-      <div className="bottom-nav-container">
+      <div className="bottom-nav-container ">
         <BottomNavbar activeItem={getActiveNavItem()} />
       </div>
     </div>

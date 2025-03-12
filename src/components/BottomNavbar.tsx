@@ -50,8 +50,8 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
   ];
 
   return (
-    <nav className="bg-[#E5E1D7] border-t border-gray-300 w-full shadow-md">
-      <div className="flex justify-around items-center h-16 px-2">
+    <nav className="bg-[#E5E1D7] border-t border-gray-300 pt-[20px] pb-[16px] w-full shadow-md left-0 z-50 w-full h-[90px] fixed bottom-0">
+      <div className=" grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
         {navItems.map((item) => {
           const isActive = activeItem === item.id;
           return (
