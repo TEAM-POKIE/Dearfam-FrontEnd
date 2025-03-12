@@ -19,7 +19,7 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
   const navItems = [
     {
       id: "home",
-      label: "일상",
+      label: "홈",
       icon: homeIcon,
       path: "/",
     },
