@@ -6,13 +6,38 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --radius: 0.5rem;
-  }
+@theme {
+  --color-logo-orange: #f28c46;
+  --color-logo-green: #689f72;
+  --color-logo-purple: #9894e6;
+  --color-logo-red: #c26a6a;
+  --color-bg-1: #e5e1d7;
+  --color-bg-2: #ddd5bf;
+  --color-bg-3: #c0bdb5;
+  --color-main-1: #f5751e;
+  --color-main-2: #9a7a50;
+  --color-main-2_80: #a98f6b;
+  --color-main-3: #9a9893;
+  --color-gray-1: #000000;
+  --color-gray-2: #1f1f1f;
+  --color-gray-3: #828282;
+  --color-gray-4: #929292;
+  --color-gray-5: #d3d3d3;
+  --color-gray-6: #f8f8f8;
+  --color-gray-7: #ffffff;
+  --color-alert: #d64d4d;
+  --font-pretendard: "Pretendard", sans-serif;
+  --app-width: 390px;
+}
 
+@layer base {
   body {
-    @apply bg-background text-foreground font-body;
+    @apply text-gray-1 font-pretendard;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    background-color: white;
   }
 
   .dark {
@@ -21,8 +46,13 @@
 }
 
 @layer components {
-  .container {
-    @apply mx-auto max-w-screen-md px-4;
+  .mobile-container {
+    width: var(--app-width);
+    min-height: 100vh;
+    overflow: hidden;
+    background-color: var(--color-bg-1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    position: relative;
   }
 
   .btn {

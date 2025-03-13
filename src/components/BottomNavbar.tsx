@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
 import homeIcon from "../assets/home.svg";
 import bookcaseIcon from "../assets/bookcase.svg";
@@ -50,8 +50,8 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
   ];
 
   return (
-    <nav className="bg-[#E5E1D7] border-t border-gray-300 pt-[20px] pb-[16px] w-full shadow-md left-0 z-50 w-full h-[90px] fixed bottom-0">
-      <div className=" grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
+    <nav className="bg-bg-1 border-t rounded-t-[20px] border-gray-300 px-[30px] pt-[20px] pb-[16px] w-full z-10 h-[90px] shadow-[0_4px_10px_0 rgba(0, 0, 0, 0.05)]">
+      <div className="flex space-between items-center h-full font-medium ">
         {navItems.map((item) => {
           const isActive = activeItem === item.id;
           return (

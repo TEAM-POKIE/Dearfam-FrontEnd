@@ -31,7 +31,7 @@ type CardProps = React.ComponentProps<typeof Card>;
 
 export function FamilyPage({ className, ...props }: CardProps) {
   return (
-    <Card className={cn("w-[380px]", className)} {...props}>
+    <Card className={cn("w-[390px]", className)} {...props}>
       <CardHeader>
         <CardTitle>Notifications</CardTitle>
         <CardDescription>You have 3 unread messages.</CardDescription>
