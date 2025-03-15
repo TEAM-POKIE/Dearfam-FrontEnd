@@ -16,7 +16,7 @@
   --color-bg-3: #c0bdb5;
   --color-main-1: #f5751e;
   --color-main-2: #9a7a50;
-  --color-main-2_80: #a98f6b;
+  --color-main-2-80: #a98f6b;
   --color-main-3: #9a9893;
   --color-gray-1: #000000;
   --color-gray-2: #1f1f1f;
@@ -42,6 +42,48 @@
 
   .dark {
     @apply bg-gray-1 text-gray-7;
+  }
+}
+@layer utilities {
+  .text-h1 {
+    font-size: 32px;
+    font-weight: bold;
+  }
+  .text-h2 {
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .text-h3 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .text-h4 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .text-h5 {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .text-body1 {
+    font-size: 20px;
+    font-weight: 400;
+  }
+  .text-body2 {
+    font-size: 18px;
+    font-weight: 400;
+  }
+  .text-body3 {
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .text-caption1 {
+    font-size: 12px;
+    font-weight: 400;
+  }
+  .text-caption2 {
+    font-size: 8px;
+    font-weight: 400;
   }
 }
 

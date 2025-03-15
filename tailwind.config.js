@@ -1,46 +1,4 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  theme: {
-    extend: {
-      fontFamily: {
-        pretendard: ["Pretendard", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
-      },
-      fontSize: {
-        h1: ["32pt", { fontWeight: "700" }],
-        h2: ["28pt", { fontWeight: "700" }],
-        h3: ["24pt", { fontWeight: "700" }],
-        h4: ["20pt", { fontWeight: "700" }],
-        h5: ["16pt", { fontWeight: "700" }],
-        body1: ["20pt", { fontWeight: "400" }],
-        body2: ["18pt", { fontWeight: "400" }],
-        body3: ["16pt", { fontWeight: "400" }],
-        body4: ["14pt", { fontWeight: "400" }],
-        caption1: ["12pt", { fontWeight: "400" }],
-        caption2: ["8pt", { fontWeight: "400" }],
-      },
-      colors: {
-        "logo-orange": "var(--color-logo-orange)",
-        "logo-green": "var(--color-logo-green)",
-        "logo-purple": "var(--color-logo-purple)",
-        "logo-red": "var(--color-logo-red)",
-        "bg-1": "var(--color-bg-1)",
-        "bg-2": "var(--color-bg-2)",
-        "bg-3": "var(--color-bg-3)",
-        "main-1": "var(--color-main-1)",
-        "main-2": "var(--color-main-2)",
-        "main-3": "var(--color-main-3)",
-        "gray-1": "var(--color-gray-1)",
-        "gray-2": "var(--color-gray-2)",
-        "gray-3": "var(--color-gray-3)",
-        "gray-4": "var(--color-gray-4)",
-        "gray-5": "var(--color-gray-5)",
-        "gray-6": "var(--color-gray-6)",
-        "gray-7": "var(--color-gray-7)",
-        alert: "var(--color-alert)",
-      },
-    },
-  },
 };

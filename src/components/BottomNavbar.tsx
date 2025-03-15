@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import homeIcon from "../assets/home.svg";
-import bookcaseIcon from "../assets/bookcase.svg";
-import writeIcon from "../assets/write.svg";
-import goodsIcon from "../assets/goods.svg";
-import famIcon from "../assets/fam.svg";
+import homeIcon from "../assets/image/home.svg";
+import bookcaseIcon from "../assets/image/bookcase.svg";
+import writeIcon from "../assets/image/write.svg";
+import goodsIcon from "../assets/image/goods.svg";
+import famIcon from "../assets/image/fam.svg";
 
 // 네비게이션 항목 타입 정의
 export type NavItem = "home" | "bookshelf" | "write" | "goods" | "family";
@@ -50,7 +50,19 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
   ];
 
   return (
-    <nav className="bg-bg-1 border-t rounded-t-[20px] border-gray-300 px-[30px] pt-[20px] pb-[16px] w-full z-10 h-[90px] shadow-[0_4px_10px_0 rgba(0, 0, 0, 0.05)]">
+    <nav
+      style={{
+        borderTopLeftRadius: "20px",
+        borderTopRightRadius: "20px",
+        paddingLeft: "30px",
+        paddingRight: "30px",
+        paddingTop: "20px",
+        paddingBottom: "16px",
+        height: "90px",
+        boxShadow: "0 4px 10px 0 rgba(0, 0, 0, 0.05)",
+      }}
+      className="bg-bg-1 border-t border-gray-300 w-full z-10"
+    >
       <div className="flex space-between items-center h-full font-medium ">
         {navItems.map((item) => {
           const isActive = activeItem === item.id;
