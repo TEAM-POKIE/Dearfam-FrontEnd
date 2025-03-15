@@ -1,117 +1,23 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap");
-@import "tailwindcss";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@theme {
-  --color-logo-orange: #f28c46;
-  --color-logo-green: #689f72;
-  --color-logo-purple: #9894e6;
-  --color-logo-red: #c26a6a;
-  --color-bg-1: #e5e1d7;
-  --color-bg-2: #ddd5bf;
-  --color-bg-3: #c0bdb5;
-  --color-main-1: #f5751e;
-  --color-main-2: #9a7a50;
-  --color-main-2-80: #a98f6b;
-  --color-main-3: #9a9893;
-  --color-gray-1: #000000;
-  --color-gray-2: #1f1f1f;
-  --color-gray-3: #828282;
-  --color-gray-4: #929292;
-  --color-gray-5: #d3d3d3;
-  --color-gray-6: #f8f8f8;
-  --color-gray-7: #ffffff;
-  --color-alert: #d64d4d;
-  --font-pretendard: "Pretendard", sans-serif;
-  --app-width: 390px;
-}
 
 @layer base {
   body {
     @apply text-gray-1 font-pretendard;
     display: flex;
     justify-content: center;
+    align-items: center;
     min-height: 100vh;
     width: 100%;
     background-color: white;
-  }
-
-  .dark {
-    @apply bg-gray-1 text-gray-7;
-  }
-}
-@layer utilities {
-  .text-h1 {
-    font-size: 32px;
-    font-weight: bold;
-  }
-  .text-h2 {
-    font-size: 28px;
-    font-weight: bold;
-  }
-  .text-h3 {
-    font-size: 24px;
-    font-weight: bold;
-  }
-  .text-h4 {
-    font-size: 20px;
-    font-weight: bold;
-  }
-  .text-h5 {
-    font-size: 16px;
-    font-weight: bold;
-  }
-  .text-body1 {
-    font-size: 20px;
-    font-weight: 400;
-  }
-  .text-body2 {
-    font-size: 18px;
-    font-weight: 400;
-  }
-  .text-body3 {
-    font-size: 16px;
-    font-weight: 400;
-  }
-  .text-caption1 {
-    font-size: 12px;
-    font-weight: 400;
-  }
-  .text-caption2 {
-    font-size: 8px;
-    font-weight: 400;
   }
 }
 
 @layer components {
   .mobile-container {
-    width: var(--app-width);
-    min-height: 100vh;
-    overflow: hidden;
-    background-color: var(--color-bg-1);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    position: relative;
-  }
-
-  .btn {
-    @apply px-4 py-2 rounded-lg font-semibold transition;
-  }
-
-  .btn-primary {
-    @apply bg-main-1 text-white hover:bg-main-2;
-  }
-
-  .btn-secondary {
-    @apply bg-gray-3 text-white hover:bg-gray-4;
-  }
-}
-
-@layer utilities {
-  .text-shadow {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    @apply w-app min-h-screen overflow-hidden bg-bg-1 shadow-soft relative;
   }
 }

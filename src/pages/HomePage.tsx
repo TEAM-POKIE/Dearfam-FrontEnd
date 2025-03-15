@@ -36,8 +36,6 @@ export function HomePage() {
 
         {/* 팝업 컴포넌트 */}
         <BasicPopup
-          title="팝업 예제"
-          content="이 팝업은 버튼을 클릭하면 열리고 닫힙니다."
           buttonText="확인"
           isOpen={isPopupOpen}
           onClose={closePopup}

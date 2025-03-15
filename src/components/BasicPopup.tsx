@@ -24,7 +24,7 @@ export const BasicPopup: React.FC<PopupProps> = ({
   isOpen,
   onClose,
   title = "title",
-  content = "content",
+  content = "this is content. this is content. this is content. this is content. this is content. this is content. this is content. this is content. this is content. ",
   buttonText = "buttonText",
   onButtonClick,
 }) => {
@@ -36,29 +36,22 @@ export const BasicPopup: React.FC<PopupProps> = ({
         className="fixed inset-0 bg-black bg-opacity-50"
         onClick={onClose}
       ></div>
-      <div
-        style={{
-          width: "350px",
-          padding: "20px 30px",
-          borderRadius: "20px",
-        }}
-        className="flex justify-center bg-white max-w-md mx-4 relative z-10"
-      >
+      <div className="flex justify-center bg-white w-[21.875rem] h-[17.5rem] px-[1.888rem] py-[1.25rem] relative z-10 rounded-[1.25rem]">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-600"
+          className="absolute top-[1.25rem] right-[1.25rem] text-main-3 hover:text-neutral-600"
           aria-label="Close"
         >
           <X size={24} />
         </button>
 
-        <div className="p-6 w-full flex flex-col items-center">
-          <h2 className="text-h3 text-center mb-4">{title}</h2>
+        <div className="w-full flex flex-col items-center gap-[1.88rem]">
+          <h4 className="text-h4 text-center">{title}</h4>
 
-          <div className="mb-6">
-            <div className="p-4 text-neutral-600 text-center">
+          <div>
+            <div className="text-neutral-600 text-center">
               {typeof content === "string" ? (
-                <p className="text-body1">{content}</p>
+                <p className="text-body3">{content}</p>
               ) : (
                 content
               )}
