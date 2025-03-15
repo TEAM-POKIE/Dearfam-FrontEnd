@@ -14,7 +14,7 @@ interface BasicButtonProps {
  * @param {string} text - 버튼 텍스트
  * @param {Function} onClick - 클릭 이벤트 핸들러
  * @param {string} color - 버튼 색상 (main_1, main_2, main_3, gray_3, gray_4)
- * @param {number} size - 버튼 너비 (px 값으로 입력하면 자동으로 rem으로 변환)
+ * @param {number} size - 버튼 너비 (px 값으로 입력하면 자동으로 반응형으로 변환)
  * @param {boolean} fullWidth - 전체 너비 적용 여부
  * @param {boolean} disabled - 비활성화 여부
  */
@@ -38,10 +38,17 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   // px를 rem으로 변환 (1rem = 16px)
   const pxToRem = (px: number) => `${px / 16}rem`;
 
+  // px를 vw로 변환 (기준 화면 너비: 390px)
+  const pxToVw = (px: number) => `${(px / 390) * 100}vw`;
+
   // 인라인 스타일로 너비 설정
   const inlineStyle = {
-    width: fullWidth ? "100%" : size ? pxToRem(size) : "auto",
-    borderRadius: "0.88rem", // 10px를 rem으로 변환
+    width: fullWidth
+      ? "100%"
+      : size
+      ? `clamp(${pxToRem(size * 0.5)}, ${pxToVw(size)}, ${pxToRem(size)})`
+      : "auto",
+    borderRadius: "0.88rem", // 14px를 rem으로 변환
   };
 
   return (
@@ -51,11 +58,9 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
       style={inlineStyle}
       className={`
         ${colorStyles[color]} 
-        px-4 py-2 
+        h-[3.125rem]
         font-medium 
         text-body3
-        transition-colors 
-        duration-200
         ${disabled ? "opacity-50 cursor-not-allowed" : ""}
       `}
     >

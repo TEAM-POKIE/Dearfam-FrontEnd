@@ -24,7 +24,7 @@ export function Layout() {
     <div className="mobile-container flex flex-col">
       <HeaderBar mode={headerMode} onModeChange={setHeaderMode} />
 
-      <main className="flex-grow overflow-y-auto pb-[90px]">
+      <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)]">
         <Outlet />
       </main>
 

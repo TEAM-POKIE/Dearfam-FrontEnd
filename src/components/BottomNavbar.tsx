@@ -57,15 +57,16 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
         border-gray-300 
         w-full 
         z-10
-        rounded-t-[1.25rem]
-        px-[1.875rem]
-        pt-[1.25rem]
-        pb-[1rem]
-        h-[5.625rem]
-        shadow-[0_0.25rem_0.625rem_0_rgba(0,0,0,0.05)]
+    
+        rounded-t-[clamp(0.75rem,3.2vw,1.25rem)]
+        px-[clamp(1.88rem,4.8vw,1.88rem)]
+        pt-[clamp(1.5rem,3.2vw,1.25rem)]
+        pb-[clamp(0.625rem,2.56vw,1rem)]
+        h-[clamp(3.75rem,14.4vw,5.625rem)]
+        shadow-[0_clamp(0.125rem,0.64vw,0.25rem)_clamp(0.375rem,1.6vw,0.625rem)_0_rgba(0,0,0,0.05)]
       "
     >
-      <div className="flex space-between items-center h-full font-medium">
+      <div className="flex space-between items-center ">
         {navItems.map((item) => {
           const isActive = activeItem === item.id;
           return (
@@ -79,7 +80,7 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
               <img
                 src={item.icon}
                 alt={item.label}
-                className={`w-[1.5rem] h-[1.5rem] ${
+                className={`w-[clamp(1rem,3.2vw,1.5rem)] h-[clamp(1rem,3.2vw,1.5rem)] ${
                   isActive ? "filter-orange" : ""
                 }`}
                 style={
@@ -91,7 +92,7 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
                     : {}
                 }
               />
-              <span className="text-xs font-medium mt-[0.25rem]">
+              <span className="text-caption1  mt-[clamp(0.125rem,0.64vw,0.25rem)]">
                 {item.label}
               </span>
             </Link>
