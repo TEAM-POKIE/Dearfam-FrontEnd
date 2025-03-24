@@ -1,100 +1,61 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+// tailwind.config.js
+module.exports = {
+  content: ["./src/**/*.{js,ts,jsx,tsx}"], // Tailwind를 적용할 파일 경로
   theme: {
     extend: {
-      fontFamily: {
-        pretendard: ["Pretendard", "sans-serif"],
-        heading: ["Pretendard", "sans-serif"],
-        body: ["Pretendard", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
-      },
-      fontSize: {
-        h1: ["32pt", { fontWeight: "700" }],
-        h2: ["28pt", { fontWeight: "700" }],
-        h3: ["24pt", { fontWeight: "700" }],
-        h4: ["20pt", { fontWeight: "700" }],
-        h5: ["16pt", { fontWeight: "700" }],
-        body1: ["20pt", { fontWeight: "400" }],
-        body2: ["16pt", { fontWeight: "400" }],
-        body3: ["14pt", { fontWeight: "400" }],
-        caption2: ["12pt", { fontWeight: "400" }],
-        caption3: ["8pt", { fontWeight: "400" }],
-      },
       colors: {
-        main: {
-          1: "#F5751E", // 주황색
-          2: "#9A7A50", // 갈색
-          3: "#898989", // 회색
-        },
-        gray: {
-          1: "#000000",
-          2: "#1F1F1F",
-          3: "#434343",
-          4: "#656565",
-          5: "#D6D6D6",
-          6: "#F8F8F8",
-          7: "#FFFFFF",
+        logo: {
+          orange: "#f28c46",
+          green: "#689f72",
+          purple: "#9894e6",
+          red: "#c26a6a",
         },
         bg: {
-          1: "#E5E1D7",
-          2: "#DDD5BF",
-          3: "#C0BDB5",
+          1: "#e5e1d7",
+          2: "#ddd5bf",
+          3: "#c0bdb5",
         },
+        main: {
+          1: "#f5751e",
+          2: "#9a7a50",
+          "2_80": "#a98f6b",
+          3: "#9a9893",
+        },
+        "gray-1": "#000000",
+        "gray-2": "#1f1f1f",
+        "gray-3": "#828282",
+        "gray-4": "#929292",
+        "gray-5": "#d3d3d3",
+        "gray-6": "#f8f8f8",
+        "gray-7": "#ffffff",
+        alert: "#D54D4D",
+      },
+      fontFamily: {
+        pretendard: ["Pretendard", "sans-serif"],
+      },
+      fontSize: {
+        // 화면 크기에 비례하여 조정되는 반응형 폰트 크기
+        // clamp(최소값, 기본값, 최대값) 형식으로 설정
+        h1: ["clamp(1.5rem, 5.13vw, 2rem)", { fontWeight: "700" }], // 32px, bold
+        h2: ["clamp(1.25rem, 4.49vw, 1.75rem)", { fontWeight: "700" }], // 28px, bold
+        h3: ["clamp(1.125rem, 3.85vw, 1.5rem)", { fontWeight: "700" }], // 24px, semibold
+        h4: ["clamp(1rem, 3.21vw, 1.25rem)", { fontWeight: "700" }], // 20px, semibold
+        h5: ["clamp(0.875rem, 2.56vw, 1rem)", { fontWeight: "700" }], // 16px, medium
+        body1: ["clamp(1rem, 3.21vw, 1.25rem)", { fontWeight: "400" }], // 20px, regular
+        body2: ["clamp(0.938rem, 2.88vw, 1.125rem)", { fontWeight: "400" }], // 18px, regular
+        body3: ["clamp(0.875rem, 2.56vw, 1rem)", { fontWeight: "400" }], // 16px, regular
+        caption1: ["clamp(0.625rem, 1.92vw, 0.75rem)", { fontWeight: "400" }], // 12px, regular
+        caption2: ["clamp(0.438rem, 1.28vw, 0.5rem)", { fontWeight: "400" }], // 8px, regular
+      },
+      width: {
+        app: "390px", // 웹뷰에서는 항상 100% 너비 사용
+      },
+
+      boxShadow: {
+        soft: "0 0 20px rgba(0, 0, 0, 0.1)",
       },
     },
   },
-  safelist: [
-    "font-pretendard",
-    "font-heading",
-    "font-body",
-    "font-mono",
-    "text-h1",
-    "text-h2",
-    "text-h3",
-    "text-h4",
-    "text-h5",
-    "text-body1",
-    "text-body2",
-    "text-body3",
-    "text-caption2",
-    "text-caption3",
-    "text-main-1",
-    "text-main-2",
-    "text-main-3",
-    "bg-main-1",
-    "bg-main-2",
-    "bg-main-3",
-    "text-gray-1",
-    "text-gray-2",
-    "text-gray-3",
-    "text-gray-4",
-    "text-gray-5",
-    "text-gray-6",
-    "text-gray-7",
-    "bg-gray-1",
-    "bg-gray-2",
-    "bg-gray-3",
-    "bg-gray-4",
-    "bg-gray-5",
-    "bg-gray-6",
-    "bg-gray-7",
-    "bg-bg-1",
-    "bg-bg-2",
-    "bg-bg-3",
-  ],
-  plugins: [
-    function ({ addUtilities }) {
-      const newUtilities = {
-        ".text-main-1": { color: "#F5751E" },
-        ".text-main-2": { color: "#9A7A50" },
-        ".text-main-3": { color: "#898989" },
-        ".bg-main-1": { backgroundColor: "#F5751E" },
-        ".bg-main-2": { backgroundColor: "#9A7A50" },
-        ".bg-main-3": { backgroundColor: "#898989" },
-      };
-      addUtilities(newUtilities);
-    },
-  ],
+  darkMode: "class", // 다크 모드 설정
+  plugins: [],
 };

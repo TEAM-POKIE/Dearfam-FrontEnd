@@ -1,21 +1,15 @@
 export function DailyPage() {
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">일상</h1>
-      <p className="text-main-1 text-lg mb-4">
-        일상 페이지 내용이 여기에 표시됩니다. (main-1 색상)
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 bg-main-1 text-white rounded">main-1 배경색</div>
-        <div className="p-4 bg-main-2 text-white rounded">main-2 배경색</div>
-        <div className="p-4 bg-main-3 text-white rounded">main-3 배경색</div>
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="p-4 border-b">
+        <h3 className="text-xl font-semibold">Card Title</h3>
+        <p className="text-gray-500 text-sm">Card Description</p>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="text-h1 p-4 text-main-1 rounded border border-gray-5">
-          main-1 텍스트 색상s
-        </div>
+      <div className="p-4">
+        <p>Card Content</p>
+      </div>
+      <div className="p-4 bg-gray-50 border-t">
+        <p>Card Footer</p>
       </div>
     </div>
   );
