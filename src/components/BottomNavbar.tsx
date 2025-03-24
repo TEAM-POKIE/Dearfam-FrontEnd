@@ -1,10 +1,10 @@
-import React from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
-import homeIcon from "../assets/home.svg";
-import bookcaseIcon from "../assets/bookcase.svg";
-import writeIcon from "../assets/write.svg";
-import goodsIcon from "../assets/goods.svg";
-import famIcon from "../assets/fam.svg";
+import homeIcon from "../assets/image/home.svg";
+import bookcaseIcon from "../assets/image/bookcase.svg";
+import writeIcon from "../assets/image/write.svg";
+import goodsIcon from "../assets/image/goods.svg";
+import famIcon from "../assets/image/fam.svg";
 
 // 네비게이션 항목 타입 정의
 export type NavItem = "home" | "bookshelf" | "write" | "goods" | "family";
@@ -19,7 +19,7 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
   const navItems = [
     {
       id: "home",
-      label: "일상",
+      label: "홈",
       icon: homeIcon,
       path: "/",
     },
@@ -50,8 +50,23 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
   ];
 
   return (
-    <nav className="bg-[#E5E1D7] border-t border-gray-300 w-full shadow-md">
-      <div className="flex justify-around items-center h-16 px-2">
+    <nav
+      className="
+        bg-bg-1 
+        border-t 
+        border-gray-300 
+        w-full 
+        z-10
+    
+        rounded-t-[clamp(0.75rem,3.2vw,1.25rem)]
+        px-[clamp(1.88rem,4.8vw,1.88rem)]
+        pt-[clamp(1.5rem,3.2vw,1.25rem)]
+        pb-[clamp(0.625rem,2.56vw,1rem)]
+        h-[clamp(3.75rem,14.4vw,5.625rem)]
+        shadow-[0_clamp(0.125rem,0.64vw,0.25rem)_clamp(0.375rem,1.6vw,0.625rem)_0_rgba(0,0,0,0.05)]
+      "
+    >
+      <div className="flex space-between items-center ">
         {navItems.map((item) => {
           const isActive = activeItem === item.id;
           return (
@@ -65,7 +80,9 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
               <img
                 src={item.icon}
                 alt={item.label}
-                className={`w-6 h-6 ${isActive ? "filter-orange" : ""}`}
+                className={`w-[clamp(1rem,3.2vw,1.5rem)] h-[clamp(1rem,3.2vw,1.5rem)] ${
+                  isActive ? "filter-orange" : ""
+                }`}
                 style={
                   isActive
                     ? {
@@ -75,7 +92,9 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
                     : {}
                 }
               />
-              <span className="text-xs font-medium mt-1">{item.label}</span>
+              <span className="text-caption1  mt-[clamp(0.125rem,0.64vw,0.25rem)]">
+                {item.label}
+              </span>
             </Link>
           );
         })}

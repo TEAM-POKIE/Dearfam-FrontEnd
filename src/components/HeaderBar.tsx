@@ -19,8 +19,8 @@ interface HeaderBarProps {
 // 설정 아이콘
 const SettingIcon = () => (
   <svg
-    width="24"
-    height="24"
+    width="clamp(1.25rem,3.2vw,1.5rem)"
+    height="clamp(1.25rem,3.2vw,1.5rem)"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -45,8 +45,8 @@ const SettingIcon = () => (
 // 추가 아이콘
 const AddIcon = () => (
   <svg
-    width="24"
-    height="24"
+    width="clamp(1.25rem,3.2vw,1.5rem)"
+    height="clamp(1.25rem,3.2vw,1.5rem)"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -79,9 +79,9 @@ export function HeaderBar({
   };
 
   return (
-    <header className="flex justify-between items-center px-6 py-4 bg-[#E5E1D7]">
-      <h1 className="text-4xl font-medium text-[#9A9893]">{title}</h1>
-      <div className="flex items-center space-x-4">
+    <header className="flex justify-between items-center px-[clamp(1.125rem,4.8vw,1.5rem)] py-[clamp(0.75rem,3.2vw,1rem)] bg-[#E5E1D7]">
+      <h1 className="text-h4 font-medium text-[#9A9893]">{title}</h1>
+      <div className="flex items-center space-x-[clamp(0.75rem,3.2vw,1rem)]">
         <div
           onClick={() => handleIconClick("add")}
           className={`cursor-pointer ${getIconStyle("add")}`}
