@@ -50,7 +50,9 @@ module.exports = {
       width: {
         app: "390px", // 웹뷰에서는 항상 100% 너비 사용
       },
-
+      height: {
+        app: "42.5rem", // 최대 세로 길이 제한
+      },
       boxShadow: {
         soft: "0 0 20px rgba(0, 0, 0, 0.1)",
       },
