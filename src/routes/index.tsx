@@ -8,6 +8,9 @@ import {
   GoodsPage,
   FamilyPage,
 } from "../pages";
+import { StartPage } from "../pages/StartPage";
+import { FirstMakePage } from "../pages/FirstMakePage";
+import { LinkInPage } from "../pages/LinkInPage";
 
 /**
  * 애플리케이션의 라우트 구성을 정의합니다.
@@ -23,6 +26,9 @@ export function AppRoutes() {
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
       </Route>
+      <Route path="/StartPage" element={<StartPage />} />
+      <Route path="/FirstMakePage" element={<FirstMakePage />} />
+      <Route path="/LinkInPage" element={<LinkInPage />} />
     </Routes>
   );
 }
