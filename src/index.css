@@ -18,6 +18,6 @@
 
 @layer components {
   .mobile-container {
-    @apply w-app min-h-screen overflow-hidden bg-bg-1 shadow-soft relative;
+    @apply w-app h-app overflow-hidden bg-bg-1 shadow-soft relative;
   }
 }

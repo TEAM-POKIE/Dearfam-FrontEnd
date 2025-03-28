@@ -202,5 +202,11 @@ export function BookshelfPage() {
     return rows;
   };
 
-  return <div className="p-4 bg-[#E5E1D7]">{renderItemRows()}</div>;
+  return (
+    <div className="flex justify-center items-center h-app bg-bg-1">
+      <div className="mobile-container flex flex-col">
+        <div className="p-4">{renderItemRows()}</div>
+      </div>
+    </div>
+  );
 }
