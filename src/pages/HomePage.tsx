@@ -15,25 +15,23 @@ export function HomePage() {
   const dropdownOptions = ["옵션 1", "옵션 2", "옵션 3"];
 
   return (
-    <div className="flex justify-center items-center h-app bg-bg-1">
-      <div className="mobile-container flex flex-col items-start justify-start p-8 overflow-hidden">
-        <h1 className="text-main-1 mb-6">홈</h1>
-        <div className="flex flex-col items-center justify-center gap-4 w-full">
-          <BasicInputBox placeholder="text" />
-          <BasicAlert message="텍스트를 입력해주세요" />
-          <BasicDropDown 
-            value={dropdownValue} 
-            onChange={setDropdownValue} 
-            options={dropdownOptions} 
-          />
-          <Button 
-            variant="default"
-            className="bg-blue-500 text-white"
-            onClick={() => navigate('/StartPage')}
-          >
-            시작 페이지로 이동
-          </Button>
-        </div>
+    <div className="p-8 w-full">
+      <h1 className="text-main-1 mb-6">홈</h1>
+      <div className="flex flex-col items-center justify-center gap-4 w-full">
+        <BasicInputBox placeholder="text" />
+        <BasicAlert message="텍스트를 입력해주세요" />
+        <BasicDropDown 
+          value={dropdownValue} 
+          onChange={setDropdownValue} 
+          options={dropdownOptions} 
+        />
+        <Button 
+          variant="default"
+          className="bg-blue-500 text-white"
+          onClick={() => navigate('/StartPage')}
+        >
+          시작 페이지로 이동
+        </Button>
       </div>
     </div>
   );
