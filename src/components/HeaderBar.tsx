@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 // 헤더바 모드 타입 정의
 export type HeaderMode =
