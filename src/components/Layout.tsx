@@ -1,10 +1,11 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { BottomNavbar, NavItem } from "./BottomNavbar";
 import { HeaderBar, HeaderMode } from "./HeaderBar";
 
 export function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [headerMode, setHeaderMode] = useState<HeaderMode>("default");
 
   // 현재 경로에 따라 활성 네비게이션 항목 결정
@@ -20,9 +21,18 @@ export function Layout() {
     return "home"; // 기본값
   };
 
+  // 헤더 모드 변경 핸들러
+  const handleHeaderModeChange = (mode: HeaderMode) => {
+    setHeaderMode(mode);
+    // 설정 아이콘 클릭 시 SettingPage로 이동
+    if (mode === "setting") {
+      navigate('/SettingPage');
+    }
+  };
+
   return (
     <div className="mobile-container flex flex-col">
-      <HeaderBar mode={headerMode} onModeChange={setHeaderMode} />
+      <HeaderBar mode={headerMode} onModeChange={handleHeaderModeChange} />
 
       <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)]">
         <Outlet />
