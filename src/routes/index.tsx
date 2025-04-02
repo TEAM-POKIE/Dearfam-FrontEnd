@@ -14,6 +14,7 @@ import { LinkInPage } from "../pages/LinkInPage";
 import { SettingPage } from "../pages/SettingPage";
 import { NameChangePage } from "../pages/NameChangePage";
 
+
 /**
  * 애플리케이션의 라우트 구성을 정의합니다.
  */
