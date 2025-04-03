@@ -28,7 +28,10 @@ module.exports = {
         "gray-5": "#d3d3d3",
         "gray-6": "#f8f8f8",
         "gray-7": "#ffffff",
-        alert: "#D54D4D",
+        utils: {
+          alert: "#D54D4D",
+          stroke: "#F3F3F3",
+        },
       },
       fontFamily: {
         pretendard: ["Pretendard", "sans-serif"],
