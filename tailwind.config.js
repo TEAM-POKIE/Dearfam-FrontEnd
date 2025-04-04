@@ -28,7 +28,10 @@ module.exports = {
         "gray-5": "#d3d3d3",
         "gray-6": "#f8f8f8",
         "gray-7": "#ffffff",
-        alert: "#D54D4D",
+        utils: {
+          alert: "#D54D4D",
+          stroke: "#F3F3F3",
+        },
       },
       fontFamily: {
         pretendard: ["Pretendard", "sans-serif"],
@@ -48,11 +51,9 @@ module.exports = {
         caption2: ["clamp(0.438rem, 1.28vw, 0.5rem)", { fontWeight: "400" }], // 8px, regular
       },
       width: {
-        app: "390px", // 웹뷰에서는 항상 100% 너비 사용
+        app: "24.375rem", // 웹뷰에서는 항상 100% 너비 사용
       },
-      height: {
-        app: "42.5rem", // 최대 세로 길이 제한
-      },
+
       boxShadow: {
         soft: "0 0 20px rgba(0, 0, 0, 0.1)",
       },
