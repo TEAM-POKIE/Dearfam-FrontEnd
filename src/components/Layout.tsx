@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { BottomNavbar, NavItem } from "./BottomNavbar";
-import { HeaderBar, HeaderMode } from "./HeaderBar";
+import { HeaderBar, HeaderMode, PageType } from "./HeaderBar";
 
 export function Layout() {
   const location = useLocation();
@@ -21,18 +21,41 @@ export function Layout() {
     return "home"; // 기본값
   };
 
+  // 현재 페이지 타입 가져오기
+  const getCurrentPageType = (): PageType => {
+    const path = location.pathname;
+
+    if (path === "/") return "home";
+    if (path.includes("/bookshelf")) return "bookshelf";
+    if (path.includes("/goods")) return "goods";
+    if (path.includes("/family")) return "family";
+
+    return "home"; // 기본값
+  };
+
+  // 작성 페이지인지 확인
+  const isWritePage = (): boolean => {
+    return location.pathname.includes("/write");
+  };
+
   // 헤더 모드 변경 핸들러
   const handleHeaderModeChange = (mode: HeaderMode) => {
     setHeaderMode(mode);
     // 설정 아이콘 클릭 시 SettingPage로 이동
     if (mode === "setting") {
-      navigate('/SettingPage');
+      navigate("/SettingPage");
     }
   };
 
   return (
     <div className="mobile-container flex flex-col">
-      <HeaderBar mode={headerMode} onModeChange={handleHeaderModeChange} />
+      {!isWritePage() && (
+        <HeaderBar
+          mode={headerMode}
+          onModeChange={handleHeaderModeChange}
+          pageType={getCurrentPageType()}
+        />
+      )}
 
       <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)]">
         <Outlet />
