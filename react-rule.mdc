@@ -1,11 +1,8 @@
----
-description: 
-globs: 
-alwaysApply: true
----
+Description: This rule describes the React project structure, conventions, technology stack, and architecture guidelines for the application.
+
 # React Project Structure and Conventions
 
-## 📂 Folder Structure
+## �� Folder Structure
 
 - **assets/**: Static files (images, icons, fonts)
 - **components/**: Reusable UI components (buttons, modals, input fields)
@@ -68,4 +65,4 @@ lib/store/ (global state)
 5. **Styling**:
    - Use Tailwind utility classes
    - Leverage shadcn/ui components
-   - Maintain consistent styling patterns
+   - Maintain consistent styling patterns 
