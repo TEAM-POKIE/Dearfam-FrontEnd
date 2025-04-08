@@ -1,6 +1,8 @@
 import * as React from "react";
 import { useEffect, useRef, useState, useCallback } from "react";
-
+import imageNotFound from "../../assets/image/section2/image_not_found_270x280.svg";
+import heartActive from "../../assets/image/section2/icon_hearrt_active.svg";
+import heartDefault from "../../assets/image/section2/icon_hearrt_default.svg";
 import { Card, CardContent } from "../../components/ui/card";
 import {
   Carousel,
@@ -13,16 +15,17 @@ import { useCarouselStore } from "../../lib/store/carouselStore";
 import { useSliderStore } from "../../lib/store/sliderStore";
 
 const SLIDES = [
-  { id: 1, title: "Event Title 1" },
-  { id: 2, title: "Event Title 2" },
-  { id: 3, title: "Event Title 3" },
-  { id: 4, title: "Event Title 4" },
-  { id: 5, title: "Event Title 5" },
+  { id: 1, title: "Event Title", image: imageNotFound },
+  { id: 2, title: "Event Title 2", image: imageNotFound },
+  { id: 3, title: "Event Title 3", image: imageNotFound },
+  { id: 4, title: "Event Title 4", image: imageNotFound },
+  { id: 5, title: "Event Title 5", image: imageNotFound },
 ];
 
 export function EventSlideContainer() {
   const initialized = useRef(false);
   const [api, setApiState] = useState<CarouselApi | null>(null);
+  const [likedEvents, setLikedEvents] = useState<Set<number>>(new Set());
 
   const { currentIndex, setTotalSlides, setCurrentIndex, setCarouselApi } =
     useCarouselStore();
@@ -93,17 +96,30 @@ export function EventSlideContainer() {
     };
   }, [api, onSelectSlide]);
 
+  const toggleLike = useCallback((eventId: number) => {
+    setLikedEvents((prev) => {
+      const newLiked = new Set(prev);
+      if (newLiked.has(eventId)) {
+        newLiked.delete(eventId);
+      } else {
+        newLiked.add(eventId);
+      }
+      return newLiked;
+    });
+  }, []);
+
   return (
-    <div className="w-full flex flex-col justify-center items-center gap-8 h-[29.25rem]">
-      <div className="relative w-full max-w-[390px]">
+    <div className="w-full flex flex-col justify-center items-center  h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
+      <div className="relative w-full">
         <Carousel className="w-full" setApi={setApi}>
-          <CarouselContent className="w-full rounded-[0.875rem] -ml-0 flex items-center ">
+          <CarouselContent className="w-full  -ml-0 flex items-center ">
             {SLIDES.map((slide, index) => (
               <CarouselItem
                 key={slide.id}
-                className="pl-0 basis-[85%] transition-all duration-300 first:pl-0"
+                className="pl-0 basis-[75%]  transition-all duration-300 "
                 style={{
                   height: index === currentIndex ? "29.25rem" : "20.0625rem",
+
                   transform: index === currentIndex ? "scale(1)" : "scale(0.9)",
                 }}
               >
@@ -113,11 +129,60 @@ export function EventSlideContainer() {
                       index === currentIndex ? "bg-white" : "bg-[#9A9893]"
                     }`}
                   >
-                    <CardContent className="flex aspect-square items-center justify-center p-6 h-full">
-                      <div className="text-2xl font-semibold">
-                        {slide.title}
+                    {index === currentIndex && (
+                      <div className=" h-full w-full pb-[0.94rem]">
+                        <CardContent className="flex flex-col  p-[0.94rem] ">
+                          {index === SLIDES.length - 1 ? (
+                            <div className="flex flex-col items-center justify-center h-full">
+                              <h3 className="text-h4 mb-6">마지막 페이지</h3>
+                              <button
+                                className="bg-[#FE6363] text-white py-3 px-6 rounded-lg font-medium hover:bg-[#e85555] transition-colors"
+                                onClick={() =>
+                                  console.log("추억 공유하러가기 clicked")
+                                }
+                              >
+                                추억 공유하러가기
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              <img
+                                className="rounded[0.875]"
+                                src={slide.image}
+                                alt={slide.title}
+                              />
+                              <div className="text-h5 mt-[0.94rem] ">
+                                {slide.title}
+                              </div>
+                              <div className="text-body4  text-gray-3 mt-[0.31rem] h-[5.3125rem] overflow-hidden text-ellipsis">
+                                This is event contents. This is event contents.
+                                This is event contents. This is event contents.
+                                This is event contents. This is event contents.
+                                This is event contents. This is event contents.
+                                This is e .. event contents. This is event
+                                contents. This is e .. event contents. This is
+                                event contents. This is e ..
+                              </div>
+                              <div className=" mt-[0.63rem] flex items-center justify-between gap-[0.31rem]">
+                                <span className="text-caption1 text-gray-3">
+                                  댓글 0개
+                                </span>
+                                <img
+                                  src={
+                                    likedEvents.has(slide.id)
+                                      ? heartActive
+                                      : heartDefault
+                                  }
+                                  alt="heart"
+                                  onClick={() => toggleLike(slide.id)}
+                                  className="cursor-pointer"
+                                />
+                              </div>
+                            </>
+                          )}
+                        </CardContent>
                       </div>
-                    </CardContent>
+                    )}
                   </Card>
                 </div>
               </CarouselItem>

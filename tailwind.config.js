@@ -51,9 +51,6 @@ module.exports = {
         caption1: ["clamp(0.75rem, 1.92vw, 0.75rem)", { fontWeight: "400" }], // 12px, regular
         caption2: ["clamp(0.5rem, 1.28vw, 0.5rem)", { fontWeight: "400" }], // 8px, regular
       },
-      width: {
-        app: "24.375rem", // 웹뷰에서는 항상 100% 너비 사용
-      },
 
       boxShadow: {
         soft: "0 0 20px rgba(0, 0, 0, 0.1)",

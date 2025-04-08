@@ -7,17 +7,31 @@
 @layer base {
   body {
     @apply text-gray-1 font-pretendard;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
     background-color: white;
+    margin: 0;
+    padding: 0;
   }
 }
 
 @layer components {
   .mobile-container {
-    @apply w-app min-h-screen overflow-hidden bg-bg-1 shadow-soft relative;
+    @apply w-full min-h-screen overflow-hidden bg-bg-1 shadow-soft relative;
+    width: 100vw;
+  }
+}
+
+/* 웹 환경에서는 최소 너비 390px 적용 */
+@media (min-width: 790px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mobile-container {
+    max-width: 390px;
+    width: 390px;
   }
 }
