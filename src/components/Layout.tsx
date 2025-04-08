@@ -48,7 +48,7 @@ export function Layout() {
   };
 
   return (
-    <div className="mobile-container flex flex-col">
+    <div className="mobile-container flex flex-col ">
       {!isWritePage() && (
         <HeaderBar
           mode={headerMode}
