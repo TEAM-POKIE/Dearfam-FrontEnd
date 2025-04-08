@@ -54,16 +54,16 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
       className="
         bg-bg-1 
         border-t 
-        border-gray-300 
-        w-full 
+        border-gray-5
+        w-[24.375rem]
         z-10
-    
-        rounded-t-[clamp(0.75rem,3.2vw,1.25rem)]
-        px-[clamp(1.88rem,4.8vw,1.88rem)]
-        pt-[clamp(1.5rem,3.2vw,1.25rem)]
-        pb-[clamp(0.625rem,2.56vw,1rem)]
-        h-[clamp(3.75rem,14.4vw,5.625rem)]
-        shadow-[0_clamp(0.125rem,0.64vw,0.25rem)_clamp(0.375rem,1.6vw,0.625rem)_0_rgba(0,0,0,0.05)]
+       w-full  
+        rounded-t-[1.25rem]
+        px-[1.875rem]
+        pt-[1.25rem]
+        pb-[0.9375rem]
+       
+        shadow-[0_-4px_10px_0_rgba(0,0,0,0.05)]
       "
     >
       <div className="flex space-between items-center ">
@@ -80,7 +80,7 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
               <img
                 src={item.icon}
                 alt={item.label}
-                className={`w-[clamp(1rem,3.2vw,1.5rem)] h-[clamp(1rem,3.2vw,1.5rem)] ${
+                className={`w-[1.875rem] h-[1.875rem] ${
                   isActive ? "filter-orange" : ""
                 }`}
                 style={
@@ -92,9 +92,7 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
                     : {}
                 }
               />
-              <span className="text-caption1  mt-[clamp(0.125rem,0.64vw,0.25rem)]">
-                {item.label}
-              </span>
+              <span className="text-caption1 ]">{item.label}</span>
             </Link>
           );
         })}
