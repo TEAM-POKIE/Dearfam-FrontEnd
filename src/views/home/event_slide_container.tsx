@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import imageNotFound from "../../assets/image/section2/image_not_found_270x280.svg";
 import heartActive from "../../assets/image/section2/icon_hearrt_active.svg";
 import heartDefault from "../../assets/image/section2/icon_hearrt_default.svg";
+import dearfamLogo from "../../assets/image/dearfam_logo_icon.svg";
 import { Card, CardContent } from "../../components/ui/card";
 import {
   Carousel,
@@ -13,6 +14,7 @@ import {
 
 import { useCarouselStore } from "../../lib/store/carouselStore";
 import { useSliderStore } from "../../lib/store/sliderStore";
+import BasicButton from "@/components/BasicButton";
 
 const SLIDES = [
   { id: 1, title: "Event Title", image: imageNotFound },
@@ -112,37 +114,56 @@ export function EventSlideContainer() {
     <div className="w-full flex flex-col justify-center items-center  h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
       <div className="relative w-full">
         <Carousel className="w-full" setApi={setApi}>
-          <CarouselContent className="w-full  -ml-0 flex items-center ">
+          <CarouselContent className="w-full  -mx-0 flex items-center gap-x-2 ">
             {SLIDES.map((slide, index) => (
               <CarouselItem
                 key={slide.id}
-                className="pl-0 basis-[75%]  transition-all duration-300 "
+                className={`basis-[76.9%] transition-all duration-300 
+                  ${index === 0 ? "ml-[2.81rem] pl-0" : ""}
+                  ${index === SLIDES.length - 1 ? "mr-[2.81rem]  " : ""}
+                  ${index !== 0 ? "px-0" : ""}
+                `}
                 style={{
                   height: index === currentIndex ? "29.25rem" : "20.0625rem",
-
                   transform: index === currentIndex ? "scale(1)" : "scale(0.9)",
                 }}
               >
-                <div className="p-1 h-full">
+                <div className=" h-full">
                   <Card
                     className={`h-full ${
                       index === currentIndex ? "bg-white" : "bg-[#9A9893]"
                     }`}
                   >
                     {index === currentIndex && (
-                      <div className=" h-full w-full pb-[0.94rem]">
-                        <CardContent className="flex flex-col  p-[0.94rem] ">
+                      <div className="h-full w-full">
+                        <CardContent
+                          className={`flex flex-col h-full  ${
+                            index === SLIDES.length - 1
+                              ? "px-[0.94rem] py-[0.88rem]  "
+                              : "p-[0.94rem]"
+                          } `}
+                        >
                           {index === SLIDES.length - 1 ? (
-                            <div className="flex flex-col items-center justify-center h-full">
-                              <h3 className="text-h4 mb-6">마지막 페이지</h3>
-                              <button
-                                className="bg-[#FE6363] text-white py-3 px-6 rounded-lg font-medium hover:bg-[#e85555] transition-colors"
-                                onClick={() =>
-                                  console.log("추억 공유하러가기 clicked")
-                                }
-                              >
-                                추억 공유하러가기
-                              </button>
+                            <div className="flex flex-col  justify-center h-full ">
+                              <div className="text-h5 text-gray-2 mt-[1.62rem] mb-[0.62rem] ml-[0.31rem]">
+                                추억을 더 공유해보세요!
+                              </div>
+                              <div className="text-body4 text-gray-3 ml-[0.31rem] mb-[3.63rem]">
+                                가족에게 일상과 추억의 이야기를 공유해보세요!
+                              </div>
+                              <img
+                                src={dearfamLogo}
+                                alt="dearfamLogo"
+                                className="w-full px-[2.81rem] mb-[5rem]"
+                              />
+                              <div className="w-full ">
+                                <BasicButton
+                                  text="추억 공유하러 가기"
+                                  color="main_1"
+                                  size={270}
+                                  textStyle="text_body3"
+                                />
+                              </div>
                             </div>
                           ) : (
                             <>
