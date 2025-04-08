@@ -64,7 +64,7 @@ export function HeaderBar({
   };
 
   return (
-    <header className="flex justify-between items-center px-[1.25rem] py-[clamp(0.75rem,3.2vw,1.06rem)] bg-[#E5E1D7]">
+    <header className="flex justify-between items-center px-[1.25rem] py-[clamp(0.75rem,3.2vw,1.06rem)] bg-[#E5E1D7] w-full">
       <img src={logo} alt="logo" />
       <div className="flex items-center space-x-[clamp(0.75rem,3.2vw,1rem)]">
         {pageType === "home" && (

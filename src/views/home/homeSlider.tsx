@@ -40,13 +40,15 @@ export function HomeSlider({ className, ...props }: SliderProps) {
   }, [sliderValue, currentIndex, totalSlides, step]);
 
   return (
-    <Slider
-      value={[sliderValue]}
-      max={100}
-      step={step}
-      onValueChange={handleSliderChange}
-      className={cn("cursor-pointer", className)}
-      {...props}
-    />
+    <div className="px-[2.81rem]">
+      <Slider
+        value={[sliderValue]}
+        max={100}
+        step={step}
+        onValueChange={handleSliderChange}
+        className={cn("cursor-pointer", className)}
+        {...props}
+      />
+    </div>
   );
 }
