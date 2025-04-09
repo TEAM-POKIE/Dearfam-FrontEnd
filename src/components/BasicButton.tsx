@@ -59,10 +59,8 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
       className={`
         ${colorStyles[color]} 
         h-[3.125rem]
-        
         ${textStyleMap[textStyle]} 
         ${disabled ? "opacity-50 cursor-not-allowed" : ""}
-        
       `}
     >
       {text}

@@ -1,11 +1,13 @@
 import * as React from "react";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import settingIcon from "../assets/image/icon_setting.svg";
 import galleryIcon from "../assets/image/icon_gallery.svg";
 import addIcon from "../assets/image/icon_add.svg";
 import urlIcon from "../assets/image/icon_url.svg";
 import sliderIcon from "../assets/image/icon_slider.svg";
 import logo from "../assets/image/dearfam_logo_default.svg";
+import { useHeaderStore } from "@/lib/store/headerStore";
+
 // 헤더바 모드 타입 정의
 export type HeaderMode =
   | "gallery"
@@ -17,14 +19,6 @@ export type HeaderMode =
 
 // 페이지 타입 정의
 export type PageType = "home" | "bookshelf" | "goods" | "family";
-
-// 컴포넌트 props 타입 정의
-interface HeaderBarProps {
-  mode?: HeaderMode;
-  title?: string;
-  pageType?: PageType;
-  onModeChange?: (mode: HeaderMode) => void;
-}
 
 // 설정 아이콘
 const SettingIcon = () => <img src={settingIcon} alt="setting" />;
@@ -39,28 +33,19 @@ const GalleryIcon = () => <img src={galleryIcon} alt="gallery" />;
 const UrlIcon = () => <img src={urlIcon} alt="url" />;
 const SliderIcon = () => <img src={sliderIcon} alt="slider" />;
 
-export function HeaderBar({
-  mode = "default",
-  pageType = "home",
-  onModeChange,
-}: HeaderBarProps) {
-  const [viewMode, setViewMode] = useState<"gallery" | "slider">("gallery");
-
-  // 아이콘 클릭 핸들러
-  const handleIconClick = (newMode: HeaderMode) => {
-    if (newMode === "gallery" || newMode === "slider") {
-      setViewMode(viewMode === "gallery" ? "slider" : "gallery");
-      if (onModeChange) {
-        onModeChange(viewMode === "gallery" ? "slider" : "gallery");
-      }
-    } else if (onModeChange) {
-      onModeChange(newMode);
-    }
-  };
+export function HeaderBar() {
+  const navigate = useNavigate();
+  const { mode, pageType, handleIconClick } = useHeaderStore();
 
   // 현재 모드에 따라 다른 스타일 적용
   const getIconStyle = (iconMode: HeaderMode) => {
     return mode === iconMode ? "text-[#F5751E]" : "text-[#9A9893]";
+  };
+
+  // 설정 페이지로 이동
+  const handleSettingClick = () => {
+    handleIconClick("setting");
+    navigate("/SettingPage");
   };
 
   return (
@@ -70,11 +55,11 @@ export function HeaderBar({
         {pageType === "home" && (
           <div
             onClick={() =>
-              handleIconClick(viewMode === "gallery" ? "slider" : "gallery")
+              handleIconClick(mode === "gallery" ? "slider" : "gallery")
             }
             className="cursor-pointer"
           >
-            {viewMode === "gallery" ? <GalleryIcon /> : <SliderIcon />}
+            {mode === "gallery" ? <SliderIcon /> : <GalleryIcon />}
           </div>
         )}
 
@@ -99,7 +84,7 @@ export function HeaderBar({
         )}
 
         <div
-          onClick={() => handleIconClick("setting")}
+          onClick={handleSettingClick}
           className={`cursor-pointer ${getIconStyle("setting")}`}
         >
           <SettingIcon />
