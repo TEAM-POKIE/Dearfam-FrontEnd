@@ -2,6 +2,7 @@ import * as React from "react";
 
 interface BasicButtonProps {
   text: string;
+  textStyle: string;
   onClick?: () => void;
   color?: "main_1" | "main_2" | "main_3" | "gray_3" | "gray_4";
   size?: number;
@@ -12,6 +13,7 @@ interface BasicButtonProps {
 /**
  * 기본 버튼 컴포넌트
  * @param {string} text - 버튼 텍스트
+ * @param {string} textStyle - 버튼 텍스트 스타일 (text_body1, text_body2, text_body3)
  * @param {Function} onClick - 클릭 이벤트 핸들러
  * @param {string} color - 버튼 색상 (main_1, main_2, main_3, gray_3, gray_4)
  * @param {number} size - 버튼 너비 (px 값으로 입력하면 자동으로 반응형으로 변환)
@@ -24,6 +26,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   color = "main_1",
   size,
   fullWidth = false,
+  textStyle = "text_body3",
   disabled = false,
 }) => {
   // 색상에 따른 스타일 매핑
@@ -34,20 +37,17 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
     gray_3: "bg-gray-3 text-white hover:bg-neutral-700",
     gray_4: "bg-gray-4 text-white hover:bg-neutral-600",
   };
+  const textStyleMap = {
+    text_body2: "text-body2",
+    text_body3: "text-body3",
+  };
 
   // px를 rem으로 변환 (1rem = 16px)
   const pxToRem = (px: number) => `${px / 16}rem`;
 
-  // px를 vw로 변환 (기준 화면 너비: 390px)
-  const pxToVw = (px: number) => `${(px / 390) * 100}vw`;
-
   // 인라인 스타일로 너비 설정
   const inlineStyle = {
-    width: fullWidth
-      ? "100%"
-      : size
-      ? `clamp(${pxToRem(size * 0.5)}, ${pxToVw(size)}, ${pxToRem(size)})`
-      : "auto",
+    width: fullWidth ? "100%" : size ? `${pxToRem(size)}` : "auto",
     borderRadius: "0.88rem", // 14px를 rem으로 변환
   };
 
@@ -59,8 +59,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
       className={`
         ${colorStyles[color]} 
         h-[3.125rem]
-        font-medium 
-        text-body3
+        ${textStyleMap[textStyle]} 
         ${disabled ? "opacity-50 cursor-not-allowed" : ""}
       `}
     >
