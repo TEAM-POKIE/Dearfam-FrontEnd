@@ -63,7 +63,7 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
         pt-[1.25rem]
         pb-[0.9375rem]
        
-        shadow-[0_-4px_10px_0_rgba(0,0,0,0.05)]
+      
       "
     >
       <div className="flex space-between items-center ">
