@@ -114,7 +114,7 @@ export function EventSlideContainer() {
     <div className="w-full flex flex-col justify-center items-center  h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
       <div className="relative w-full">
         <Carousel className="w-full" setApi={setApi}>
-          <CarouselContent className="w-full  -mx-0 flex items-center gap-x-2 ">
+          <CarouselContent className="w-full  -mx-0 flex items-center gap-x-2 h-full ">
             {SLIDES.map((slide, index) => (
               <CarouselItem
                 key={slide.id}
@@ -130,33 +130,36 @@ export function EventSlideContainer() {
               >
                 <div className=" h-full">
                   <Card
-                    className={`h-full ${
+                    className={`h-full  ${
                       index === currentIndex ? "bg-white" : "bg-[#9A9893]"
                     }`}
                   >
                     {index === currentIndex && (
-                      <div className="h-full w-full">
+                      <div className="h-full w-full  ">
                         <CardContent
                           className={`flex flex-col h-full  ${
                             index === SLIDES.length - 1
-                              ? "px-[0.94rem] py-[0.88rem]  "
+                              ? "px-[0.94rem] pt-[2.5rem] pb-[0.88rem] "
                               : "p-[0.94rem]"
                           } `}
                         >
                           {index === SLIDES.length - 1 ? (
-                            <div className="flex flex-col  justify-center h-full ">
-                              <div className="text-h5 text-gray-2 mt-[1.62rem] mb-[0.62rem] ml-[0.31rem]">
-                                추억을 더 공유해보세요!
+                            <div className="flex flex-col   h-full justify-between ">
+                              <div>
+                                <div className="text-h5 text-gray-2  mb-[0.62rem] ml-[0.31rem]">
+                                  추억을 더 공유해보세요!
+                                </div>
+                                <div className="text-body4 text-gray-3 ml-[0.31rem] ">
+                                  가족에게 일상과 추억의 이야기를 공유해보세요!
+                                </div>
                               </div>
-                              <div className="text-body4 text-gray-3 ml-[0.31rem] mb-[3.63rem]">
-                                가족에게 일상과 추억의 이야기를 공유해보세요!
-                              </div>
+
                               <img
                                 src={dearfamLogo}
                                 alt="dearfamLogo"
-                                className="w-full px-[2.81rem] mb-[5rem]"
+                                className="w-full px-[2.81rem]  "
                               />
-                              <div className="w-full ">
+                              <div className=" flex justify-center  ">
                                 <BasicButton
                                   text="추억 공유하러 가기"
                                   color="main_1"

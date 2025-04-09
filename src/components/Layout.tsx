@@ -1,12 +1,12 @@
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { BottomNavbar, NavItem } from "./BottomNavbar";
-import { HeaderBar, HeaderMode, PageType } from "./HeaderBar";
+import { HeaderBar, PageType } from "./HeaderBar";
+import { useHeaderStore } from "@/lib/store/headerStore";
 
 export function Layout() {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [headerMode, setHeaderMode] = useState<HeaderMode>("default");
+  const { isWritePage, setPageType, setIsWritePage } = useHeaderStore();
 
   // 현재 경로에 따라 활성 네비게이션 항목 결정
   const getActiveNavItem = (): NavItem => {
@@ -21,47 +21,33 @@ export function Layout() {
     return "home"; // 기본값
   };
 
-  // 현재 페이지 타입 가져오기
-  const getCurrentPageType = (): PageType => {
+  // 경로 변경 시 페이지 타입과 작성 페이지 여부 업데이트
+  useEffect(() => {
     const path = location.pathname;
 
-    if (path === "/") return "home";
-    if (path.includes("/bookshelf")) return "bookshelf";
-    if (path.includes("/goods")) return "goods";
-    if (path.includes("/family")) return "family";
+    // 현재 페이지 타입 결정
+    let currentPageType: PageType = "home";
+    if (path === "/") currentPageType = "home";
+    else if (path.includes("/bookshelf")) currentPageType = "bookshelf";
+    else if (path.includes("/goods")) currentPageType = "goods";
+    else if (path.includes("/family")) currentPageType = "family";
 
-    return "home"; // 기본값
-  };
+    // 페이지 타입 업데이트
+    setPageType(currentPageType);
 
-  // 작성 페이지인지 확인
-  const isWritePage = (): boolean => {
-    return location.pathname.includes("/write");
-  };
-
-  // 헤더 모드 변경 핸들러
-  const handleHeaderModeChange = (mode: HeaderMode) => {
-    setHeaderMode(mode);
-    // 설정 아이콘 클릭 시 SettingPage로 이동
-    if (mode === "setting") {
-      navigate("/SettingPage");
-    }
-  };
+    // 작성 페이지 여부 업데이트
+    setIsWritePage(path.includes("/write"));
+  }, [location.pathname, setPageType, setIsWritePage]);
 
   return (
     <div className="mobile-container flex flex-col ">
-      {!isWritePage() && (
-        <HeaderBar
-          mode={headerMode}
-          onModeChange={handleHeaderModeChange}
-          pageType={getCurrentPageType()}
-        />
-      )}
+      {!isWritePage && <HeaderBar />}
 
-      <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)]">
+      <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)] ">
         <Outlet />
       </main>
 
-      <div className="absolute bottom-0 left-0 right-0 w-full">
+      <div className="absolute bottom-0 left-0 right-0 w-full  ">
         <BottomNavbar activeItem={getActiveNavItem()} />
       </div>
     </div>
