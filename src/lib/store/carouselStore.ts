@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { type CarouselApi } from "@/components/ui/carousel";
+import { type CarouselApi } from "@/components/ui/carouselMain";
 
 interface CarouselState {
   carouselApi: CarouselApi | null;

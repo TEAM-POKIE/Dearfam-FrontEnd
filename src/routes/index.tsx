@@ -13,7 +13,7 @@ import { FirstMakePage } from "../pages/FirstMakePage";
 import { LinkInPage } from "../pages/LinkInPage";
 import { SettingPage } from "../pages/SettingPage";
 import { NameChangePage } from "../pages/NameChangePage";
-
+import { MemoryDetailPage } from "@/pages/main/MemoryDetailPage";
 
 /**
  * 애플리케이션의 라우트 구성을 정의합니다.
@@ -23,6 +23,7 @@ export function AppRoutes() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} />
+        <Route path="memoryDetailPage" element={<MemoryDetailPage />} />
         <Route path="daily" element={<DailyPage />} />
         <Route path="bookshelf" element={<BookshelfPage />} />
         <Route path="write" element={<WritePage />} />
