@@ -1,4 +1,4 @@
-export { HomePage } from "./HomePage";
+export { HomePage } from "./main/HomePage";
 export { DailyPage } from "./DailyPage";
 export { BookshelfPage } from "./BookshelfPage";
 export { WritePage } from "./WritePage";
