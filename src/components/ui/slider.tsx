@@ -16,7 +16,7 @@ const Slider = React.forwardRef<
     {...props}
   >
     <SliderPrimitive.Track className=" h-[1px] w-full  bg-gray-3"></SliderPrimitive.Track>
-    <SliderPrimitive.Thumb className="block h-[0.5rem] w-[3.125rem] rounded-[1.25rem] bg-main-1 " />
+    <SliderPrimitive.Thumb className="block h-[0.5rem] w-[3.125rem] rounded-[1.25rem] bg-main-1 focus:outline-none focus:ring-0" />
   </SliderPrimitive.Root>
 ));
 Slider.displayName = SliderPrimitive.Root.displayName;
