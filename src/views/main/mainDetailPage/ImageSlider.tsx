@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import imageNotFound from "../../../assets/image/section2/image_not_found_270x280.svg";
 import {
   Carousel,
@@ -17,7 +17,6 @@ const IMAGES = [
 
 export function ImageSlider() {
   const [api, setApi] = useState<CarouselApi | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const onSelect = useCallback(() => {
     if (!api) return;
