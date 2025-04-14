@@ -7,11 +7,9 @@ import { useHeaderStore } from "@/lib/store/headerStore";
 export function Layout() {
   const location = useLocation();
   const { isWritePage, setPageType, setIsWritePage } = useHeaderStore();
-
+  const path = location.pathname;
   // 현재 경로에 따라 활성 네비게이션 항목 결정
   const getActiveNavItem = (): NavItem => {
-    const path = location.pathname;
-
     if (path === "/") return "home";
     if (path.includes("/bookshelf")) return "bookshelf";
     if (path.includes("/write")) return "write";
@@ -23,8 +21,6 @@ export function Layout() {
 
   // 경로 변경 시 페이지 타입과 작성 페이지 여부 업데이트
   useEffect(() => {
-    const path = location.pathname;
-
     // 현재 페이지 타입 결정
     let currentPageType: PageType = "home";
     if (path === "/") currentPageType = "home";
@@ -42,14 +38,14 @@ export function Layout() {
   return (
     <div className="mobile-container flex flex-col ">
       {!isWritePage && <HeaderBar />}
-
       <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)] ">
         <Outlet />
       </main>
-
-      <div className="absolute bottom-0 left-0 right-0 w-full  ">
-        <BottomNavbar activeItem={getActiveNavItem()} />
-      </div>
+      {!path.includes("/memoryDetail") && (
+        <div className="absolute bottom-0 left-0 right-0 w-full">
+          <BottomNavbar activeItem={getActiveNavItem()} />
+        </div>
+      )}
     </div>
   );
 }
