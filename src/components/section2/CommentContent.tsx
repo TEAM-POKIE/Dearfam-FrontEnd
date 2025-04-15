@@ -51,9 +51,15 @@ export function CommentContent({
       {/* 더보기 아이콘 */}
       <div className="shrink-0"></div>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <img src={etcIcon} alt="더보기" className="w-[1rem] h-[1rem]" />
-        </DropdownMenuTrigger>
+        <div className="outline-none ring-0 focus:outline-none focus-visible:outline-none focus:ring-0">
+          <DropdownMenuTrigger>
+            <img
+              src={etcIcon}
+              alt="더보기"
+              className="w-[1rem] h-[1rem] hover:outline-none focus:outline-none focus-visible:outline-none"
+            />
+          </DropdownMenuTrigger>
+        </div>
         <DropdownMenuContent>
           <DropdownMenuItem>삭제하기</DropdownMenuItem>
         </DropdownMenuContent>
