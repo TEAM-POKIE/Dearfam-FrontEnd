@@ -9,7 +9,7 @@ export function BasicAlert({ message }: BasicAlertProps) {
     <div
       className={`
         text-body3
-        text-alert
+        text-utils-alert
       `}
     >
       {message}

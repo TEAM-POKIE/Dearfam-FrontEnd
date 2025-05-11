@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
-import { BasicInputBox } from "../components/ui/section1/BasicInputBox";
-import BasicButton from "../components/BasicButton";
-import { BasicAlert } from "../components/ui/section1/BasicAlert";
-import BasicPopup from "../components/BasicPopup";
+import { BasicInputBox } from "../../components/ui/section1/BasicInputBox";
+import BasicButton from "../../components/BasicButton";
+import { BasicAlert } from "../../components/ui/section1/BasicAlert";
+import BasicPopup from "../../components/BasicPopup";
 
 export function NameChangePage() {
     const navigate = useNavigate();
@@ -129,6 +129,7 @@ export function NameChangePage() {
                             size={350}
                             onClick={handleNameChange}
                             disabled={!isValid || !nickname.trim()}
+                            textStyle="text-h4"
                         />
                     </div>
                 </div>
