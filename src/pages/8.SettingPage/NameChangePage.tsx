@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BasicInputBox } from "../components/ui/section1/BasicInputBox";
 import BasicButton from "../components/BasicButton";
 import { BasicAlert } from "../components/ui/section1/BasicAlert";
