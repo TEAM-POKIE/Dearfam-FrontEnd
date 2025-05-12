@@ -43,7 +43,7 @@ export function FamilyPage({ className, ...props }: CardProps) {
             <p className="text-sm font-medium leading-none">
               Push Notifications
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground ">
               Send notifications to device.
             </p>
           </div>
@@ -66,6 +66,7 @@ export function FamilyPage({ className, ...props }: CardProps) {
               </div>
             </div>
           ))}
+          n{" "}
         </div>
       </CardContent>
       <CardFooter>
