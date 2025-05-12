@@ -2,7 +2,7 @@ import * as React from "react";
 
 interface BasicButtonProps {
   text: string;
-  textStyle: string;
+  textStyle?: string;
   onClick?: () => void;
   color?: "main_1" | "main_2" | "main_3" | "gray_3" | "gray_4";
   size?: number;

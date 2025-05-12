@@ -37,7 +37,7 @@ export function Layout() {
 
   return (
     <div className="mobile-container flex flex-col ">
-      {!isWritePage && <HeaderBar />}
+      {!isWritePage && !path.includes("/memoryDetail") && <HeaderBar />}
       <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)] ">
         <Outlet />
       </main>
