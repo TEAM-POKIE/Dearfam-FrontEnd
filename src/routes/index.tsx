@@ -8,11 +8,13 @@ import {
   GoodsPage,
   FamilyPage,
 } from "../pages";
-import { StartPage } from "../pages/StartPage";
-import { FirstMakePage } from "../pages/FirstMakePage";
-import { LinkInPage } from "../pages/LinkInPage";
-import { SettingPage } from "../pages/SettingPage";
-import { NameChangePage } from "../pages/NameChangePage";
+import { StartPage } from "../pages/1.StartPage/StartPage";
+import { FirstMakePage } from "../pages/1.StartPage/FirstMakePage";
+import { MakeConfirmPage } from "../pages/1.StartPage/MakeConfirmPage";
+import { LinkInPage } from "../pages/1.StartPage/LinkInPage";
+import { KakaoInPage } from "../pages/1.StartPage/KakaoInPage";
+import { SettingPage } from "../pages/8.SettingPage/SettingPage";
+import { NameChangePage } from "../pages/8.SettingPage/NameChangePage";
 import { MemoryDetailPage } from "@/pages/main/MemoryDetailPage";
 
 /**
@@ -32,7 +34,9 @@ export function AppRoutes() {
       </Route>
       <Route path="/StartPage" element={<StartPage />} />
       <Route path="/FirstMakePage" element={<FirstMakePage />} />
+      <Route path="/MakeConfirmPage" element={<MakeConfirmPage />} />
       <Route path="/LinkInPage" element={<LinkInPage />} />
+      <Route path="/KakaoInPage" element={<KakaoInPage />} />
       <Route path="/SettingPage" element={<SettingPage />} />
       <Route path="/NameChangePage" element={<NameChangePage />} />
     </Routes>

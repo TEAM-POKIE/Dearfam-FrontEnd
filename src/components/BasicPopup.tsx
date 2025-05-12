@@ -46,12 +46,12 @@ export const BasicPopup: React.FC<PopupProps> = ({
         </button>
 
         <div className="w-full flex flex-col items-center gap-[clamp(1rem,2.88vw,1.875rem)]">
-          <h4 className="text-h4 text-center">{title}</h4>
+          <h4 className="text-h4 text-center whitespace-pre-line">{title}</h4>
 
           <div>
             <div className="text-neutral-600 text-center">
               {typeof content === "string" ? (
-                <p className="text-body3">{content}</p>
+                <p className="text-body3 whitespace-pre-line">{content}</p>
               ) : (
                 content
               )}
@@ -63,6 +63,7 @@ export const BasicPopup: React.FC<PopupProps> = ({
             onClick={onButtonClick || onClose}
             color="main_1"
             size={290}
+            textStyle="text-h4"
           />
         </div>
       </div>

@@ -52,6 +52,14 @@ export function HeaderBar() {
     <header className="flex justify-between items-center px-[1.25rem] py-[clamp(0.75rem,3.2vw,1.06rem)] bg-[#E5E1D7] w-full">
       <img src={logo} alt="logo" />
       <div className="flex items-center space-x-[clamp(0.75rem,3.2vw,1rem)]">
+        {/* 디버그용 버튼 - 추후 삭제 예정 */}
+        <button
+          onClick={() => navigate('/StartPage')}
+          className="bg-blue-500 text-white px-2 py-1 rounded-md text-xs"
+        >
+          InitPage
+        </button>
+
         {pageType === "home" && (
           <div
             onClick={() =>
