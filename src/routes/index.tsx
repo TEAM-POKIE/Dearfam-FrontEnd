@@ -1,5 +1,5 @@
-import { Routes, Route } from "react-router-dom";
-import { Layout } from "../components/Layout";
+import { Routes, Route, Outlet } from "react-router-dom";
+import { AppLayout } from "../AppLayout";
 import {
   HomePage,
   DailyPage,
@@ -16,6 +16,14 @@ import { LinkInPage } from "../pages/Start/LinkInPage";
 import { KakaoInPage } from "../pages/Start/KakaoInPage";
 import { NameChangePage } from "../pages/Setting/NameChangePage";
 import { MemoryDetailPage } from "@/pages/Home/MemoryDetailPage";
+
+function Layout() {
+  return (
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
+  );
+}
 
 /**
  * 애플리케이션의 라우트 구성을 정의합니다.

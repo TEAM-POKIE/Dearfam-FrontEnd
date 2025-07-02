@@ -4,96 +4,35 @@ import { ImageWithProfiles } from "./components/ImageWithProfiles";
 
 const EventGallery = () => {
   return (
-    <div className="mt-[1.25rem] px-[1.25rem] h-full max-h-[calc(100vh-10rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden  ">
-      <div className="text-h4 text-[#9a9893] mb-[1rem] ml-[0.63rem]">0000</div>
-      <div className="grid grid-cols-2 gap-x-[1.13rem] gap-y-[1rem] mb-6">
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={3}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={3}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={3}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={1}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={1}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={1}
-          profileSize="small"
-        />
+    <div className="h-[calc(100vh-4rem)] px-5 overflow-y-auto hide-scrollbar">
+      {/* 첫 번째 섹션 */}
+      <div className="text-h4 text-[#9a9893] mb-4 ml-2.5">0000</div>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-4 mb-6">
+        {[3, 3, 3, 1, 1, 1].map((count, idx) => (
+          <ImageWithProfiles
+            key={`first-${idx}`}
+            imageSrc={imageNotFound}
+            imageAlt="imageNotFound"
+            imageClassName="rounded-[0.94rem]"
+            profileCount={count}
+            profileSize="small"
+          />
+        ))}
       </div>
-      <div className="text-h4 text-[#9a9893] mb-[1rem] ml-[0.63rem]">0000</div>
-      <div className="grid grid-cols-2 gap-x-[1.13rem] gap-y-[1rem]">
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={1}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={1}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={1}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={1}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={1}
-          profileSize="small"
-        />
-        <ImageWithProfiles
-          imageSrc={imageNotFound}
-          imageAlt="imageNotFound"
-          imageClassName="rounded-[0.94rem]"
-          profileCount={1}
-          profileSize="small"
-        />
+
+      {/* 두 번째 섹션 */}
+      <div className="text-h4 text-[#9a9893] mb-4 ml-2.5">0000</div>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+        {Array.from({ length: 12 }).map((_, idx) => (
+          <ImageWithProfiles
+            key={`second-${idx}`}
+            imageSrc={imageNotFound}
+            imageAlt="imageNotFound"
+            imageClassName="rounded-[0.94rem]"
+            profileCount={1}
+            profileSize="small"
+          />
+        ))}
       </div>
     </div>
   );

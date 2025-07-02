@@ -1,13 +1,14 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { BottomNavbar, NavItem } from "./BottomNavbar";
-import { HeaderBar, PageType } from "./HeaderBar";
+import { BottomNavbar, NavItem } from "./components/BottomNavbar";
+import { HeaderBar, PageType } from "./components/HeaderBar";
 import { useHeaderStore } from "@/context/store/headerStore";
 
-export function Layout() {
+export function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { isWritePage, setPageType, setIsWritePage } = useHeaderStore();
   const path = location.pathname;
+
   // 현재 경로에 따라 활성 네비게이션 항목 결정
   const getActiveNavItem = (): NavItem => {
     if (path === "/") return "home";
@@ -38,11 +39,11 @@ export function Layout() {
   return (
     <div className="mobile-container flex flex-col ">
       {!isWritePage && !path.includes("/memoryDetail") && <HeaderBar />}
-      <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)] ">
-        <Outlet />
+      <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)] [&::-webkit-scrollbar]:hidden ">
+        {children}
       </main>
       {!path.includes("/memoryDetail") && (
-        <div className="absolute bottom-0 left-0 right-0 w-full">
+        <div className="fixed bottom-0 left-0 right-0 w-[390px] m-auto">
           <BottomNavbar activeItem={getActiveNavItem()} />
         </div>
       )}
