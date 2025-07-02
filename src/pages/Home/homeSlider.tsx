@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { Slider } from "@/components/ui/slider";
-import { useSliderStore } from "../../lib/store/sliderStore";
-import { useCarouselStore } from "../../lib/store/carouselStore";
+import { cn } from "../../utils/utils";
+import { Slider } from "../../components/ui/slider";
+import { useSliderStore } from "../../context/store/sliderStore";
+import { useCarouselStore } from "../../context/store/carouselStore";
 
 type SliderProps = Omit<
   React.ComponentProps<typeof Slider>,

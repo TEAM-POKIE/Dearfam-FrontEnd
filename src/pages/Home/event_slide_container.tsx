@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import imageNotFound from "../../assets/image/section2/image_not_found_270x280.svg";
-import { EventCarousel } from "@/components/section2/EventCarousel";
+import { EventCarousel } from "./components/EventCarousel";
 
 const SLIDES = [
   { id: 1, title: "Event Title", image: imageNotFound },

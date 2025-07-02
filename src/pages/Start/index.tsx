@@ -1,5 +1,5 @@
-import dearfamLogo from "../../assets/image/dearfam_logo_icon.svg";
-import { BasicButton } from "../../components/BasicButton";
+import dearfamLogo from "@/assets/image/dearfam_logo_icon.svg";
+import { BasicButton } from "@/components/BasicButton";
 import { useNavigate } from "react-router-dom";
 
 export function StartPage() {

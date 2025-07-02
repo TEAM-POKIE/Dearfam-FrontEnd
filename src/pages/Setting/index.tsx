@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronRight, Camera } from "lucide-react";
-import profileIcon from "../../assets/image/style_icon_profile.svg";
+import profileIcon from "@/assets/image/style_icon_profile.svg";
 import { useState } from "react";
-import BasicPopup from "../../components/BasicPopup";
+import BasicPopup from "@/components/BasicPopup";
 
 // ArrowLeft 및 ChevronRight는 추후 Component로 정의해야함
 

@@ -2,7 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { BottomNavbar, NavItem } from "./BottomNavbar";
 import { HeaderBar, PageType } from "./HeaderBar";
-import { useHeaderStore } from "@/lib/store/headerStore";
+import { useHeaderStore } from "@/context/store/headerStore";
 
 export function Layout() {
   const location = useLocation();

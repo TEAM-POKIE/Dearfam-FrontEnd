@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ReactFlow, {
   Controls,
   Node,
@@ -8,8 +8,8 @@ import ReactFlow, {
   Position,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import bgTree from "../assets/image/section7/bg_familytree_2.svg";
-import profileIcon from "../assets/image/style_icon_profile.svg";
+import bgTree from "../../assets/image/section7/bg_familytree_2.svg";
+import profileIcon from "../../assets/image/style_icon_profile.svg";
 
 // 커스텀 노드 컴포넌트
 const CustomNode: React.FC<NodeProps<{ name: string; imageUrl?: string }>> = ({
@@ -105,7 +105,7 @@ interface FamilySample {
 const sonOnlySample: FamilySample = {
   label: "아들 1명",
   value: "son_only1",
-  members: [{ id: "c1", name: "아들", role: "childMale" as "childMale" }],
+  members: [{ id: "c1", name: "아들", role: "childMale" }],
 };
 
 const familySamplesGenerated: FamilySample[] = Array.from(
@@ -116,13 +116,11 @@ const familySamplesGenerated: FamilySample[] = Array.from(
     label: `아빠, 자녀 ${childCount}명`,
     value: `father_children${childCount}`,
     members: [
-      { id: "p1", name: "아빠", role: "parentMale" as "parentMale" },
+      { id: "p1", name: "아빠", role: "parentMale" },
       ...Array.from({ length: childCount }, (_, j) => ({
         id: `c${j + 1}`,
         name: `자녀${j + 1}`,
-        role: (j % 2 === 0 ? "childMale" : "childFemale") as
-          | "childMale"
-          | "childFemale",
+        role: (j % 2 === 0 ? "childMale" : "childFemale"),
       })),
     ],
   },
@@ -268,7 +266,6 @@ function getNodesAndEdges(sample: FamilySample): {
       });
     } else if (parents.length === 1) {
       // 단일 부모 -> 모든 자녀 엣지
-      parents[0]; // 부모 노드 위치는 위에서 이미 설정됨
       children.forEach((c) => {
         reactFlowEdges.push({
           id: `e-${parents[0].id}-${c.id}`,
@@ -345,52 +342,30 @@ const nodeTypes = {
 export function FamilyPage() {
   const defaultSample =
     familySamples.find((f) => f.value === "son_only1") || familySamples[0];
-  const [selected, setSelected] = useState<FamilySample>(defaultSample);
+  const [selected] = useState<FamilySample>(defaultSample);
   const { nodes, edges } = getNodesAndEdges(selected);
 
   return (
-    <Card className={cn("w-[390px]", className)} {...props}>
-      <CardHeader>
-        <CardTitle>Notifications</CardTitle>
-        <CardDescription>You have 3 unread messages.</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <div className=" flex items-center space-x-4 rounded-md border p-4">
-          <BellRing />
-          <div className="flex-1 space-y-1">
-            <p className="text-sm font-medium leading-none">
-              Push Notifications
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Send notifications to device.
-            </p>
-          </div>
-          <Switch />
-        </div>
-        <div>
-          {notifications.map((notification, index) => (
-            <div
-              key={index}
-              className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
+    <div className="flex justify-center items-center h-app bg-bg-1">
+      <div className="mobile-container flex flex-col overflow-y-auto">
+        <div className="w-full h-full relative">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${bgTree})` }}
+          />
+          <div className="relative z-10 w-full h-full">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              fitView
+              attributionPosition="top-right"
             >
-              <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {notification.title}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {notification.description}
-                </p>
-              </div>
-            </div>
-          ))}
+              <Controls />
+            </ReactFlow>
+          </div>
         </div>
-      </CardContent>
-      <CardFooter>
-        <Button className="w-full">
-          <Check /> Mark all as read
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

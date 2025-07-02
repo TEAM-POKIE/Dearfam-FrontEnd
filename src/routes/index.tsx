@@ -7,15 +7,15 @@ import {
   WritePage,
   GoodsPage,
   FamilyPage,
+  StartPage,
+  SettingPage,
 } from "../pages";
-import { StartPage } from "../pages/1.StartPage/StartPage";
-import { FirstMakePage } from "../pages/1.StartPage/FirstMakePage";
-import { MakeConfirmPage } from "../pages/1.StartPage/MakeConfirmPage";
-import { LinkInPage } from "../pages/1.StartPage/LinkInPage";
-import { KakaoInPage } from "../pages/1.StartPage/KakaoInPage";
-import { SettingPage } from "../pages/8.SettingPage/SettingPage";
-import { NameChangePage } from "../pages/8.SettingPage/NameChangePage";
-import { MemoryDetailPage } from "@/pages/main/MemoryDetailPage";
+import { FirstMakePage } from "../pages/Start/FirstMakePage";
+import { MakeConfirmPage } from "../pages/Start/MakeConfirmPage";
+import { LinkInPage } from "../pages/Start/LinkInPage";
+import { KakaoInPage } from "../pages/Start/KakaoInPage";
+import { NameChangePage } from "../pages/Setting/NameChangePage";
+import { MemoryDetailPage } from "@/pages/Home/MemoryDetailPage";
 
 /**
  * 애플리케이션의 라우트 구성을 정의합니다.

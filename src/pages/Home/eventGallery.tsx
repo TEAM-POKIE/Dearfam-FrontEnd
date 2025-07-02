@@ -1,6 +1,6 @@
 import * as React from "react";
 import imageNotFound from "../../assets/image/section2/image_not_found_170x130.svg";
-import { ImageWithProfiles } from "@/components/section2/ImageWithProfiles";
+import { ImageWithProfiles } from "./components/ImageWithProfiles";
 
 const EventGallery = () => {
   return (

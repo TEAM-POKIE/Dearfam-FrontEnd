@@ -1,4 +1,4 @@
-import { CommentContent } from "@/components/section2/CommentContent";
+import { CommentContent } from "../components/CommentContent";
 import * as React from "react";
 
 export function CommentContainer() {

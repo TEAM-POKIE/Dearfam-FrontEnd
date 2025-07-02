@@ -20,13 +20,15 @@ export function ImageSlider() {
 
   const onSelect = useCallback(() => {
     if (!api) return;
-    setCurrentIndex(api.selectedScrollSnap());
+    // 선택된 슬라이드 인덱스를 확인하는 로직 (필요시 추가)
   }, [api]);
 
   useEffect(() => {
     if (!api) return;
     api.on("select", onSelect);
-    return () => api.off("select", onSelect);
+    return () => {
+      api.off("select", onSelect);
+    };
   }, [api, onSelect]);
 
   return (

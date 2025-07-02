@@ -1,19 +1,19 @@
 import * as React from "react";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Card, CardContent } from "../../components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   type CarouselApi,
-} from "../ui/carouselMain";
+} from "@/components/ui/carouselMain";
 import { ImageWithProfiles } from "./ImageWithProfiles";
-import heartActive from "../../assets/image/section2/icon_hearrt_active.svg";
-import heartDefault from "../../assets/image/section2/icon_hearrt_default.svg";
-import dearfamLogo from "../../assets/image/dearfam_logo_icon.svg";
+import heartActive from "../../../assets/image/section2/icon_hearrt_active.svg";
+import heartDefault from "../../../assets/image/section2/icon_hearrt_default.svg";
+import dearfamLogo from "../../../assets/image/dearfam_logo_icon.svg";
 import BasicButton from "@/components/BasicButton";
-import { useCarouselStore } from "../../lib/store/carouselStore";
-import { useSliderStore } from "../../lib/store/sliderStore";
+import { useCarouselStore } from "@/context/store/carouselStore";
+import { useSliderStore } from "@/context/store/sliderStore";
 import { useNavigate } from "react-router-dom";
 
 interface EventItem {
