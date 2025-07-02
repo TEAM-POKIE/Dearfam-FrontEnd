@@ -1,4 +1,4 @@
-import IconSend from "../../assets/image/section2/icon_send.svg";
+import IconSend from "../../../assets/image/section2/icon_send.svg";
 import { Input } from "@/components/ui/input";
 
 export const InputContainer = () => {

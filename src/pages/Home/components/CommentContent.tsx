@@ -1,5 +1,5 @@
-import profileIcon from "../../assets/image/style_icon_profile.svg";
-import etcIcon from "../../assets/image/section2/icon_etc.svg";
+import profileIcon from "../../../assets/image/style_icon_profile.svg";
+import etcIcon from "../../../assets/image/section2/icon_etc.svg";
 import {
   DropdownMenu,
   DropdownMenuContent,

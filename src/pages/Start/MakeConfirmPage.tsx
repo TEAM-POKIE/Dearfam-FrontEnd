@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BasicButton } from "../../components/BasicButton";
-import { BasicDropDown } from "../../components/ui/section1/BasicDropDown";
-import { BasicPopup } from "../../components/BasicPopup";
+import { BasicButton } from "@/components/BasicButton";
+import { BasicDropDown } from "@/components/ui/section1/BasicDropDown";
+import { BasicPopup } from "@/components/BasicPopup";
 
 interface LocationState {
   familyName?: string;
