@@ -17,11 +17,18 @@
 
 @layer components {
   .mobile-container {
-    @apply w-full min-h-screen overflow-hidden bg-bg-1 shadow-soft relative;
+    @apply w-full min-h-screen overflow-hidden hide-scrollbar bg-bg-1 shadow-soft relative;
     width: 100vw;
   }
 }
 
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
 /* 웹 환경에서는 최소 너비 390px 적용 */
 @media (min-width: 790px) {
   body {
@@ -33,5 +40,6 @@
   .mobile-container {
     max-width: 390px;
     width: 390px;
+    max-height: 100vh;
   }
 }

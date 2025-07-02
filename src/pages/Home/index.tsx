@@ -7,9 +7,9 @@ import EventGallery from "./eventGallery";
 
 export function HomePage() {
   const { mode } = useHeaderStore();
-  
+
   return (
-    <div className="h-full">
+    <div className="h-full ">
       {mode === "gallery" && <EventGallery />}
       {mode === "slider" && (
         <div>
