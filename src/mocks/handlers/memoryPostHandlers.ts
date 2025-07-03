@@ -107,6 +107,7 @@ const getRecentPosts = http.get("/api/v1/memory-post/recent", ({ request }) => {
       liked: true,
       likeCount: 12,
       commentCount: 5,
+      images: ["https://picsum.photos/300/200?random=101"],
     }),
     createMockMemoryPost({
       postId: 1002,
@@ -116,6 +117,7 @@ const getRecentPosts = http.get("/api/v1/memory-post/recent", ({ request }) => {
       liked: false,
       likeCount: 8,
       commentCount: 3,
+      images: [], // 이미지 없음
     }),
     createMockMemoryPost({
       postId: 1003,
@@ -125,6 +127,7 @@ const getRecentPosts = http.get("/api/v1/memory-post/recent", ({ request }) => {
       liked: true,
       likeCount: 15,
       commentCount: 7,
+      images: ["https://picsum.photos/300/200?random=103"],
     }),
     createMockMemoryPost({
       postId: 1004,
@@ -134,6 +137,7 @@ const getRecentPosts = http.get("/api/v1/memory-post/recent", ({ request }) => {
       liked: false,
       likeCount: 6,
       commentCount: 2,
+      images: [], // 이미지 없음
     }),
     createMockMemoryPost({
       postId: 1005,
@@ -143,6 +147,7 @@ const getRecentPosts = http.get("/api/v1/memory-post/recent", ({ request }) => {
       liked: true,
       likeCount: 9,
       commentCount: 4,
+      images: ["https://picsum.photos/300/200?random=105"],
     }),
   ].slice(0, limit);
 
@@ -164,7 +169,7 @@ const getPostsByTimeOrder = http.get(
     const limit = parseInt(url.searchParams.get("limit") || "20");
     const order = url.searchParams.get("order") || "desc"; // desc: 최신순, asc: 오래된순
 
-    const allPosts = Array.from({ length: 50 }, (_, index) => {
+    const allPosts = Array.from({ length: 20 }, (_, index) => {
       const baseDate = new Date();
       if (order === "desc") {
         baseDate.setDate(baseDate.getDate() - index);
