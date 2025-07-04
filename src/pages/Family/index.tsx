@@ -116,11 +116,13 @@ const familySamplesGenerated: FamilySample[] = Array.from(
     label: `아빠, 자녀 ${childCount}명`,
     value: `father_children${childCount}`,
     members: [
-      { id: "p1", name: "아빠", role: "parentMale" },
+      { id: "p1", name: "아빠", role: "parentMale" as const },
       ...Array.from({ length: childCount }, (_, j) => ({
         id: `c${j + 1}`,
         name: `자녀${j + 1}`,
-        role: (j % 2 === 0 ? "childMale" : "childFemale"),
+        role: (j % 2 === 0 ? "childMale" : "childFemale") as
+          | "childMale"
+          | "childFemale",
       })),
     ],
   },
@@ -128,7 +130,7 @@ const familySamplesGenerated: FamilySample[] = Array.from(
     label: `엄마, 자녀 ${childCount}명`,
     value: `mother_children${childCount}`,
     members: [
-      { id: "p1", name: "엄마", role: "parentFemale" as "parentFemale" },
+      { id: "p1", name: "엄마", role: "parentFemale" as const },
       ...Array.from({ length: childCount }, (_, j) => ({
         id: `c${j + 1}`,
         name: `자녀${j + 1}`,
@@ -142,8 +144,8 @@ const familySamplesGenerated: FamilySample[] = Array.from(
     label: `부모, 자녀 ${childCount}명`,
     value: `parents_children${childCount}`,
     members: [
-      { id: "p1", name: "아빠", role: "parentMale" as "parentMale" },
-      { id: "p2", name: "엄마", role: "parentFemale" as "parentFemale" },
+      { id: "p1", name: "아빠", role: "parentMale" as const },
+      { id: "p2", name: "엄마", role: "parentFemale" as const },
       ...Array.from({ length: childCount }, (_, j) => ({
         id: `c${j + 1}`,
         name: `자녀${j + 1}`,

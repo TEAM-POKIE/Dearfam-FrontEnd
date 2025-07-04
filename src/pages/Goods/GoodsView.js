@@ -1,0 +1,4 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+export const GoodsView = () => {
+    return (_jsxs("div", { className: "p-4", children: [_jsx("h1", { className: "text-2xl font-bold mb-4", children: "\uAD7F\uC988" }), _jsx("div", { className: "grid grid-cols-2 gap-4", children: [1, 2, 3, 4].map((item) => (_jsxs("div", { className: "bg-white rounded-lg shadow-sm p-4 flex flex-col items-center", children: [_jsx("div", { className: "w-full h-32 mb-2 bg-gray-200 rounded-md flex items-center justify-center", children: _jsx("span", { className: "text-gray-500", children: "\uC0C1\uD488 \uC774\uBBF8\uC9C0" }) }), _jsxs("h3", { className: "text-sm font-medium", children: ["\uC0C1\uD488 ", item] }), _jsx("p", { className: "text-xs text-gray-500", children: "10,000\uC6D0" })] }, item))) })] }));
+};

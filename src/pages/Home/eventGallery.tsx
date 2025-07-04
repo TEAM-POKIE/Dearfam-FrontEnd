@@ -25,8 +25,8 @@ const EventGallery = () => {
       console.log("📝 첫 번째 포스트:", data.data.posts[0]);
       console.log(
         "📅 포스트 날짜들:",
-        data.data.posts.map((p: MemoryPostResponse) => ({
-          id: p.postId,
+        data.data.posts.map((p: any) => ({
+          id: p.id,
           createdAt: p.createdAt,
           year: new Date(p.createdAt).getFullYear(),
         }))
@@ -110,19 +110,22 @@ const EventGallery = () => {
     updatedAt: string;
   }
 
-  const posts = data.data.posts as MemoryPostResponse[];
+  const posts = data.data.posts || [];
 
   // 데이터를 연도별로 그룹화
-  const groupedByYear = posts.reduce((acc, post) => {
-    const year = new Date(
-      post.createdAt || post.updatedAt || Date.now()
-    ).getFullYear();
-    if (!acc[year]) {
-      acc[year] = [];
-    }
-    acc[year].push(post);
-    return acc;
-  }, {} as Record<number, MemoryPostResponse[]>);
+  const groupedByYear = posts.reduce(
+    (acc: Record<number, any[]>, post: any) => {
+      const year = new Date(
+        post.createdAt || post.updatedAt || Date.now()
+      ).getFullYear();
+      if (!acc[year]) {
+        acc[year] = [];
+      }
+      acc[year].push(post);
+      return acc;
+    },
+    {} as Record<number, any[]>
+  );
 
   return (
     <div className="h-[calc(100vh-4rem)] px-5 overflow-y-auto hide-scrollbar">
