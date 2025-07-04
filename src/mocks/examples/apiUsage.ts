@@ -304,7 +304,7 @@ export const usageExamples = {
         []
       );
 
-      if (postResult.success) {
+      if (postResult.success && postResult.data) {
         console.log("게시글 생성 성공:", postResult.data);
 
         // 2. 댓글 작성

@@ -1,0 +1,5 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { CommentContent } from "../components/CommentContent";
+export function CommentContainer() {
+    return (_jsxs("div", { className: "flex flex-col gap-[1.25rem] p-[1.25rem]", children: [_jsx(CommentContent, { commentText: "dssadsadasdsadsadsadsadsadsdsdasdsadasdsad", userName: "\uC720\uC800\uB124\uC784" }), _jsx(CommentContent, { commentText: "dssadsadasdsadsadsadsadsadsdsdasdsadasdsad", userName: "\uC720\uC800\uB124\uC784" }), _jsx(CommentContent, { commentText: "dssadsadasdsadsadsadsadsadsdsdasdsadasdsad", userName: "\uC720\uC800\uB124\uC784" }), _jsx(CommentContent, { commentText: "dssadsadasdsadsadsadsadsadsdsdasdsadasdsad", userName: "\uC720\uC800\uB124\uC784" }), _jsx(CommentContent, { commentText: "dssadsadasdsadsadsadsadsadsdsdasdsadasdsad", userName: "\uC720\uC800\uB124\uC784" }), _jsx(CommentContent, { commentText: "dssadsadasdsadsadsadsadsadsdsdasdsadasdsad", userName: "\uC720\uC800\uB124\uC784" }), _jsx(CommentContent, { commentText: "dssadsadasdsadsadsadsadsadsdsdasdsadasdsad", userName: "\uC720\uC800\uB124\uC784" })] }));
+}

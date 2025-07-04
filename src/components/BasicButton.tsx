@@ -37,7 +37,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
     gray_3: "bg-gray-3 text-white hover:bg-neutral-700",
     gray_4: "bg-gray-4 text-white hover:bg-neutral-600",
   };
-  const textStyleMap = {
+  const textStyleMap: Record<string, string> = {
     text_body2: "text-body2",
     text_body3: "text-body3",
   };
@@ -59,7 +59,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
       className={`
         ${colorStyles[color]} 
         h-[3.125rem]
-        ${textStyleMap[textStyle]} 
+        ${textStyleMap[textStyle] || textStyle || "text-body3"} 
         ${disabled ? "opacity-50 cursor-not-allowed" : ""}
       `}
     >
