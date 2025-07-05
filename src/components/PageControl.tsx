@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface PageControlProps {
   currentStep: number;
   totalSteps: number;

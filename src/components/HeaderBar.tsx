@@ -6,7 +6,7 @@ import addIcon from "../assets/image/icon_add.svg";
 import urlIcon from "../assets/image/icon_url.svg";
 import sliderIcon from "../assets/image/icon_slider.svg";
 import logo from "../assets/image/dearfam_logo_default.svg";
-import { useHeaderStore } from "@/lib/store/headerStore";
+import { useHeaderStore } from "@/context/store/headerStore";
 
 // 헤더바 모드 타입 정의
 export type HeaderMode =

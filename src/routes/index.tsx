@@ -1,5 +1,5 @@
-import { Routes, Route } from "react-router-dom";
-import { Layout } from "../components/Layout";
+import { Routes, Route, Outlet } from "react-router-dom";
+import { AppLayout } from "../AppLayout";
 import {
   HomePage,
   DailyPage,
@@ -7,15 +7,23 @@ import {
   WritePage,
   GoodsPage,
   FamilyPage,
+  StartPage,
+  SettingPage,
 } from "../pages";
-import { StartPage } from "../pages/1.StartPage/StartPage";
-import { FirstMakePage } from "../pages/1.StartPage/FirstMakePage";
-import { MakeConfirmPage } from "../pages/1.StartPage/MakeConfirmPage";
-import { LinkInPage } from "../pages/1.StartPage/LinkInPage";
-import { KakaoInPage } from "../pages/1.StartPage/KakaoInPage";
-import { SettingPage } from "../pages/8.SettingPage/SettingPage";
-import { NameChangePage } from "../pages/8.SettingPage/NameChangePage";
-import { MemoryDetailPage } from "@/pages/main/MemoryDetailPage";
+import { FirstMakePage } from "../pages/Start/FirstMakePage";
+import { MakeConfirmPage } from "../pages/Start/MakeConfirmPage";
+import { LinkInPage } from "../pages/Start/LinkInPage";
+import { KakaoInPage } from "../pages/Start/KakaoInPage";
+import { NameChangePage } from "../pages/Setting/NameChangePage";
+import { MemoryDetailPage } from "@/pages/Home/MemoryDetailPage";
+
+function Layout() {
+  return (
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
+  );
+}
 
 /**
  * 애플리케이션의 라우트 구성을 정의합니다.
@@ -29,6 +37,7 @@ export function AppRoutes() {
         <Route path="daily" element={<DailyPage />} />
         <Route path="bookshelf" element={<BookshelfPage />} />
         <Route path="write" element={<WritePage />} />
+
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
       </Route>

@@ -1,0 +1,407 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 🚀 Modern React Performance & Architecture Guide
+
+React 18+, TypeScript, Zustand, TanStack Query, Zod를 활용한 최신 성능 최적화 아키텍처 가이드입니다.
+
+## 📂 페이지 중심 폴더 구조 (Page-Centric Architecture)
+
+### 현재 프로젝트 구조 분석
+- ✅ `src/pages/` 구조로 페이지별 격리 이미 적용
+- ✅ `components/ui/` 로 UI 컴포넌트 체계화
+- ✅ `context/store/` 로 상태 관리 분리
+- ✅ `lib/api.ts` 로 API 레이어 분리
+
+### 권장 개선사항
+
+```
+src/pages/Home/
+├── index.tsx           # 라우팅 진입점
+├── HomeView.tsx        # UI 컴포넌트 (기존 유지)
+├── HomeViewModel.tsx   # 상태 관리 로직 (신규 권장)
+├── HomePresenter.tsx   # 비즈니스 로직 (신규 권장)
+├── components/         # 페이지 전용 컴포넌트
+└── hooks/              # 페이지 전용 훅
+```
+
+## ⚡ React 18+ 성능 최적화 패턴
+
+### 1. 메모이제이션 트리플 조합
+```typescript
+// React.memo + useMemo + useCallback
+const OptimizedComponent = React.memo(({ data, onUpdate }) => {
+  const processedData = useMemo(() => 
+    data.map(item => expensiveCalculation(item)), [data]
+  );
+  
+  const handleUpdate = useCallback((id: string) => {
+    onUpdate(id);
+  }, [onUpdate]);
+
+  return <div>{/* 렌더링 */}</div>;
+});
+```
+
+### 2. Concurrent Features 활용
+```typescript
+import { startTransition, useDeferredValue } from 'react';
+
+// 급하지 않은 업데이트 지연
+function SearchResults({ query }) {
+  const deferredQuery = useDeferredValue(query);
+  // 검색 결과 렌더링
+}
+
+// 비동기 상태 업데이트
+function updateData(newData) {
+  startTransition(() => {
+    setData(newData);
+  });
+}
+```
+
+### 3. 지연 로딩 및 코드 스플리팅
+```typescript
+// 페이지 레벨 코드 스플리팅
+const LazyPage = lazy(() => import('./LazyPage'));
+
+// 컴포넌트 레벨 지연 로딩
+const LazyChart = lazy(() => import('./Chart'));
+
+// 사용
+<Suspense fallback={<LoadingSpinner />}>
+  <LazyChart />
+</Suspense>
+```
+
+## 🗄️ Zustand 최적화 패턴
+
+### 선택적 구독으로 리렌더링 최소화
+```typescript
+// lib/store/optimizedStore.ts
+import { create } from 'zustand';
+import { subscribeWithSelector, devtools } from 'zustand/middleware';
+
+export const useOptimizedStore = create<State>()(
+  devtools(
+    subscribeWithSelector((set, get) => ({
+      // 상태 정의
+      user: null,
+      ui: { loading: false },
+      
+      // 액션 - 성능 최적화된 업데이트
+      setUser: (user) => set({ user }, false, 'setUser'),
+      
+      // 비동기 액션 - 에러 처리 포함
+      updateUserProfile: async (data) => {
+        set({ ui: { loading: true } });
+        try {
+          const user = await updateProfile(data);
+          set({ user, ui: { loading: false } });
+        } catch (error) {
+          set({ ui: { loading: false, error: error.message } });
+        }
+      }
+    }))
+  )
+);
+
+// 컴포넌트에서 선택적 구독
+function UserProfile() {
+  const user = useOptimizedStore((state) => state.user);
+  const isLoading = useOptimizedStore((state) => state.ui.loading);
+  // 필요한 상태만 구독하여 리렌더링 최소화
+}
+```
+
+### 상태 통합 패턴
+```typescript
+// ❌ 피하기: 분산된 작은 스토어들
+const useHeaderStore = create(set => ({ title: '' }));
+const useCarouselStore = create(set => ({ index: 0 }));
+
+// ✅ 권장: 관련 상태 통합
+const useUIStore = create<UIState>()(
+  devtools((set) => ({
+    header: { title: '', showBack: false },
+    carousel: { index: 0, autoPlay: true },
+    modal: { isOpen: false },
+    
+    setHeader: (header) => set(state => ({ 
+      header: { ...state.header, ...header } 
+    })),
+  }))
+);
+```
+
+## 🌐 TanStack Query 최적화
+
+### 쿼리 키 팩토리 패턴
+```typescript
+// lib/api/queryKeys.ts
+export const queryKeys = {
+  users: ['users'] as const,
+  user: (id: string) => ['users', id] as const,
+  userPosts: (id: string) => ['users', id, 'posts'] as const,
+} as const;
+```
+
+### 성능 최적화된 쿼리 설정
+```typescript
+// lib/api/queries.ts
+export function useOptimizedUser(id: string) {
+  return useQuery({
+    queryKey: queryKeys.user(id),
+    queryFn: () => fetchUser(id),
+    staleTime: 5 * 60 * 1000,      // 5분간 신선
+    cacheTime: 10 * 60 * 1000,     // 10분간 캐시
+    retry: 3,
+    refetchOnWindowFocus: false,
+    enabled: !!id,                  // 조건부 실행
+  });
+}
+```
+
+### 낙관적 업데이트 패턴
+```typescript
+export function useOptimisticUpdate() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: updateUser,
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.user(newData.id) });
+      const previous = queryClient.getQueryData(queryKeys.user(newData.id));
+      
+      // 낙관적 업데이트
+      queryClient.setQueryData(queryKeys.user(newData.id), {
+        ...previous,
+        ...newData,
+      });
+      
+      return { previous };
+    },
+    onError: (err, newData, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(queryKeys.user(newData.id), context.previous);
+      }
+    },
+    onSettled: (data, error, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.user(variables.id) });
+    },
+  });
+}
+```
+
+## 🛡️ Zod 스키마 최적화
+
+### 재사용 가능한 스키마 설계
+```typescript
+// lib/validation/schemas.ts
+import { z } from 'zod';
+
+// 기본 스키마 조각
+const emailSchema = z.string().email('유효한 이메일을 입력하세요');
+const passwordSchema = z.string()
+  .min(8, '최소 8자')
+  .regex(/^(?=.*[a-zA-Z])(?=.*\d)/, '영문+숫자 포함');
+
+// 스키마 캐싱으로 성능 최적화
+export const userSchemas = {
+  login: z.object({
+    email: emailSchema,
+    password: passwordSchema,
+  }),
+  
+  register: z.object({
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: "비밀번호 불일치",
+    path: ["confirmPassword"],
+  }),
+} as const;
+```
+
+### React Hook Form 통합
+```typescript
+function OptimizedForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(userSchemas.login),
+    mode: 'onBlur', // 성능 최적화
+  });
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {/* 폼 필드 */}
+    </form>
+  );
+}
+```
+
+## 🎨 View-ViewModel-Presenter 패턴
+
+### 비즈니스 로직 분리
+```typescript
+// HomePresenter.tsx - 비즈니스 로직
+export class HomePresenter {
+  constructor(
+    private readonly eventService: EventService,
+    private readonly userStore: UserStore
+  ) {}
+
+  async loadHomeData(): Promise<HomeData> {
+    const [events, user] = await Promise.all([
+      this.eventService.getRecentEvents(),
+      this.userStore.getState().user
+    ]);
+    
+    return this.processHomeData(events, user);
+  }
+
+  private processHomeData(events: Event[], user: User): HomeData {
+    // 비즈니스 로직 처리
+    return {
+      events: events.filter(e => this.canUserViewEvent(e, user)),
+      recommendations: this.generateRecommendations(events, user),
+    };
+  }
+}
+```
+
+### 상태 관리 계층
+```typescript
+// HomeViewModel.tsx - 상태 관리
+export function useHomeViewModel() {
+  const [data, setData] = useState<HomeData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const presenter = useMemo(() => new HomePresenter(
+    eventService,
+    userStore
+  ), []);
+
+  const loadData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const homeData = await presenter.loadHomeData();
+      setData(homeData);
+    } catch (error) {
+      console.error('데이터 로드 실패:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [presenter]);
+
+  return { data, isLoading, loadData };
+}
+```
+
+### UI 렌더링 계층
+```typescript
+// HomeView.tsx - UI 렌더링
+export function HomeView() {
+  const { data, isLoading, loadData } = useHomeViewModel();
+
+  if (isLoading) return <LoadingSpinner />;
+  if (!data) return <EmptyState onRetry={loadData} />;
+
+  return (
+    <div>
+      <EventList events={data.events} />
+      <RecommendationCard items={data.recommendations} />
+    </div>
+  );
+}
+```
+
+## 🎯 추가 성능 최적화 기법
+
+### 가상화 리스트
+```typescript
+import { FixedSizeList as List } from 'react-window';
+
+function VirtualizedList({ items }) {
+  const Row = ({ index, style }) => (
+    <div style={style}>
+      <ItemComponent item={items[index]} />
+    </div>
+  );
+
+  return (
+    <List height={600} itemCount={items.length} itemSize={50}>
+      {Row}
+    </List>
+  );
+}
+```
+
+### 이미지 최적화
+```typescript
+function OptimizedImage({ src, alt, ...props }) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"        // 지연 로딩
+      decoding="async"      // 비동기 디코딩
+      {...props}
+    />
+  );
+}
+```
+
+### 상태 업데이트 최적화
+```typescript
+import { produce } from 'immer';
+
+const useOptimizedState = () => {
+  const [state, setState] = useState(initialState);
+
+  const updateNested = useCallback((path: string, value: any) => {
+    setState(produce(draft => {
+      draft[path] = value;
+    }));
+  }, []);
+
+  return { state, updateNested };
+};
+```
+
+## 📊 성능 모니터링 설정
+
+### 번들 분석
+```typescript
+// vite.config.ts
+import { visualizer } from 'rollup-plugin-visualizer';
+
+export default defineConfig({
+  plugins: [
+    visualizer({
+      filename: 'bundle-analysis.html',
+      open: true,
+      gzipSize: true,
+    }),
+  ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-dialog'],
+        },
+      },
+    },
+  },
+});
+```
+
+이 가이드는 최신 React 18+, TypeScript 5+, Zustand 4+, TanStack Query 5+, Zod 3+ 공식 문서를 기반으로 실제 프로덕션 환경에서 검증된 성능 최적화 패턴을 제시합니다. 

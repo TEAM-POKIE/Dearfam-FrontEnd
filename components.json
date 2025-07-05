@@ -12,9 +12,8 @@
   },
   "aliases": {
     "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
+          "utils": "@/utils",
+      "ui": "@/components/ui",
     "hooks": "@/hooks"
   },
   "iconLibrary": "lucide"

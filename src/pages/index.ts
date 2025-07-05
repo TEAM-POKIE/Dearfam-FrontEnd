@@ -1,6 +1,8 @@
-export { HomePage } from "./main/HomePage";
-export { DailyPage } from "./DailyPage";
-export { BookshelfPage } from "./BookshelfPage";
-export { WritePage } from "./WritePage";
-export { GoodsPage } from "./GoodsPage";
-export { FamilyPage } from "./FamilyPage";
+export { HomePage } from "./Home";
+export { DailyPage } from "./Daily";
+export { BookshelfPage } from "./Bookshelf";
+export { WritePage } from "./Write";
+export { GoodsPage } from "./Goods";
+export { FamilyPage } from "./Family";
+export { StartPage } from "./Start";
+export { SettingPage } from "./Setting";
