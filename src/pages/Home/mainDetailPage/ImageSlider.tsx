@@ -7,7 +7,7 @@ import {
   CarouselItem,
   CarouselDots,
   type CarouselApi,
-} from "../../../components/ui/carouselDetail";
+} from "../../../components/ui/shadcn/carouselDetail";
 
 const IMAGES = [
   { id: 1, src: imageNotFound },

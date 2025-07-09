@@ -3,14 +3,13 @@ import { CommentContainer } from "./mainDetailPage/CommentContainer";
 import { DetailContent } from "./mainDetailPage/DetailContent";
 import { DetailContentHeader } from "./mainDetailPage/DetailContentHeader";
 import { EventHeader } from "./mainDetailPage/EventHeader";
-import { HeaderNav } from "./mainDetailPage/HeaderNav";
+import { SemiHeader } from "@/components/SemiHeader";
 import { ImageSlider } from "./mainDetailPage/ImageSlider";
-import * as React from "react";
 
 export function MemoryDetailPage() {
   return (
     <div>
-      <HeaderNav />
+      <SemiHeader title="이벤트 제목" exit={false} />
       <EventHeader />
       <ImageSlider />
       <DetailContentHeader />

@@ -1,4 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-export function DailyPage() {
-    return (_jsx("div", { className: "flex justify-center items-center h-app bg-bg-1", children: _jsx("div", { className: "mobile-container flex flex-col overflow-y-auto", children: _jsx("div", { className: "p-4", children: _jsxs("div", { className: "bg-white rounded-lg shadow-md overflow-hidden", children: [_jsxs("div", { className: "p-4 border-b", children: [_jsx("h3", { className: "text-xl font-semibold", children: "Card Title" }), _jsx("p", { className: "text-gray-500 text-sm", children: "Card Description" })] }), _jsx("div", { className: "p-4", children: _jsx("p", { children: "Card Content" }) }), _jsx("div", { className: "p-4 bg-gray-50 border-t", children: _jsx("p", { children: "Card Footer" }) })] }) }) }) }));
-}

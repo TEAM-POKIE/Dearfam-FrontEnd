@@ -2,7 +2,7 @@ import * as React from "react";
 import imageNotFound from "../../assets/image/section2/image_not_found_170x130.svg";
 import { ImageWithProfiles } from "./components/ImageWithProfiles";
 import { useMemoryPostsByTimeOrder } from "../../hooks/api";
-import { Skeleton } from "../../components/ui/skeleton";
+import { Skeleton } from "../../components/ui/shadcn/skeleton";
 
 const EventGallery = () => {
   const { data, isLoading, error } = useMemoryPostsByTimeOrder({

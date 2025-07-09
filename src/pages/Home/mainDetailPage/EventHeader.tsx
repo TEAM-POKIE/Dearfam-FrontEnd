@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/shadcn/dropdown-menu";
 export const EventHeader = () => {
   return (
     <div className="flex items-center justify-between px-[1.25rem] h-[3.125rem] ">

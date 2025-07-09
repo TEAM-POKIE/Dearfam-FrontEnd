@@ -1,9 +1,11 @@
-import { WriteView } from "./WriteView";
+import { SemiHeader } from "@/components/SemiHeader";
+import { Paper } from "@/components/wirte/Paper";
 
 export function WritePage() {
   return (
-    <div className="flex justify-center items-center h-app bg-bg-1">
-      <WriteView />
+    <div className="h-app bg-bg-1">
+      <SemiHeader title="게시글 작성" exit={false} />
+      <Paper />
     </div>
   );
 }

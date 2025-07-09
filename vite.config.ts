@@ -10,6 +10,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  esbuild: {
+    target: "es2020",
+    jsxInject: `import React from 'react'`,
+  },
+  build: {
+    target: "es2020",
+    sourcemap: true,
+  },
   test: {
     globals: true,
     environment: "jsdom",
