@@ -10,7 +10,17 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+build
 *.local
+
+# Build outputs
+*.js.map
+*.css.map
+
+# Cache directories
+.cache
+.temp
+.tmp
 
 # Editor directories and files
 .vscode/*

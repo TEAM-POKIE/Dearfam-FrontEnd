@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect } from "react";
 import { cn } from "../../utils/utils";
-import { Slider } from "../../components/ui/slider";
+import { Slider } from "../../components/ui/shadcn/slider";
 import { useSliderStore } from "../../context/store/sliderStore";
 import { useCarouselStore } from "../../context/store/carouselStore";
 
