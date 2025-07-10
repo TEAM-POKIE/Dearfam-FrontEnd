@@ -3,20 +3,38 @@ import { ArrowLeft, ChevronRight, Camera } from "lucide-react";
 import profileIcon from "@/assets/image/style_icon_profile.svg";
 import { useState } from "react";
 import BasicPopup from "@/components/BasicPopup";
+import { useAuthStore } from "@/store/authStore";
+import axiosInstance from "@/lib/api/axiosInstance";
 
 // ArrowLeft 및 ChevronRight는 추후 Component로 정의해야함
 
 export function SettingPage() {
     const navigate = useNavigate();
+    const { logout, user } = useAuthStore();
     const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
     const [isWithdrawPopupOpen, setIsWithdrawPopupOpen] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    const handleLogout = () => {
-        // 로그아웃 처리 로직
-        console.log("로그아웃 처리");
-        setIsLogoutPopupOpen(false);
-        // 로그아웃 후 메인 페이지로 이동
-        navigate('/');
+    const handleLogout = async () => {
+        try {
+            setIsLoggingOut(true);
+            
+            // 백엔드 로그아웃 API 호출
+            await axiosInstance.post('/api/v1/auth/logout');
+            
+            console.log("로그아웃 API 호출 성공");
+        } catch (error) {
+            console.error("로그아웃 API 호출 실패:", error);
+            // API 실패해도 로컬 로그아웃은 진행
+        } finally {
+            // zustand store에서 로그아웃 처리 (토큰 제거 포함)
+            logout();
+            setIsLogoutPopupOpen(false);
+            setIsLoggingOut(false);
+            
+            // 로그인 페이지로 이동
+            navigate('/LoginPage');
+        }
     };
 
     const handleWithdraw = () => {
@@ -47,7 +65,7 @@ export function SettingPage() {
                 <div className="relative">
                     <div className="w-[72px] h-[72px] rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
                         <img 
-                            src={profileIcon} 
+                            src={user?.profileImage || profileIcon} 
                             alt="프로필 이미지" 
                             className="w-full h-full object-cover"
                         />
@@ -59,7 +77,7 @@ export function SettingPage() {
                 <div className="ml-4 flex flex-col items-start">
                     <p className="text-body2 font-normal">'유기농 가족'의 딸</p>
                     <div className="flex items-center">
-                        <span className="text-h4 font-bold">홍동생</span>
+                        <span className="text-h4 font-bold">{user?.nickname || '사용자'}</span>
                         <span className="text-body2 font-normal">님</span>
                     </div>
                 </div>
@@ -86,8 +104,11 @@ export function SettingPage() {
                 <button 
                     className="w-full px-6 h-[1.75rem] flex justify-between items-center"
                     onClick={() => setIsLogoutPopupOpen(true)}
+                    disabled={isLoggingOut}
                 >
-                    <span className="text-body4 text-black">로그아웃</span>
+                    <span className="text-body4 text-black">
+                        {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
+                    </span>
                     <ChevronRight width="1.75rem" height="1.75rem" color="#828282" />
                 </button>
             </div>
@@ -143,8 +164,9 @@ export function SettingPage() {
                     다시 로그인 해야 합니다.
                 </div>
             }
-            buttonText="로그아웃"
+            buttonText={isLoggingOut ? "로그아웃 중..." : "로그아웃"}
             onButtonClick={handleLogout}
+            disabled={isLoggingOut}
         />
 
         {/* 회원탈퇴 확인 팝업 */}

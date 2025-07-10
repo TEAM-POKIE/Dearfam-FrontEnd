@@ -9,6 +9,8 @@ import {
   FamilyPage,
   StartPage,
   SettingPage,
+  SplashPage,
+  LoginPage,
 } from "../pages";
 import { FirstMakePage } from "../pages/Start/FirstMakePage";
 import { MakeConfirmPage } from "../pages/Start/MakeConfirmPage";
@@ -16,6 +18,8 @@ import { LinkInPage } from "../pages/Start/LinkInPage";
 import { KakaoInPage } from "../pages/Start/KakaoInPage";
 import { NameChangePage } from "../pages/Setting/NameChangePage";
 import { MemoryDetailPage } from "@/pages/Home/MemoryDetailPage";
+import { KakaoCallback } from "../pages/OAuth/KakaoCallback";
+import { KakaoMockAuth } from "../pages/Mock/KakaoMockAuth";
 
 function Layout() {
   return (
@@ -41,6 +45,10 @@ export function AppRoutes() {
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
       </Route>
+      <Route path="/SplashPage" element={<SplashPage />} />
+      <Route path="/LoginPage" element={<LoginPage />} />
+      <Route path="/oauth/kakao/callback" element={<KakaoCallback />} />
+      <Route path="/mock/kakao/auth" element={<KakaoMockAuth />} />
       <Route path="/StartPage" element={<StartPage />} />
       <Route path="/FirstMakePage" element={<FirstMakePage />} />
       <Route path="/MakeConfirmPage" element={<MakeConfirmPage />} />

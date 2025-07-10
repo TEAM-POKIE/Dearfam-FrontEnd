@@ -4,7 +4,7 @@ interface BasicButtonProps {
   text: string;
   textStyle?: string;
   onClick?: () => void;
-  color?: "main_1" | "main_2" | "main_3" | "gray_3" | "gray_4";
+  color?: "main_1" | "main_2" | "main_3" | "gray_3" | "gray_4" | "yellow";
   size?: number;
   fullWidth?: boolean;
   disabled?: boolean;
@@ -15,7 +15,7 @@ interface BasicButtonProps {
  * @param {string} text - 버튼 텍스트
  * @param {string} textStyle - 버튼 텍스트 스타일 (text_body1, text_body2, text_body3)
  * @param {Function} onClick - 클릭 이벤트 핸들러
- * @param {string} color - 버튼 색상 (main_1, main_2, main_3, gray_3, gray_4)
+ * @param {string} color - 버튼 색상 (main_1, main_2, main_3, gray_3, gray_4, yellow)
  * @param {number} size - 버튼 너비 (px 값으로 입력하면 자동으로 반응형으로 변환)
  * @param {boolean} fullWidth - 전체 너비 적용 여부
  * @param {boolean} disabled - 비활성화 여부
@@ -36,6 +36,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
     main_3: "bg-main-3 text-white hover:bg-main-3/90",
     gray_3: "bg-gray-3 text-white hover:bg-neutral-700",
     gray_4: "bg-gray-4 text-white hover:bg-neutral-600",
+    yellow: "bg-yellow-400 text-black hover:bg-yellow-500",
   };
   const textStyleMap = {
     text_body2: "text-body2",

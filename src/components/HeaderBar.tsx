@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { Bug, ChevronDown } from "lucide-react";
 import settingIcon from "../assets/image/icon_setting.svg";
 import galleryIcon from "../assets/image/icon_gallery.svg";
 import addIcon from "../assets/image/icon_add.svg";
@@ -15,6 +16,7 @@ export type HeaderMode =
   | "url"
   | "add"
   | "setting"
+  | "debug"
   | "default";
 
 // 페이지 타입 정의
@@ -33,9 +35,14 @@ const GalleryIcon = () => <img src={galleryIcon} alt="gallery" />;
 const UrlIcon = () => <img src={urlIcon} alt="url" />;
 const SliderIcon = () => <img src={sliderIcon} alt="slider" />;
 
+// 디버그 아이콘
+const DebugIcon = () => <Bug size={20} />;
+
 export function HeaderBar() {
   const navigate = useNavigate();
   const { mode, pageType, handleIconClick } = useHeaderStore();
+  const [isDebugDropdownOpen, setIsDebugDropdownOpen] = React.useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   // 현재 모드에 따라 다른 스타일 적용
   const getIconStyle = (iconMode: HeaderMode) => {
@@ -48,17 +55,78 @@ export function HeaderBar() {
     navigate("/SettingPage");
   };
 
+  // 디버그 드롭다운 토글
+  const handleDebugClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log("Debug button clicked, current state:", isDebugDropdownOpen);
+    setIsDebugDropdownOpen(!isDebugDropdownOpen);
+  };
+
+  // 디버그 페이지 이동
+  const handleDebugNavigation = (page: string) => {
+    console.log("Navigating to:", page);
+    navigate(page);
+    setIsDebugDropdownOpen(false);
+  };
+
+  // 외부 클릭 시 드롭다운 닫기
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        if (isDebugDropdownOpen) {
+          console.log("Closing dropdown from outside click");
+          setIsDebugDropdownOpen(false);
+        }
+      }
+    };
+
+    if (isDebugDropdownOpen) {
+      document.addEventListener('click', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isDebugDropdownOpen]);
+
   return (
     <header className="flex justify-between items-center px-[1.25rem] py-[clamp(0.75rem,3.2vw,1.06rem)] bg-[#E5E1D7] w-full">
       <img src={logo} alt="logo" />
       <div className="flex items-center space-x-[clamp(0.75rem,3.2vw,1rem)]">
-        {/* 디버그용 버튼 - 추후 삭제 예정 */}
-        <button
-          onClick={() => navigate('/StartPage')}
-          className="bg-blue-500 text-white px-2 py-1 rounded-md text-xs"
-        >
-          InitPage
-        </button>
+        {/* 디버그 드롭다운 */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={handleDebugClick}
+            className={`cursor-pointer flex items-center space-x-1 px-2 py-1 rounded-md ${getIconStyle("debug")} hover:bg-gray-200 transition-colors`}
+          >
+            <DebugIcon />
+          </button>
+          
+          {isDebugDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-[9999] overflow-hidden">
+              <div className="py-1">
+                <button
+                  onClick={() => handleDebugNavigation('/SplashPage')}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  SplashPage
+                </button>
+                <button
+                  onClick={() => handleDebugNavigation('/StartPage')}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  InitPage
+                </button>
+                <button
+                  onClick={() => handleDebugNavigation('/LoginPage')}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  LoginPage
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {pageType === "home" && (
           <div
