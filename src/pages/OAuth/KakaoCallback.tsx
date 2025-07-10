@@ -36,7 +36,7 @@ export const KakaoCallback: React.FC = () => {
 
         console.log('📋 카카오 인가 코드 받음:', code);
 
-        // 백엔드 API 호출 (fetch 사용 - MSW 인터셉트용)
+        // 백엔드 API 호출 (fetch 사용 - MSW가 인터셉트)
         const redirectUri = `${window.location.origin}/oauth/kakao/callback`;
         const requestData = {
           provider: 'kakao',
@@ -44,8 +44,8 @@ export const KakaoCallback: React.FC = () => {
           redirectUri,
         };
 
-        console.log('🚀 API 요청 시작:', requestData);
-        console.log('🎯 요청 URL:', '/api/v1/auth/oauth2/login');
+        console.log('🚀 API 요청 데이터:', requestData);
+        console.log('🎯 요청 URL: POST /api/v1/auth/oauth2/login');
 
         const response = await fetch('/api/v1/auth/oauth2/login', {
           method: 'POST',
@@ -56,13 +56,12 @@ export const KakaoCallback: React.FC = () => {
         });
 
         console.log('📡 응답 상태:', response.status, response.statusText);
-        console.log('📡 응답 헤더들:', Object.fromEntries(response.headers.entries()));
 
         const data = await response.json();
         console.log('📦 응답 데이터:', data);
 
         if (!response.ok) {
-          console.error('❌ 백엔드 API 오류:', data);
+          console.error('❌ API 오류:', data);
           setError('로그인 처리 중 오류가 발생했습니다.');
           setTimeout(() => {
             navigate('/LoginPage?error=oauth-fail');
@@ -73,7 +72,7 @@ export const KakaoCallback: React.FC = () => {
         if (data.success && data.data) {
           const { accessToken, refreshToken, user } = data.data;
           
-          // 토큰을 localStorage에도 저장 (axios 인터셉터에서 사용)
+          // 토큰을 localStorage에 저장
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
           
@@ -87,14 +86,14 @@ export const KakaoCallback: React.FC = () => {
             navigate('/');
           }, 1000);
         } else {
-          console.error('❌ 로그인 응답 데이터 오류:', data);
+          console.error('❌ 응답 데이터 오류:', data);
           setError('로그인 데이터 처리 중 오류가 발생했습니다.');
           setTimeout(() => {
             navigate('/LoginPage?error=oauth-fail');
           }, 2000);
         }
       } catch (error: any) {
-        console.error('❌ 카카오 로그인 처리 오류:', error);
+        console.error('❌ 네트워크 오류:', error);
         setError('네트워크 오류가 발생했습니다.');
         setTimeout(() => {
           navigate('/LoginPage?error=oauth-fail');
