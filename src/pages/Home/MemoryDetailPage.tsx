@@ -18,7 +18,7 @@ export function MemoryDetailPage() {
         <CommentContainer />
       </div>
 
-      <div className="fixed w-[24.375rem] bottom-0 ">
+      <div className="fixed w-full bottom-0 ">
         <InputContainer />
       </div>
     </div>
