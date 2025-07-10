@@ -16,6 +16,7 @@ build
 # Build outputs
 *.js.map
 *.css.map
+tsconfig.tsbuildinfo
 
 # Cache directories
 .cache
