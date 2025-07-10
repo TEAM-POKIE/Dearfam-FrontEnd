@@ -60,7 +60,7 @@ export function CommentContent({
             />
           </DropdownMenuTrigger>
         </div>
-        <DropdownMenuContent>
+        <DropdownMenuContent align="end">
           <DropdownMenuItem>삭제하기</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

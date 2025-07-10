@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-import { BasicButton } from "../BasicButton";
-import exitIcon from "../../assets/image/icon_exit_20.svg";
-import profileIcon from "../../assets/image/style_icon_profile.svg";
-import selectedIcon from "../../assets/image/style_icon_profile_manager_Select.svg";
+import { BasicButton } from "../../../components/BasicButton";
+import exitIcon from "../../../assets/image/icon_exit_20.svg";
+import profileIcon from "../../../assets/image/style_icon_profile.svg";
+import selectedIcon from "../../../assets/image/style_icon_profile_manager_Select.svg";
 
 interface FamilyMember {
   id: string;
@@ -144,7 +144,7 @@ export const AddFamPopup = ({
         onClick={onClose}
       ></div>
       <div
-        className="flex flex-col bg-white z-10 rounded-[clamp(0.75rem,1.92vw,1.25rem)] w-[clamp(15.625rem,70vw,21.875rem)] px-[1.88rem] py-[1.25rem]"
+        className="flex flex-col bg-white z-10 rounded-[1.25rem] px-[1.88rem] py-[1.25rem]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -155,7 +155,7 @@ export const AddFamPopup = ({
           <img src={exitIcon} alt="exitIcon" />
         </button>
 
-        <div className="w-full flex flex-col items-center gap-[clamp(1rem,2.88vw,1.875rem)] pt-[0.625rem]">
+        <div className="w-full flex flex-col items-center gap-[1.88rem] pt-[0.625rem]">
           <h4 className="text-h4 text-center whitespace-pre-line">
             함께했던 가족을 선택해주세요.
           </h4>

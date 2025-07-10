@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import addFamProfile from "../../assets/image/section3/icon_add_fam_profile.svg";
-import addFamPlus from "../../assets/image/section3/icon_add_fam_plus.svg";
+import addFamProfile from "../../../assets/image/section3/icon_add_fam_profile.svg";
+import addFamPlus from "../../../assets/image/section3/icon_add_fam_plus.svg";
 import AddFamPopup from "./AddFamPopup";
 
 export const AddFam = () => {

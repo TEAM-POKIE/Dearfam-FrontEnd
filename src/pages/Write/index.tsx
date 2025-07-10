@@ -1,5 +1,5 @@
 import { SemiHeader } from "@/components/SemiHeader";
-import { Paper } from "@/components/wirte/Paper";
+import { Paper } from "@/pages/Write/components/Paper";
 
 export function WritePage() {
   return (
