@@ -1,8 +1,8 @@
 import { InputTitle } from "./InputTitle";
 import { DropdownCalender } from "./DropdownCalender";
-import addFamProfile from "../../assets/image/section3/icon_add_fam_profile.svg";
-import addFamPlus from "../../assets/image/section3/icon_add_fam_plus.svg";
+
 import { InputContent } from "./InputContent";
+import { AddFam } from "./AddFam";
 
 export const Paper = () => {
   return (
@@ -21,10 +21,7 @@ export const Paper = () => {
         <div className="flex flex-col w-full h-full  p-[0.625rem]">
           <div className="flex justify-between items-center mb-[0.81rem]">
             <DropdownCalender />
-            <button className="bg-bg-2 inline-flex px-[0.625rem] py-[0.25rem] rounded-[1rem] gap-[0.375rem] h-[1.4375rem]">
-              <img src={addFamPlus} alt="addFamPlus" />
-              <img src={addFamProfile} alt="addFamProfile" />
-            </button>
+            <AddFam />
           </div>
           <InputTitle />
           <InputContent />
