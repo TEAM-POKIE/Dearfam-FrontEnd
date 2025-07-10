@@ -30,7 +30,7 @@
   display: none; /* Chrome, Safari, Opera */
 }
 /* 웹 환경에서는 최소 너비 390px 적용 */
-@media (min-width: 790px) {
+@media (min-width: 500px) {
   body {
     display: flex;
     justify-content: center;
@@ -38,8 +38,8 @@
   }
 
   .mobile-container {
-    max-width: 390px;
-    width: 390px;
+    max-width: 24.375rem;
+    width: 24.375rem;
     max-height: 100vh;
   }
 }
