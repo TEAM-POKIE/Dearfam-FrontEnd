@@ -2,7 +2,7 @@ import * as React from "react";
 import imageNotFound from "../../assets/image/section2/image_not_found_170x130.svg";
 import { ImageWithProfiles } from "./components/ImageWithProfiles";
 import { useMemoryPostsByTimeOrder } from "../../hooks/api";
-import { Skeleton } from "../../components/ui/skeleton";
+import { Skeleton } from "../../components/ui/shadcn/skeleton";
 
 const EventGallery = () => {
   const { data, isLoading, error } = useMemoryPostsByTimeOrder({
@@ -25,8 +25,8 @@ const EventGallery = () => {
       console.log("📝 첫 번째 포스트:", data.data.posts[0]);
       console.log(
         "📅 포스트 날짜들:",
-        data.data.posts.map((p: MemoryPostResponse) => ({
-          id: p.postId,
+        data.data.posts.map((p: any) => ({
+          id: p.id,
           createdAt: p.createdAt,
           year: new Date(p.createdAt).getFullYear(),
         }))
@@ -110,19 +110,22 @@ const EventGallery = () => {
     updatedAt: string;
   }
 
-  const posts = data.data.posts as MemoryPostResponse[];
+  const posts = data.data.posts || [];
 
   // 데이터를 연도별로 그룹화
-  const groupedByYear = posts.reduce((acc, post) => {
-    const year = new Date(
-      post.createdAt || post.updatedAt || Date.now()
-    ).getFullYear();
-    if (!acc[year]) {
-      acc[year] = [];
-    }
-    acc[year].push(post);
-    return acc;
-  }, {} as Record<number, MemoryPostResponse[]>);
+  const groupedByYear = posts.reduce(
+    (acc: Record<number, any[]>, post: any) => {
+      const year = new Date(
+        post.createdAt || post.updatedAt || Date.now()
+      ).getFullYear();
+      if (!acc[year]) {
+        acc[year] = [];
+      }
+      acc[year].push(post);
+      return acc;
+    },
+    {} as Record<number, any[]>
+  );
 
   return (
     <div className="h-[calc(100vh-4rem)] px-5 overflow-y-auto hide-scrollbar">

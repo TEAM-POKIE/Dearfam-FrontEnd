@@ -38,12 +38,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="mobile-container flex flex-col ">
-      {!isWritePage && !path.includes("/memoryDetail") && <HeaderBar />}
-      <main className="flex-grow overflow-y-auto pb-[clamp(3.75rem,14.4vw,5.625rem)] [&::-webkit-scrollbar]:hidden ">
+      {!isWritePage && !path.includes("/memoryDetailPage") && <HeaderBar />}
+      <main className="flex-grow overflow-y-auto  [&::-webkit-scrollbar]:hidden ">
         {children}
       </main>
       {!path.includes("/memoryDetail") && (
-        <div className="fixed bottom-0 left-0 right-0 w-[390px] m-auto">
+        <div className=" fixed bottom-0 left-0 right-0  m-auto w-full sm:w-[24.375rem] ">
           <BottomNavbar activeItem={getActiveNavItem()} />
         </div>
       )}

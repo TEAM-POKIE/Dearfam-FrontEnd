@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/shadcn/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   type CarouselApi,
-} from "@/components/ui/carouselMain";
+} from "@/components/ui/shadcn/carouselMain";
 import { ImageWithProfiles } from "./ImageWithProfiles";
 import heartActive from "../../../assets/image/section2/icon_hearrt_active.svg";
 import heartDefault from "../../../assets/image/section2/icon_hearrt_default.svg";

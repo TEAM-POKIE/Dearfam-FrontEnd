@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { type CarouselApi } from "@/components/ui/carouselMain";
+import { type CarouselApi } from "@/components/ui/shadcn/carouselMain";
 
 interface CarouselState {
   carouselApi: CarouselApi | null;

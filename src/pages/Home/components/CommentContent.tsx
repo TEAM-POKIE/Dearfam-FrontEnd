@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/shadcn/dropdown-menu";
 
 interface CommentContentProps {
   userName: string;
@@ -60,7 +60,7 @@ export function CommentContent({
             />
           </DropdownMenuTrigger>
         </div>
-        <DropdownMenuContent>
+        <DropdownMenuContent align="end">
           <DropdownMenuItem>삭제하기</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
