@@ -5,6 +5,7 @@ import bookcaseIcon from "../assets/image/bookcase.svg";
 import writeIcon from "../assets/image/write.svg";
 import goodsIcon from "../assets/image/goods.svg";
 import famIcon from "../assets/image/fam.svg";
+import { useCarouselStore } from "@/context/store/carouselStore";
 
 // 네비게이션 항목 타입 정의
 export type NavItem = "home" | "bookshelf" | "write" | "goods" | "family";
@@ -15,6 +16,16 @@ interface BottomNavbarProps {
 }
 
 export function BottomNavbar({ activeItem }: BottomNavbarProps) {
+  const { resetIndex } = useCarouselStore();
+
+  // 네비게이션 클릭 핸들러
+  const handleNavClick = (itemId: string) => {
+    // home 페이지가 아닌 다른 페이지로 이동할 때만 인덱스 초기화
+    if (itemId !== "home") {
+      resetIndex();
+    }
+  };
+
   // 네비게이션 항목 정의
   const navItems = [
     {
@@ -73,6 +84,7 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
             <Link
               key={item.id}
               to={item.path}
+              onClick={() => handleNavClick(item.id)}
               className={`flex flex-col items-center justify-center w-full h-full no-underline ${
                 isActive ? "text-[#F5751E]" : "text-[#9A9893]"
               }`}
