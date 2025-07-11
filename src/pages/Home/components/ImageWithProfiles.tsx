@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { Skeleton } from "../../../components/ui/shadcn/skeleton";
 
 interface ImageWithProfilesProps {
@@ -16,8 +16,8 @@ export const ImageWithProfiles: React.FC<ImageWithProfilesProps> = ({
   profileCount = 1,
   profileSize = "medium",
 }) => {
-  const [isImageLoaded, setIsImageLoaded] = React.useState(false);
-  const [isImageError, setIsImageError] = React.useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isImageError, setIsImageError] = useState(false);
 
   const profileImage = "/src/assets/image/style_icon_profile.svg";
   const profileSizeClasses = {
@@ -41,7 +41,7 @@ export const ImageWithProfiles: React.FC<ImageWithProfilesProps> = ({
   };
 
   // 이미지 src가 변경되면 로딩 상태 초기화
-  React.useEffect(() => {
+  useEffect(() => {
     setIsImageLoaded(false);
     setIsImageError(false);
   }, [imageSrc]);
@@ -66,7 +66,7 @@ export const ImageWithProfiles: React.FC<ImageWithProfilesProps> = ({
       )}
 
       <img
-        className={`w-full ${imageClassName} ${
+        className={` ${imageClassName} ${
           !isImageLoaded && !isImageError ? "opacity-0 absolute" : ""
         }`}
         src={imageSrc}
