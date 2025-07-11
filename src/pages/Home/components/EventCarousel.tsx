@@ -37,9 +37,13 @@ export const EventCarousel: React.FC<EventCarouselProps> = ({
   const [isDragging, setIsDragging] = useState(false);
 
   const {
+    currentIndex: storeCurrentIndex,
+    shouldRememberIndex,
     setTotalSlides,
     setCurrentIndex: setStoreCurrentIndex,
     setCarouselApi,
+    saveIndexForDetailPage,
+    resetIndex,
   } = useCarouselStore();
   const { setSliderValue, step } = useSliderStore();
 
@@ -224,12 +228,15 @@ export const EventCarousel: React.FC<EventCarouselProps> = ({
       if (!initialized.current) {
         initialized.current = true;
         setTimeout(() => {
-          setCurrentIndex(0);
-          setStoreCurrentIndex(0);
-          newApi.scrollTo(0);
+          // shouldRememberIndex가 true인 경우에만 저장된 인덱스 사용
+          const initialIndex = shouldRememberIndex ? storeCurrentIndex : 0;
+          setCurrentIndex(initialIndex);
+          setStoreCurrentIndex(initialIndex);
+          newApi.scrollTo(initialIndex);
 
-          // 슬라이더 초기값 설정
-          setSliderValue(0);
+          // 슬라이더 값도 초기 인덱스로 설정
+          const initialSliderValue = initialIndex * step;
+          setSliderValue(initialSliderValue);
         }, 100);
       }
 
@@ -255,15 +262,46 @@ export const EventCarousel: React.FC<EventCarouselProps> = ({
     };
   }, [api, onSelectSlide]);
 
+  // 컴포넌트 마운트 시 인덱스 초기화 (다른 페이지에서 돌아올 때)
+  useEffect(() => {
+    if (!shouldRememberIndex) {
+      resetIndex();
+    }
+  }, [shouldRememberIndex, resetIndex]);
+
   const handleCardClick = useCallback(
-    (event: React.MouseEvent) => {
+    (event: React.MouseEvent, index: number) => {
       // 좋아요 버튼 클릭 시에는 이벤트 전파를 막음
       if ((event.target as HTMLElement).closest('img[alt="heart"]')) {
         return;
       }
+
+      // 현재 활성 슬라이드가 아닌 경우, 해당 슬라이드로 이동
+      if (index !== currentIndex) {
+        api?.scrollTo(index);
+        // Zustand에 바로 인덱스 저장 (onSelectSlide에서도 처리되지만 즉시 반영을 위해)
+        setStoreCurrentIndex(index);
+        setCurrentIndex(index);
+
+        // 슬라이더 값도 함께 업데이트
+        const newSliderValue = index * step;
+        setSliderValue(newSliderValue);
+        return;
+      }
+
+      // 현재 활성 슬라이드인 경우에만 상세 페이지로 이동
+      saveIndexForDetailPage(currentIndex); // 상세 페이지로 이동할 때만 인덱스 저장
       navigate("/memoryDetailPage");
     },
-    [navigate]
+    [
+      navigate,
+      currentIndex,
+      api,
+      setStoreCurrentIndex,
+      setSliderValue,
+      step,
+      saveIndexForDetailPage,
+    ]
   );
 
   const handleLike = useCallback(
@@ -357,7 +395,7 @@ export const EventCarousel: React.FC<EventCarouselProps> = ({
                     opacity: dynamicStyle.opacity,
                     transition: isDragging
                       ? "none"
-                      : "all 450ms linear(0, 0.1605, 0.4497, 0.7063, 0.8805, 0.9768, 1.0183, 1.0284, 1.0242, 1.0161, 1.0087, 1.0036, 1.0008, 0.9995, 1)",
+                      : "all 250ms linear(0, 0.1605, 0.4497, 0.7063, 0.8805, 0.9768, 1.0183, 1.0284, 1.0242, 1.0161, 1.0087, 1.0036, 1.0008, 0.9995, 1)",
                   }}
                   onPointerDown={handlePointerDown}
                   onPointerUp={handlePointerUp}
@@ -365,14 +403,14 @@ export const EventCarousel: React.FC<EventCarouselProps> = ({
                 >
                   <div className="h-full">
                     <Card
-                      className="h-full"
+                      className="h-full hover:shadow-lg"
                       style={{
                         backgroundColor: dynamicStyle.backgroundColor,
                         transition: isDragging
                           ? "none"
-                          : "background-color 450ms linear(0, 0.1605, 0.4497, 0.7063, 0.8805, 0.9768, 1.0183, 1.0284, 1.0242, 1.0161, 1.0087, 1.0036, 1.0008, 0.9995, 1)",
+                          : "background-color 450ms linear(0, 0.1605, 0.4497, 0.7063, 0.8805, 0.9768, 1.0183, 1.0284, 1.0242, 1.0161, 1.0087, 1.0036, 1.0008, 0.9995, 1), box-shadow 500ms linear(0, 0.1144, 0.3475, 0.5885, 0.7844, 0.9194, 0.9987, 1.0359, 1.046, 1.0413, 1.0308, 1.0196, 1.0104, 1.004, 1.0002, 0.9984, 1)",
                       }}
-                      onClick={handleCardClick}
+                      onClick={(e) => handleCardClick(e, index)}
                     >
                       {dynamicStyle.showContent && (
                         <div
