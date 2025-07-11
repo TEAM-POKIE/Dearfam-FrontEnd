@@ -144,7 +144,7 @@ const EventGallery = () => {
                       : imageNotFound
                   }
                   imageAlt={post.title || "이미지"}
-                  imageClassName="rounded-[0.94rem] w-[10.625rem] h-[8.125rem]"
+                  imageClassName="object-cover rounded-[0.94rem] w-[10.625rem] h-[8.125rem] "
                   profileCount={post.participants?.length || 1}
                   profileSize="small"
                 />

@@ -1,3 +1,4 @@
+import TestImage from "../../assets/image/temporary.svg";
 import { http, HttpResponse } from "msw";
 
 // 기존 스타일의 공통 응답 구조
@@ -52,11 +53,7 @@ const createMockMemoryPost = (overrides?: Partial<MemoryPost>): MemoryPost => {
     postId: Math.floor(Math.random() * 10000) + 1000,
     title: `추억 ${Math.floor(Math.random() * 100)}`,
     content: "가족과 함께한 소중한 추억입니다.",
-    images: [
-      `https://picsum.photos/300/200?random=${Math.floor(
-        Math.random() * 1000
-      )}`,
-    ],
+    images: [TestImage],
     commentCount: Math.floor(Math.random() * 10),
     memoryDate: baseDate.toISOString().split("T")[0],
     participants: [
@@ -107,7 +104,7 @@ const getRecentPosts = http.get("/api/v1/memory-post/recent", ({ request }) => {
       liked: true,
       likeCount: 12,
       commentCount: 5,
-      images: ["https://picsum.photos/300/200?random=101"],
+      images: [TestImage],
     }),
     createMockMemoryPost({
       postId: 1002,
@@ -127,7 +124,7 @@ const getRecentPosts = http.get("/api/v1/memory-post/recent", ({ request }) => {
       liked: true,
       likeCount: 15,
       commentCount: 7,
-      images: ["https://picsum.photos/300/200?random=103"],
+      images: [TestImage],
     }),
     createMockMemoryPost({
       postId: 1004,
@@ -147,7 +144,7 @@ const getRecentPosts = http.get("/api/v1/memory-post/recent", ({ request }) => {
       liked: true,
       likeCount: 9,
       commentCount: 4,
-      images: ["https://picsum.photos/300/200?random=105"],
+      images: [TestImage],
     }),
   ].slice(0, limit);
 
