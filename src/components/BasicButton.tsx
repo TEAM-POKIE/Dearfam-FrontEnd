@@ -4,7 +4,7 @@ interface BasicButtonProps {
   text: string;
   textStyle?: string;
   onClick?: () => void;
-  color?: "main_1" | "main_2" | "main_3" | "gray_3" | "gray_4";
+  color?: "main_1" | "main_2" | "main_3" | "gray_3" | "gray_4" | "bg-bg-3";
   size?: number;
   fullWidth?: boolean;
   disabled?: boolean;
@@ -36,10 +36,12 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
     main_3: "bg-main-3 text-white hover:bg-main-3/90",
     gray_3: "bg-gray-3 text-white hover:bg-neutral-700",
     gray_4: "bg-gray-4 text-white hover:bg-neutral-600",
+    "bg-bg-3": "bg-bg-3 text-white hover:bg-bg-3/90",
   };
   const textStyleMap: Record<string, string> = {
     text_body2: "text-body2",
     text_body3: "text-body3",
+    text_body4: "text-body4",
   };
 
   // px를 rem으로 변환 (1rem = 16px)
@@ -57,7 +59,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
       disabled={disabled}
       style={inlineStyle}
       className={`
-        ${colorStyles[color]} 
+        ${colorStyles[color]}   
         h-[3.125rem]
         ${textStyleMap[textStyle] || textStyle || "text-body3"} 
         ${disabled ? "opacity-50 cursor-not-allowed" : ""}
