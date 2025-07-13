@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { Slider } from "@/components/ui/shadcn/slider";
 import deleteIcon from "../../../assets/image/section3/icon_cancel.svg";
+import styles from "./AddPicture.module.css";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -31,11 +32,101 @@ const debounce = <T extends unknown[]>(
 export const AddPicture = () => {
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [sliderValue, setSliderValue] = useState([0]);
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const [dragOverItem, setDragOverItem] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const isScrollingProgrammatically = useRef(false);
   const userScrollTimeout = useRef<NodeJS.Timeout | null>(null);
   const animationFrameId = useRef<number | null>(null);
   const isDragging = useRef(false);
+  const autoScrollAnimationId = useRef<number | null>(null);
+  const isAutoScrolling = useRef(false);
+
+  // 컨텍스트 메뉴 방지 핸들러
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+  }, []);
+
+  // 자동 스크롤 중지 함수
+  const stopAutoScroll = useCallback(() => {
+    if (autoScrollAnimationId.current) {
+      cancelAnimationFrame(autoScrollAnimationId.current);
+      autoScrollAnimationId.current = null;
+    }
+    isAutoScrolling.current = false;
+  }, []);
+
+  // 자동 스크롤 함수
+  const startAutoScroll = useCallback(
+    (direction: "left" | "right", speed: number) => {
+      if (isAutoScrolling.current || !scrollRef.current) return;
+
+      isAutoScrolling.current = true;
+
+      const scroll = () => {
+        if (!scrollRef.current || !isAutoScrolling.current) return;
+
+        const scrollAmount = direction === "left" ? -speed : speed;
+        scrollRef.current.scrollLeft += scrollAmount;
+
+        // 스크롤 경계 체크
+        const maxScroll =
+          scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+        if (
+          scrollRef.current.scrollLeft <= 0 ||
+          scrollRef.current.scrollLeft >= maxScroll
+        ) {
+          stopAutoScroll();
+          return;
+        }
+
+        autoScrollAnimationId.current = requestAnimationFrame(scroll);
+      };
+
+      autoScrollAnimationId.current = requestAnimationFrame(scroll);
+    },
+    [stopAutoScroll]
+  );
+
+  // 드래그 위치에 따른 자동 스크롤 체크
+  const checkAutoScroll = useCallback(
+    (clientX: number) => {
+      if (!scrollRef.current) return;
+
+      const container = scrollRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const scrollThreshold = 80; // 경계 영역 크기
+      const maxScrollSpeed = 8; // 최대 스크롤 속도
+
+      // 왼쪽 경계 체크
+      if (clientX < containerRect.left + scrollThreshold) {
+        const distance = Math.max(0, clientX - containerRect.left);
+        const speed = Math.max(
+          1,
+          maxScrollSpeed * (1 - distance / scrollThreshold)
+        );
+        if (!isAutoScrolling.current) {
+          startAutoScroll("left", speed);
+        }
+      }
+      // 오른쪽 경계 체크
+      else if (clientX > containerRect.right - scrollThreshold) {
+        const distance = Math.max(0, containerRect.right - clientX);
+        const speed = Math.max(
+          1,
+          maxScrollSpeed * (1 - distance / scrollThreshold)
+        );
+        if (!isAutoScrolling.current) {
+          startAutoScroll("right", speed);
+        }
+      }
+      // 경계 영역 밖이면 자동 스크롤 중지
+      else {
+        stopAutoScroll();
+      }
+    },
+    [startAutoScroll, stopAutoScroll]
+  );
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -51,6 +142,13 @@ export const AddPicture = () => {
       );
 
       setFiles((prev) => [...prev, ...newFiles]);
+
+      // 이미지가 추가될 때만 스크롤을 마지막으로 이동
+      if (newFiles.length > 0) {
+        setTimeout(() => {
+          setSliderValue([100]);
+        }, 100);
+      }
     },
     [files.length]
   );
@@ -65,7 +163,92 @@ export const AddPicture = () => {
       }
       return prev;
     });
+    // 삭제 시에는 현재 스크롤 위치 유지 (자동 스크롤 없음)
   }, []);
+
+  // 드래그 앤 드롭 핸들러들
+  const handleDragStart = useCallback((e: React.DragEvent, fileId: string) => {
+    setDraggedItem(fileId);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", fileId);
+
+    // 드래그 중에는 스크롤 핸들러 비활성화
+    isDragging.current = true;
+  }, []);
+
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+
+      // 드래그 중일 때 자동 스크롤 체크
+      if (draggedItem) {
+        checkAutoScroll(e.clientX);
+      }
+    },
+    [draggedItem, checkAutoScroll]
+  );
+
+  const handleDragEnter = useCallback(
+    (e: React.DragEvent, fileId: string) => {
+      e.preventDefault();
+      if (draggedItem && draggedItem !== fileId) {
+        setDragOverItem(fileId);
+      }
+    },
+    [draggedItem]
+  );
+
+  const handleDragLeave = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      // 자식 요소로 이동하는 경우가 아닐 때만 dragOverItem을 null로 설정
+      if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+        setDragOverItem(null);
+        stopAutoScroll(); // 드래그가 컨테이너를 벗어나면 자동 스크롤 중지
+      }
+    },
+    [stopAutoScroll]
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent, targetFileId: string) => {
+      e.preventDefault();
+
+      if (!draggedItem || draggedItem === targetFileId) {
+        setDraggedItem(null);
+        setDragOverItem(null);
+        isDragging.current = false;
+        return;
+      }
+
+      setFiles((prev) => {
+        const draggedIndex = prev.findIndex((file) => file.id === draggedItem);
+        const targetIndex = prev.findIndex((file) => file.id === targetFileId);
+
+        if (draggedIndex === -1 || targetIndex === -1) return prev;
+
+        const newFiles = [...prev];
+        const [removed] = newFiles.splice(draggedIndex, 1);
+        newFiles.splice(targetIndex, 0, removed);
+
+        return newFiles;
+      });
+
+      setDraggedItem(null);
+      setDragOverItem(null);
+      isDragging.current = false;
+      stopAutoScroll(); // 드롭 완료 시 자동 스크롤 중지
+    },
+    [draggedItem, stopAutoScroll]
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setDraggedItem(null);
+    setDragOverItem(null);
+    isDragging.current = false;
+    stopAutoScroll(); // 드래그 종료 시 자동 스크롤 중지
+  }, [stopAutoScroll]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -82,6 +265,9 @@ export const AddPicture = () => {
       files.forEach((file) => URL.revokeObjectURL(file.preview));
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
+      }
+      if (autoScrollAnimationId.current) {
+        cancelAnimationFrame(autoScrollAnimationId.current);
       }
     };
   }, [files]);
@@ -170,21 +356,23 @@ export const AddPicture = () => {
     }
   }, [sliderValue, smoothScrollTo, immediateScrollTo]);
 
-  // 이미지가 추가될 때마다 슬라이더를 최대값으로 이동
+  // 첫 로드 시에만 슬라이더 초기화
   useEffect(() => {
-    if (files.length > 0) {
-      // 레이아웃 업데이트를 위한 짧은 딜레이
-      setTimeout(() => {
-        setSliderValue([100]);
-      }, 100);
-    } else {
+    if (files.length === 0) {
       setSliderValue([0]);
     }
   }, [files.length]);
 
+  // 드래그가 끝나면 자동 스크롤 중지
+  useEffect(() => {
+    if (!draggedItem) {
+      stopAutoScroll();
+    }
+  }, [draggedItem, stopAutoScroll]);
+
   // 스크롤 위치에 따라 슬라이더 값 업데이트
   const handleScroll = useCallback(() => {
-    if (scrollRef.current && !isDragging.current) {
+    if (scrollRef.current) {
       const container = scrollRef.current;
       const maxScroll = Math.max(
         0,
@@ -192,24 +380,48 @@ export const AddPicture = () => {
       );
 
       if (maxScroll > 0) {
-        const scrollPercentage = Math.min(
-          100,
-          Math.max(0, (container.scrollLeft / maxScroll) * 100)
-        );
+        let scrollPercentage = (container.scrollLeft / maxScroll) * 100;
 
-        // 사용자가 수동으로 스크롤 중임을 표시
-        isScrollingProgrammatically.current = true;
-        setSliderValue([Math.round(scrollPercentage * 10) / 10]);
-
-        // 기존 타임아웃 클리어
-        if (userScrollTimeout.current) {
-          clearTimeout(userScrollTimeout.current);
+        // 경계값 정확하게 처리 (더 넓은 오차 범위)
+        if (container.scrollLeft <= 5) {
+          scrollPercentage = 0;
+        } else if (container.scrollLeft >= maxScroll - 5) {
+          scrollPercentage = 100;
         }
 
-        // 200ms 후 플래그 해제
-        userScrollTimeout.current = setTimeout(() => {
-          isScrollingProgrammatically.current = false;
-        }, 200);
+        // 0-100 범위로 클램핑
+        scrollPercentage = Math.min(100, Math.max(0, scrollPercentage));
+
+        // 드래그 중이 아니거나 자동 스크롤 중일 때만 슬라이더 업데이트
+        if (!isDragging.current || isAutoScrolling.current) {
+          // 사용자가 수동으로 스크롤 중임을 표시
+          isScrollingProgrammatically.current = true;
+          setSliderValue([Math.round(scrollPercentage * 100) / 100]);
+
+          // 기존 타임아웃 클리어
+          if (userScrollTimeout.current) {
+            clearTimeout(userScrollTimeout.current);
+          }
+
+          // 200ms 후 플래그 해제
+          userScrollTimeout.current = setTimeout(() => {
+            isScrollingProgrammatically.current = false;
+          }, 200);
+        }
+      } else {
+        // 스크롤할 수 없는 상태에서는 슬라이더를 0으로 설정
+        if (!isDragging.current || isAutoScrolling.current) {
+          isScrollingProgrammatically.current = true;
+          setSliderValue([0]);
+
+          if (userScrollTimeout.current) {
+            clearTimeout(userScrollTimeout.current);
+          }
+
+          userScrollTimeout.current = setTimeout(() => {
+            isScrollingProgrammatically.current = false;
+          }, 200);
+        }
       }
     }
   }, []);
@@ -218,6 +430,15 @@ export const AddPicture = () => {
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 16), [
     handleScroll,
   ]);
+
+  // 실시간 스크롤 핸들러 (드래그 중에는 디바운스 없이)
+  const realTimeHandleScroll = useCallback(() => {
+    if (isDragging.current || isAutoScrolling.current) {
+      handleScroll(); // 드래그/자동스크롤 중에는 즉시 업데이트
+    } else {
+      debouncedHandleScroll(); // 일반 스크롤에는 디바운스 적용
+    }
+  }, [handleScroll, debouncedHandleScroll]);
 
   // 슬라이더 드래그 시작
   const handleSliderPointerDown = useCallback(() => {
@@ -253,31 +474,87 @@ export const AddPicture = () => {
             // 하드웨어 가속 활성화
             willChange: "scroll-position",
             transform: "translateZ(0)",
+            // 모바일 길게 누르기 메뉴 방지
+            WebkitTouchCallout: "none",
+            WebkitUserSelect: "none",
+            userSelect: "none",
           }}
-          onScroll={debouncedHandleScroll}
+          onScroll={realTimeHandleScroll}
+          onContextMenu={handleContextMenu}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
         >
           <div className="flex space-x-[0.19rem] ">
             {/* 선택된 이미지들 */}
             {files.map((file, index) => (
-              <figure key={file.id} className="shrink-0 relative">
-                <div className="overflow-hidden rounded-md">
+              <figure
+                key={file.id}
+                className={`
+                  shrink-0 relative cursor-move ${styles.motionSpring} ${
+                  styles.imageFadeIn
+                }
+                  ${draggedItem === file.id ? "opacity-50 scale-95" : ""}
+                  ${dragOverItem === file.id ? styles.dragHover : ""}
+                `}
+                draggable
+                onDragStart={(e) => handleDragStart(e, file.id)}
+                onDragOver={handleDragOver}
+                onDragEnter={(e) => handleDragEnter(e, file.id)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, file.id)}
+                onDragEnd={handleDragEnd}
+                onContextMenu={handleContextMenu}
+                style={{
+                  WebkitTouchCallout: "none",
+                  WebkitUserSelect: "none",
+                  userSelect: "none",
+                }}
+              >
+                <div
+                  className={`overflow-hidden rounded-md ${
+                    styles.motionSpringFast
+                  } ${dragOverItem === file.id ? "ring-2 ring-blue-400" : ""}`}
+                >
                   <img
                     src={file.preview}
                     alt={`선택된 이미지 ${index + 1}`}
                     className="aspect-square h-[4.375rem] w-[4.375rem] object-cover"
+                    draggable={false} // 이미지 자체의 드래그 방지
+                    onContextMenu={handleContextMenu}
+                    style={{
+                      WebkitTouchCallout: "none",
+                      WebkitUserSelect: "none",
+                      userSelect: "none",
+                      pointerEvents: "none", // 이미지 자체의 모든 포인터 이벤트 방지
+                    }}
                   />
+                </div>
+
+                {/* 순서 표시 */}
+                <div
+                  className={`absolute top-[0.19rem] left-[0.19rem] bg-black bg-opacity-60 text-white text-xs rounded-full w-[1rem] h-[1rem] flex items-center justify-center pointer-events-none ${styles.motionSpringFast}`}
+                >
+                  {index + 1}
                 </div>
 
                 {/* 삭제 버튼 */}
                 <button
                   onClick={() => removeFile(file.id)}
-                  className="absolute top-[0.19rem] right-[0.19rem] w-[0.75rem] h-[0.75rem] "
+                  className={`absolute top-[0.19rem] right-[0.19rem] w-[0.75rem] h-[0.75rem] z-10 ${styles.motionSpring} hover:scale-110 active:scale-95`}
                   aria-label="이미지 삭제"
+                  onContextMenu={handleContextMenu}
                 >
                   <img
                     className="w-[0.75rem] h-[0.75rem] object-cover "
                     src={deleteIcon}
                     alt="삭제"
+                    draggable={false}
+                    onContextMenu={handleContextMenu}
+                    style={{
+                      WebkitTouchCallout: "none",
+                      WebkitUserSelect: "none",
+                      userSelect: "none",
+                    }}
                   />
                 </button>
               </figure>
@@ -290,19 +567,29 @@ export const AddPicture = () => {
                   {...getRootProps()}
                   className={`
                     aspect-square h-[4.375rem] w-[4.375rem] border-2 border-dashed rounded-md 
-                    flex items-center justify-center cursor-pointer transition-colors
+                    flex items-center justify-center cursor-pointer ${
+                      styles.motionSpring
+                    } ${styles.addButtonHover}
                     ${
                       isDragActive
-                        ? "border-blue-400 bg-blue-50"
-                        : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                        ? "border-blue-400 bg-blue-50 scale-102"
+                        : "border-gray-300"
                     }
                   `}
+                  onContextMenu={handleContextMenu}
+                  style={{
+                    WebkitTouchCallout: "none",
+                    WebkitUserSelect: "none",
+                    userSelect: "none",
+                  }}
                 >
                   <input {...getInputProps()} />
 
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center pointer-events-none">
                     <svg
-                      className="w-5 h-5 text-gray-400"
+                      className={`w-5 h-5 text-gray-400 ${
+                        styles.motionSpringFast
+                      } ${isDragActive ? "scale-110" : ""}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
