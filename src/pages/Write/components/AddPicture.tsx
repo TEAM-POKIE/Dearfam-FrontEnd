@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { Slider } from "@/components/ui/shadcn/slider";
+import ConfirmPopup from "@/components/ConfirmPopup";
 import deleteIcon from "../../../assets/image/section3/icon_cancel.svg";
 import styles from "./AddPicture.module.css";
 
@@ -34,6 +35,8 @@ export const AddPicture = () => {
   const [sliderValue, setSliderValue] = useState([0]);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const isScrollingProgrammatically = useRef(false);
   const userScrollTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -153,6 +156,13 @@ export const AddPicture = () => {
     [files.length]
   );
 
+  // 삭제 확인 모달 띄우기
+  const handleDeleteClick = useCallback((fileId: string) => {
+    setFileToDelete(fileId);
+    setShowDeleteModal(true);
+  }, []);
+
+  // 실제 파일 삭제 함수
   const removeFile = useCallback((fileId: string) => {
     setFiles((prev) => {
       const fileIndex = prev.findIndex((file) => file.id === fileId);
@@ -164,6 +174,21 @@ export const AddPicture = () => {
       return prev;
     });
     // 삭제 시에는 현재 스크롤 위치 유지 (자동 스크롤 없음)
+  }, []);
+
+  // 삭제 확인 처리
+  const handleConfirmDelete = useCallback(() => {
+    if (fileToDelete) {
+      removeFile(fileToDelete);
+    }
+    setShowDeleteModal(false);
+    setFileToDelete(null);
+  }, [fileToDelete, removeFile]);
+
+  // 삭제 취소 처리
+  const handleCancelDelete = useCallback(() => {
+    setShowDeleteModal(false);
+    setFileToDelete(null);
   }, []);
 
   // 드래그 앤 드롭 핸들러들
@@ -539,7 +564,7 @@ export const AddPicture = () => {
 
                 {/* 삭제 버튼 */}
                 <button
-                  onClick={() => removeFile(file.id)}
+                  onClick={() => handleDeleteClick(file.id)}
                   className={`absolute top-[0.19rem] right-[0.19rem] w-[0.75rem] h-[0.75rem] z-10 ${styles.motionSpring} hover:scale-110 active:scale-95`}
                   aria-label="이미지 삭제"
                   onContextMenu={handleContextMenu}
@@ -622,6 +647,18 @@ export const AddPicture = () => {
           className="w-full"
         />
       </div>
+
+      {/* 삭제 확인 모달 */}
+      <ConfirmPopup
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="이미지를 삭제하시겠어요?"
+        content="선택한 이미지가 삭제됩니다."
+        confirmText="삭제"
+        cancelText="취소"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   );
 };
