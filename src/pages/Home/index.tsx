@@ -3,7 +3,7 @@ import { useHeaderStore } from "@/context/store/headerStore";
 
 import * as React from "react";
 import { HomeSlider } from "./HomeSlider";
-import EventGallery from "./EventGallery";
+import { EventGallery } from "./EventGallery";
 
 export function HomePage() {
   const { mode } = useHeaderStore();
