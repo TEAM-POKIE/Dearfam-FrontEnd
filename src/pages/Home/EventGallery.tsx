@@ -4,7 +4,7 @@ import { ImageWithProfiles } from "./components/ImageWithProfiles";
 import { useMemoryPostsByTimeOrder } from "../../hooks/api";
 import { Skeleton } from "../../components/ui/shadcn/skeleton";
 
-const EventGallery = () => {
+export const EventGallery = () => {
   const { data, isLoading, error } = useMemoryPostsByTimeOrder({
     page: 1,
     limit: 50, // 충분한 데이터를 가져와서 연도별 그룹화
@@ -179,5 +179,3 @@ const EventGallery = () => {
     </div>
   );
 };
-
-export default EventGallery;
