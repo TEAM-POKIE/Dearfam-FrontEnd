@@ -1,9 +1,9 @@
-import { EventSlideContainer } from "./event_slide_container";
+import { EventSlideContainer } from "./EventSlideContainer";
 import { useHeaderStore } from "@/context/store/headerStore";
 
 import * as React from "react";
-import { HomeSlider } from "./homeSlider";
-import EventGallery from "./eventGallery";
+import { HomeSlider } from "./HomeSlider";
+import EventGallery from "./EventGallery";
 
 export function HomePage() {
   const { mode } = useHeaderStore();

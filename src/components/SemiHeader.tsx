@@ -2,11 +2,19 @@ import { useNavigate } from "react-router-dom";
 import backButtonIcon from "../assets/image/icon_backbutton_24.svg";
 import exitIcon from "../assets/image/icon_exit_24.svg";
 
-export const SemiHeader = (props: { title: string; exit: boolean }) => {
+export const SemiHeader = (props: {
+  title: string;
+  exit: boolean;
+  onBackClick?: () => void;
+}) => {
   const navigate = useNavigate();
 
   const handleBackClick = () => {
-    navigate(-1);
+    if (props.onBackClick) {
+      props.onBackClick();
+    } else {
+      navigate(-1);
+    }
   };
 
   const handleExitClick = () => {
