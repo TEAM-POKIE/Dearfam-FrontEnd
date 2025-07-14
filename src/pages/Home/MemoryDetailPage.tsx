@@ -1,10 +1,10 @@
 import { InputContainer } from "./components/InputContainer";
-import { CommentContainer } from "./mainDetailPage/CommentContainer";
-import { DetailContent } from "./mainDetailPage/DetailContent";
-import { DetailContentHeader } from "./mainDetailPage/DetailContentHeader";
-import { EventHeader } from "./mainDetailPage/EventHeader";
+import { CommentContainer } from "./MainDetailPage/CommentContainer";
+import { DetailContent } from "./MainDetailPage/DetailContent";
+import { DetailContentHeader } from "./MainDetailPage/DetailContentHeader";
+import { EventHeader } from "./MainDetailPage/EventHeader";
 import { SemiHeader } from "@/components/SemiHeader";
-import { ImageSlider } from "./mainDetailPage/ImageSlider";
+import { ImageSlider } from "./MainDetailPage/ImageSlider";
 
 export function MemoryDetailPage() {
   return (

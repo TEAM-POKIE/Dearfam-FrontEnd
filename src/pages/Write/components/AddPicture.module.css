@@ -1,0 +1,126 @@
+/* Motion AI 스프링 애니메이션 정의 */
+.motionSpring {
+  transition: all 650ms
+    linear(
+      0,
+      0.1162,
+      0.3622,
+      0.6245,
+      0.8404,
+      0.9868,
+      1.0661,
+      1.0937,
+      1.0885,
+      1.0672,
+      1.042,
+      1.02,
+      1.0043,
+      0.9952,
+      0.9914,
+      0.9913,
+      0.993,
+      0.9954,
+      0.9976,
+      0.9993,
+      1.0003,
+      1
+    );
+}
+
+.motionSpringFast {
+  transition: all 350ms
+    linear(
+      0,
+      0.1162,
+      0.3622,
+      0.6245,
+      0.8404,
+      0.9868,
+      1.0661,
+      1.0937,
+      1.0885,
+      1.0672,
+      1.042,
+      1.02,
+      1.0043,
+      0.9952,
+      0.9914,
+      0.9913,
+      0.993,
+      0.9954,
+      0.9976,
+      0.9993,
+      1.0003,
+      1
+    );
+}
+
+/* 이미지 페이드 인 애니메이션 */
+.imageFadeIn {
+  animation: fadeInScale 650ms
+    linear(
+      0,
+      0.1162,
+      0.3622,
+      0.6245,
+      0.8404,
+      0.9868,
+      1.0661,
+      1.0937,
+      1.0885,
+      1.0672,
+      1.042,
+      1.02,
+      1.0043,
+      0.9952,
+      0.9914,
+      0.9913,
+      0.993,
+      0.9954,
+      0.9976,
+      0.9993,
+      1.0003,
+      1
+    )
+    forwards;
+}
+
+/* 삭제 애니메이션 */
+.imageFadeOut {
+  animation: fadeOutScale 300ms ease-out forwards;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOutScale {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* 드래그 호버 효과 */
+.dragHover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* 추가 버튼 호버 효과 */
+.addButtonHover:hover {
+  transform: scale(1.02);
+  border-color: #9ca3af;
+  background-color: #f9fafb;
+}

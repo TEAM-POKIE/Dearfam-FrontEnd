@@ -42,7 +42,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="flex-grow overflow-y-auto  [&::-webkit-scrollbar]:hidden ">
         {children}
       </main>
-      {!path.includes("/memoryDetail") && (
+      {!path.includes("/memoryDetail") && !path.includes("/write") && (
         <div className=" fixed bottom-0 left-0 right-0  m-auto w-full sm:w-[24.375rem] ">
           <BottomNavbar activeItem={getActiveNavItem()} />
         </div>
