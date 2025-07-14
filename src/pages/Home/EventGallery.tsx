@@ -11,7 +11,6 @@ export const EventGallery = () => {
     order: "desc", // 최신순 정렬
   });
 
-  // 디버깅용 로그
   React.useEffect(() => {
     console.log("📊 EventGallery 상태:", {
       isLoading,
