@@ -23,15 +23,37 @@ export const AddFamPopup = ({
   onConfirm?: (selectedMembers: FamilyMember[]) => void;
 }) => {
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
-  // 팝업이 열릴 때마다 선택 상태 초기화
+  // 팝업이 열릴 때마다 선택 상태 초기화 및 애니메이션 처리
   useEffect(() => {
     if (isOpen) {
       setSelectedMemberIds([]);
+      setShouldRender(true);
+      // 다음 프레임에서 애니메이션 시작
+      requestAnimationFrame(() => {
+        setIsAnimating(true);
+      });
+    } else {
+      setIsAnimating(false);
+      // 애니메이션 완료 후 언마운트 (gentle 애니메이션 지속시간과 동일)
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 450); // motion-spring-gentle의 지속시간과 동일
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  // 팝업 닫기 핸들러
+  const handleClose = () => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      onClose();
+    }, 450); // 열리는 속도와 동일한 450ms
+  };
+
+  if (!shouldRender) return null;
 
   const handleMemberClick = (memberId: string) => {
     setSelectedMemberIds((prev) =>
@@ -46,7 +68,7 @@ export const AddFamPopup = ({
       selectedMemberIds.includes(member.id)
     );
     onConfirm?.(selectedMembers);
-    onClose();
+    handleClose();
   };
 
   const renderRow = (members: FamilyMember[], useGrid: boolean) => {
@@ -87,7 +109,7 @@ export const AddFamPopup = ({
       <button
         key={member.id}
         onClick={() => handleMemberClick(member.id)}
-        className="flex flex-col items-center transition-all duration-200"
+        className="flex flex-col items-center motion-spring-gentle hover:scale-105 active:scale-95"
       >
         <div>
           {member.profileImage ? (
@@ -137,19 +159,26 @@ export const AddFamPopup = ({
   return (
     <div
       className="fixed inset-0 flex items-center justify-center z-50"
-      onClick={onClose}
+      onClick={handleClose}
     >
+      {/* 배경 오버레이 - 페이드 인 효과 */}
       <div
-        className="fixed inset-0 bg-black opacity-60 cursor-pointer"
-        onClick={onClose}
+        className={`fixed inset-0 bg-black cursor-pointer motion-fade-gentle ${
+          isAnimating ? "opacity-60" : "opacity-0"
+        }`}
+        onClick={handleClose}
       ></div>
+
+      {/* 팝업 모달 - 스케일 + 페이드 효과 (gentle 애니메이션으로 변경) */}
       <div
-        className="flex flex-col bg-white z-10 rounded-[1.25rem] px-[1.88rem] py-[1.25rem]"
+        className={`flex flex-col bg-white z-10 rounded-[1.25rem] px-[1.88rem] py-[1.25rem] motion-spring-gentle ${
+          isAnimating ? "scale-100 opacity-100" : "scale-90 opacity-0"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          onClick={onClose}
-          className=" hover:text-neutral-600 self-end transition-colors duration-200"
+          onClick={handleClose}
+          className="hover:text-neutral-600 self-end motion-spring-gentle hover:scale-110 active:scale-95"
           aria-label="Close"
         >
           <img src={exitIcon} alt="exitIcon" />
@@ -174,6 +203,7 @@ export const AddFamPopup = ({
             color="main_1"
             size={290}
             textStyle="text-body3 text-[#FFFFFF]"
+            animation="gentle"
           />
         </div>
       </div>
