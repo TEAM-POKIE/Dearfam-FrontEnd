@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useCallback, useMemo } from "react";
 import { BasicButton } from "../../../components/BasicButton";
 import exitIcon from "../../../assets/image/icon_exit_20.svg";
-import profileIcon from "../../../assets/image/style_icon_profile.svg";
-import selectedIcon from "../../../assets/image/style_icon_profile_manager_Select.svg";
+import { usePopupAnimation } from "@/hooks/usePopupAnimation";
+import { AddFamillyButton } from "./AddFamillyButton";
 
 interface FamilyMember {
   id: string;
@@ -11,146 +10,61 @@ interface FamilyMember {
   profileImage?: string;
 }
 
+const ANIMATION_DURATION = 450;
+const GRID_GAP = "3.44rem";
+
 export const AddFamPopup = ({
   isOpen,
   onClose,
   familyMembers = [],
-  onConfirm,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  familyMembers?: FamilyMember[];
+  familyMembers: FamilyMember[];
   onConfirm?: (selectedMembers: FamilyMember[]) => void;
 }) => {
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [shouldRender, setShouldRender] = useState(false);
+  const { isAnimating, shouldRender, closeWithAnimation } = usePopupAnimation(
+    isOpen,
+    ANIMATION_DURATION
+  );
 
-  useEffect(() => {
-    if (isOpen) {
-      setSelectedMemberIds([]);
-      setShouldRender(true);
-
-      requestAnimationFrame(() => {
-        setIsAnimating(true);
-      });
-    } else {
-      setIsAnimating(false);
-
-      const timer = setTimeout(() => {
-        setShouldRender(false);
-      }, 450);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen]);
-
-  const handleClose = () => {
-    setIsAnimating(false);
-    setTimeout(() => {
-      onClose();
-    }, 450);
-  };
-
-  if (!shouldRender) return null;
-
-  const handleMemberClick = (memberId: string) => {
+  const handleMemberClick = useCallback((memberId: string) => {
     setSelectedMemberIds((prev) =>
       prev.includes(memberId)
         ? prev.filter((id) => id !== memberId)
         : [...prev, memberId]
     );
+  }, []);
+
+  const memberClickHandlers = useMemo(() => {
+    const handlers: Record<string, () => void> = {};
+    familyMembers.forEach((member) => {
+      handlers[member.id] = () => handleMemberClick(member.id);
+    });
+    return handlers;
+  }, [familyMembers, handleMemberClick]);
+
+  const handleClose = () => {
+    closeWithAnimation(onClose);
   };
 
-  const handleConfirm = () => {
-    const selectedMembers = familyMembers.filter((member) =>
-      selectedMemberIds.includes(member.id)
-    );
-    onConfirm?.(selectedMembers);
-    handleClose();
+  const getMemberRows = (members: FamilyMember[]): FamilyMember[][] => {
+    if (members.length <= 2) return [members];
+    if (members.length === 3) return [members];
+    if (members.length === 4) return [members.slice(0, 2), members.slice(2)];
+    if (members.length === 5) return [members.slice(0, 3), members.slice(3)];
+    if (members.length === 6) return [members.slice(0, 3), members.slice(3)];
+    return [];
   };
 
-  const renderRow = (members: FamilyMember[], useGrid: boolean) => {
-    if (useGrid) {
-      if (members.length === 3) {
-        return (
-          <div className="grid grid-cols-3 gap-x-[3.44rem] justify-items-center">
-            {members.map(renderMemberButton)}
-          </div>
-        );
-      } else if (members.length === 2) {
-        return (
-          <div className="grid grid-cols-2 gap-x-[3.44rem] justify-items-center">
-            {members.map(renderMemberButton)}
-          </div>
-        );
-      } else {
-        return (
-          <div className="grid grid-cols-1 justify-items-center">
-            {members.map(renderMemberButton)}
-          </div>
-        );
-      }
-    } else {
-      return (
-        <div className="flex justify-evenly">
-          {members.map(renderMemberButton)}
-        </div>
-      );
+  React.useEffect(() => {
+    if (isOpen) {
+      setSelectedMemberIds([]);
     }
-  };
+  }, [isOpen]);
 
-  const renderMemberButton = (member: FamilyMember) => {
-    const isSelected = selectedMemberIds.includes(member.id);
-    return (
-      <button
-        key={member.id}
-        onClick={() => handleMemberClick(member.id)}
-        className="flex flex-col items-center motion-spring-gentle hover:scale-105 active:scale-95"
-      >
-        <div>
-          {member.profileImage ? (
-            <img
-              src={member.profileImage}
-              alt={member.name}
-              className="w-full h-full rounded-full object-cover"
-            />
-          ) : (
-            <img
-              className="w-[3rem]"
-              src={isSelected ? selectedIcon : profileIcon}
-              alt="profileIcon"
-            />
-          )}
-        </div>
-        <span className="text-gray-3">{member.name}</span>
-      </button>
-    );
-  };
-
-  const memberCount = familyMembers.length;
-
-  let rows: React.ReactElement[] = [];
-
-  if (memberCount === 1 || memberCount === 2) {
-    rows = [renderRow(familyMembers, false)];
-  } else if (memberCount === 3) {
-    rows = [renderRow(familyMembers, true)];
-  } else if (memberCount === 4) {
-    rows = [
-      renderRow(familyMembers.slice(0, 2), false),
-      renderRow(familyMembers.slice(2), false),
-    ];
-  } else if (memberCount === 5) {
-    rows = [
-      renderRow(familyMembers.slice(0, 3), true),
-      renderRow(familyMembers.slice(3), false),
-    ];
-  } else if (memberCount === 6) {
-    rows = [
-      renderRow(familyMembers.slice(0, 3), true),
-      renderRow(familyMembers.slice(3), true),
-    ];
-  }
+  if (!shouldRender) return null;
 
   return (
     <div
@@ -162,7 +76,7 @@ export const AddFamPopup = ({
           isAnimating ? "opacity-60" : "opacity-0"
         }`}
         onClick={handleClose}
-      ></div>
+      />
 
       <div
         className={`flex flex-col bg-white z-10 rounded-[1.25rem] px-[1.88rem] py-[1.25rem] motion-spring-gentle ${
@@ -183,17 +97,37 @@ export const AddFamPopup = ({
             함께했던 가족을 선택해주세요.
           </h4>
 
-          {memberCount > 0 ? (
-            <div className="w-full flex flex-col gap-[1.25rem]">{rows}</div>
-          ) : (
-            <div className="text-neutral-600 text-center col-span-full">
-              가족 정보를 불러오는 중...
-            </div>
-          )}
+          <div className="w-full flex flex-col gap-[1.25rem]">
+            {getMemberRows(familyMembers).map((group, idx) => (
+              <div
+                key={idx}
+                className={`${
+                  group.length === 3
+                    ? "grid grid-cols-3"
+                    : group.length === 2
+                    ? "grid grid-cols-2"
+                    : "grid grid-cols-1"
+                } justify-items-center gap-x-[${GRID_GAP}]`}
+              >
+                {group.map((member) => (
+                  <AddFamillyButton
+                    key={member.id}
+                    id={member.id}
+                    name={member.name}
+                    profileImage={member.profileImage}
+                    isSelected={selectedMemberIds.includes(member.id)}
+                    onClick={memberClickHandlers[member.id]}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
 
           <BasicButton
             text="선택하기"
-            onClick={handleConfirm}
+            onClick={() => {
+              onClose();
+            }}
             color="main_1"
             size={290}
             textStyle="text-body3 text-[#FFFFFF]"
