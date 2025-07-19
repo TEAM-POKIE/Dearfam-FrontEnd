@@ -45,6 +45,140 @@
       );
   }
 
+  /* 로고 회전 애니메이션 */
+  @keyframes logo-spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* 로딩 스프링 애니메이션 */
+  @keyframes loading-spring {
+    0% {
+      transform: scale(1) rotate(0deg);
+    }
+    25% {
+      transform: scale(1) rotate(90deg);
+    }
+    50% {
+      transform: scale(1) rotate(180deg);
+    }
+    75% {
+      transform: scale(1) rotate(270deg);
+    }
+    100% {
+      transform: scale(1) rotate(360deg);
+    }
+  }
+
+  .animate-loading-spring {
+    animation: loading-spring 4000ms
+      linear(
+        0,
+        0.1262,
+        0.4133,
+        0.7368,
+        1.0078,
+        1.1812,
+        1.2506,
+        1.2366,
+        1.1719,
+        1.0896,
+        1.0154,
+        0.9638,
+        0.9389,
+        0.9372,
+        0.9509,
+        0.9713,
+        0.9912,
+        1.0062,
+        1.0144,
+        1.0163,
+        1.0137,
+        1.0088,
+        1.0036,
+        0.9993,
+        0.9968,
+        1,
+        0.9962,
+        0.9974,
+        0.9987,
+        0.9999,
+        1.0007,
+        1,
+        1
+      )
+      infinite;
+  }
+
+  /* 로딩 펄스 애니메이션 */
+  @keyframes loading-pulse {
+    0%,
+    100% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+  }
+
+  .animate-loading-pulse {
+    animation: loading-pulse 1500ms ease-in-out infinite;
+  }
+
+  /* 로딩 텍스트 페이드 애니메이션 */
+  @keyframes loading-text {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .animate-loading-text {
+    animation: loading-text 2000ms ease-in-out infinite;
+  }
+
+  .animate-logo-spin {
+    animation: logo-spin 800ms
+      linear(
+        0,
+        0.1187,
+        0.3801,
+        0.6679,
+        0.9085,
+        1.069,
+        1.1478,
+        1.1617,
+        1.1346,
+        1.0894,
+        1.0435,
+        1.0072,
+        0.9844,
+        0.9745,
+        0.9743,
+        0.9797,
+        0.9873,
+        0.9945,
+        0.9999,
+        1.0031,
+        1.0043,
+        1.004,
+        1.003,
+        1.0018,
+        1.0006,
+        0.9998,
+        1
+      );
+  }
+
   .motion-spring-medium {
     transition: transform 900ms
       linear(
