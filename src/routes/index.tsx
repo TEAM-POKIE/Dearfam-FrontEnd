@@ -64,12 +64,8 @@ const MemoryDetailPage = lazy(() =>
   }))
 );
 
-// 로딩 컴포넌트
-const PageLoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-  </div>
-);
+// 로딩 컴포넌트 - 빈 화면으로 변경
+const PageLoadingSpinner = () => <div className="min-h-screen bg-bg-1"></div>;
 
 function Layout() {
   return (
@@ -81,10 +77,6 @@ function Layout() {
   );
 }
 
-/**
- * 애플리케이션의 라우트 구성을 정의합니다.
- * 모든 페이지는 동적 임포트를 통해 코드 스플리팅이 적용되었습니다.
- */
 export function AppRoutes() {
   return (
     <Routes>

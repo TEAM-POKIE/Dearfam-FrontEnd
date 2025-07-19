@@ -26,31 +26,29 @@ export const AddFamPopup = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
 
-  // 팝업이 열릴 때마다 선택 상태 초기화 및 애니메이션 처리
   useEffect(() => {
     if (isOpen) {
       setSelectedMemberIds([]);
       setShouldRender(true);
-      // 다음 프레임에서 애니메이션 시작
+
       requestAnimationFrame(() => {
         setIsAnimating(true);
       });
     } else {
       setIsAnimating(false);
-      // 애니메이션 완료 후 언마운트 (gentle 애니메이션 지속시간과 동일)
+
       const timer = setTimeout(() => {
         setShouldRender(false);
-      }, 450); // motion-spring-gentle의 지속시간과 동일
+      }, 450);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
-  // 팝업 닫기 핸들러
   const handleClose = () => {
     setIsAnimating(false);
     setTimeout(() => {
       onClose();
-    }, 450); // 열리는 속도와 동일한 450ms
+    }, 450);
   };
 
   if (!shouldRender) return null;
@@ -73,7 +71,6 @@ export const AddFamPopup = ({
 
   const renderRow = (members: FamilyMember[], useGrid: boolean) => {
     if (useGrid) {
-      // 그리드 레이아웃 - 3명씩 한 줄로 배치
       if (members.length === 3) {
         return (
           <div className="grid grid-cols-3 gap-x-[3.44rem] justify-items-center">
@@ -94,7 +91,6 @@ export const AddFamPopup = ({
         );
       }
     } else {
-      // 플렉스 레이아웃 - 균등 배치
       return (
         <div className="flex justify-evenly">
           {members.map(renderMemberButton)}
@@ -161,7 +157,6 @@ export const AddFamPopup = ({
       className="fixed inset-0 flex items-center justify-center z-50"
       onClick={handleClose}
     >
-      {/* 배경 오버레이 - 페이드 인 효과 */}
       <div
         className={`fixed inset-0 bg-black cursor-pointer motion-fade-gentle ${
           isAnimating ? "opacity-60" : "opacity-0"
@@ -169,7 +164,6 @@ export const AddFamPopup = ({
         onClick={handleClose}
       ></div>
 
-      {/* 팝업 모달 - 스케일 + 페이드 효과 (gentle 애니메이션으로 변경) */}
       <div
         className={`flex flex-col bg-white z-10 rounded-[1.25rem] px-[1.88rem] py-[1.25rem] motion-spring-gentle ${
           isAnimating ? "scale-100 opacity-100" : "scale-90 opacity-0"
