@@ -9,7 +9,7 @@ export const AddFam = () => {
   return (
     <>
       <button
-        className="bg-bg-2 inline-flex px-[0.625rem] py-[0.25rem] rounded-[1rem] gap-[0.375rem] h-[1.4375rem]"
+        className="bg-bg-2 inline-flex px-[0.625rem] py-[0.25rem] rounded-[1rem] gap-[0.375rem] h-[1.4375rem] motion-spring-gentle hover:scale-105 active:scale-95"
         onClick={() => setIsOpen(true)}
       >
         <img src={addFamPlus} alt="addFamPlus" />
