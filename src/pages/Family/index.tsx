@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactFlow, {
   Controls,
   Node,
@@ -10,6 +10,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import bgTree from "../../assets/image/section7/bg_familytree_2.svg";
 import profileIcon from "../../assets/image/style_icon_profile.svg";
+import { BasicLoading } from "@/components/BasicLoading";
 
 // 커스텀 노드 컴포넌트
 const CustomNode: React.FC<NodeProps<{ name: string; imageUrl?: string }>> = ({
@@ -342,10 +343,29 @@ const nodeTypes = {
 };
 
 export function FamilyPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const defaultSample =
     familySamples.find((f) => f.value === "son_only1") || familySamples[0];
   const [selected] = useState<FamilySample>(defaultSample);
   const { nodes, edges } = getNodesAndEdges(selected);
+
+  // 컴포넌트가 마운트되면 로딩 완료
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // 1초 후 로딩 완료
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // 로딩 중일 때 로딩 화면 표시
+  if (isLoading) {
+    return (
+      <div className="bg-bg-1 min-h-screen">
+        <BasicLoading fullscreen text="가족 페이지 로딩 중..." size={80} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center items-center h-app bg-bg-1">
