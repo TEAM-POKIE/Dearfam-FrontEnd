@@ -3,8 +3,8 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
 
-// MSW 초기화 (개발 환경에서만)
-if (import.meta.env.DEV) {
+// MSW 초기화 (개발 환경에서만, VITE_DISABLE_MSW가 false일 때)
+if (import.meta.env.DEV && import.meta.env.VITE_DISABLE_MSW !== "true") {
   import("./mocks/browser").then(({ worker }) => {
     worker
       .start({

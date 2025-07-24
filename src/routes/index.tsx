@@ -50,6 +50,22 @@ const KakaoInPage = lazy(() =>
   }))
 );
 
+const KakaoCallback = lazy(() =>
+  import("../components/KakaoCallback").then((module) => ({
+    default: module.KakaoCallback,
+  }))
+);
+const LoginPage = lazy(() =>
+  import("../pages/Start/LoginPage").then((module) => ({
+    default: module.LoginPage,
+  }))
+);
+const SplashPage = lazy(() =>
+  import("../pages/Start/SplashPage").then((module) => ({
+    default: module.SplashPage,
+  }))
+);
+
 // Setting 관련 페이지들
 const NameChangePage = lazy(() =>
   import("../pages/Setting/NameChangePage").then((module) => ({
@@ -80,7 +96,11 @@ function Layout() {
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      {/* SplashPage를 루트 경로로 설정 */}
+      <Route path="/" element={<SplashPage />} />
+      
+      {/* 메인 앱 라우트 */}
+      <Route path="/home" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="memoryDetailPage" element={<MemoryDetailPage />} />
         <Route path="daily" element={<DailyPage />} />
@@ -89,6 +109,7 @@ export function AppRoutes() {
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
       </Route>
+      
       <Route
         path="/StartPage"
         element={
@@ -126,6 +147,39 @@ export function AppRoutes() {
         element={
           <Suspense fallback={<PageLoadingSpinner />}>
             <KakaoInPage />
+          </Suspense>
+        }
+      />
+
+      <Route
+        path="/kakao/callback"
+        element={
+          <Suspense fallback={<PageLoadingSpinner />}>
+            <KakaoCallback />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/auth/kakao/callback"
+        element={
+          <Suspense fallback={<PageLoadingSpinner />}>
+            <KakaoCallback />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/LoginPage"
+        element={
+          <Suspense fallback={<PageLoadingSpinner />}>
+            <LoginPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/SplashPage"
+        element={
+          <Suspense fallback={<PageLoadingSpinner />}>
+            <SplashPage />
           </Suspense>
         }
       />
