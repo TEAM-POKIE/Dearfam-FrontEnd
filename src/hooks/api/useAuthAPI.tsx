@@ -28,6 +28,7 @@ interface TokenRefreshResponse {
   expiresIn: number;
 }
 
+
 // API 함수들
 const authAPI = {
   // 카카오 로그인
@@ -65,6 +66,7 @@ const authAPI = {
       }
       throw error;
     }
+
   },
 
   // 로그아웃
@@ -78,6 +80,7 @@ const authAPI = {
       }
       throw error;
     }
+
   },
 };
 
@@ -88,6 +91,7 @@ export const useKakaoLogin = () => {
   const queryClient = useQueryClient();
   const { setUser, setError } = useAuthStore();
 
+
   return useMutation({
     mutationFn: authAPI.kakaoLogin,
     onSuccess: (data) => {
@@ -97,7 +101,6 @@ export const useKakaoLogin = () => {
           success: true,
           data: data.data.user,
         });
-        
         // Zustand 스토어에 사용자 정보 저장
         setUser(data.data.user);
       }
@@ -153,6 +156,7 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
   const { logout } = useAuthStore();
 
+
   return useMutation({
     mutationFn: authAPI.logout,
     onSuccess: (data) => {
@@ -174,9 +178,10 @@ export const useLogout = () => {
       queryClient.clear();
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      
+
       // Zustand 스토어 정리
       logout();
+
     },
   });
 };
@@ -211,7 +216,6 @@ export const authUtils = {
       return false;
     }
   },
-
   // 카카오 로그인 URL 생성
   getKakaoLoginUrl: (): string => {
     const KAKAO_REST_KEY = import.meta.env.VITE_KAKAO_REST_KEY;

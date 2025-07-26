@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useState, useRef, useEffect } from "react";
 import settingIcon from "../assets/image/icon_setting.svg";
 import galleryIcon from "../assets/image/icon_gallery.svg";
@@ -35,6 +36,7 @@ const GalleryIcon = () => <img src={galleryIcon} alt="gallery" />;
 const UrlIcon = () => <img src={urlIcon} alt="url" />;
 const SliderIcon = () => <img src={sliderIcon} alt="slider" />;
 
+
 // Bug 아이콘 (SVG)
 const BugIcon = () => (
   <svg 
@@ -59,6 +61,7 @@ export function HeaderBar() {
   const { resetIndex } = useCarouselStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
 
   // 현재 모드에 따라 다른 스타일 적용
   const getIconStyle = (iconMode: HeaderMode) => {

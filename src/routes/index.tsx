@@ -109,7 +109,7 @@ export function AppRoutes() {
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
       </Route>
-      
+
       <Route
         path="/StartPage"
         element={
@@ -183,6 +183,7 @@ export function AppRoutes() {
           </Suspense>
         }
       />
+
       <Route
         path="/SettingPage"
         element={

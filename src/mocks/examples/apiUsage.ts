@@ -251,7 +251,6 @@ export const likeExamples = {
 
 // 사용 예시
 export const usageExamples = {
-
   // 게시글 생성 후 댓글 작성
   async createPostAndComment() {
     try {

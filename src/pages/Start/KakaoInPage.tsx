@@ -92,6 +92,7 @@ export function KakaoInPage() {
                 managerName: "샘플 방장" 
             } 
         });
+
     };
 
     return (
@@ -102,6 +103,7 @@ export function KakaoInPage() {
                     <div>
                         <p className="text-body2 text-gray-3">
                             카카오 계정으로 간편하게 로그인하고 가족과의 소중한 추억을 공유해보세요.
+
                         </p>
                     </div>
                 </div>
@@ -113,7 +115,6 @@ export function KakaoInPage() {
                 {!isValid && (
                     <p className="text-body3 text-red-500 text-center mt-2">유효하지 않은 참여 코드입니다.</p>
                 )}
-
                 {/* 카카오 로그인 버튼 */}
                 <div className="w-full flex justify-center mt-[8.22rem]">
                     <div className="mx-[1.25rem]">
@@ -130,13 +131,13 @@ export function KakaoInPage() {
                         </button>
                     </div>
                 </div>
-
                 {/* 참여하기 버튼 (기존 기능) */}
                 <div className="w-full flex justify-center mt-[1rem]">
                     <div className="mx-[1.25rem]">
                         <BasicButton
                             text="참여 코드로 입장"
                             color="gray_3"
+
                             size={350}
                             onClick={handleJoin}
                             textStyle="text-h4"
@@ -144,13 +145,13 @@ export function KakaoInPage() {
                     </div>
                 </div>
             </div>
-
             {/* 토스트 메시지 */}
             {showToast && (
                 <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
                     <BasicToast message={toastMessage} />
                 </div>
             )}
+
         </div>
     );
 }
