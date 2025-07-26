@@ -41,9 +41,11 @@ export function LoginPage() {
     // 테스트용 로그인 - 실제 구현에서는 제거
     const testUser = {
       id: '1',
-      name: '테스트 사용자',
+      nickname: '테스트 사용자',
       email: 'test@example.com',
-      profileImage: null,
+      profilePicture: undefined,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     
     // 토큰 저장

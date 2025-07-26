@@ -22,9 +22,11 @@ export function SplashPage() {
           // 현재는 토큰 존재 여부만 확인
           useAuthStore.getState().setUser({
             id: '1',
-            name: '사용자',
+            nickname: '사용자',
             email: 'user@example.com',
-            profileImage: null,
+            profilePicture: undefined,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
           });
         } else {
           // 토큰이 없으면 로그아웃 상태로 설정

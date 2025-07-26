@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
-import { User } from '../../../mocks/types';
+import { User } from '../../mocks/types';
 
 interface AuthState {
   user: User | null;

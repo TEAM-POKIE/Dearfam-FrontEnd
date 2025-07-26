@@ -1,5 +1,11 @@
 // src/lib/api/axiosInstance.ts
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+
+// Axios 설정 타입 확장
+interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
+  metadata?: { startTime: Date };
+  _retry?: boolean;
+}
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.DEV ? "" : import.meta.env.VITE_API_URL,
@@ -16,7 +22,7 @@ axiosInstance.interceptors.request.use(
     }
     
     // 중복 요청 방지를 위한 요청 ID 추가
-    config.metadata = { startTime: new Date() };
+    (config as ExtendedAxiosRequestConfig).metadata = { startTime: new Date() };
     
     return config;
   },
@@ -31,7 +37,7 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    const originalRequest = error.config;
+    const originalRequest = error.config as ExtendedAxiosRequestConfig;
     
     // 401 에러이고 아직 재시도하지 않은 경우
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
