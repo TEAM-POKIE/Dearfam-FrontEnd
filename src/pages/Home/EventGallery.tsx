@@ -2,14 +2,24 @@ import * as React from "react";
 import imageNotFound from "../../assets/image/section2/image_not_found_170x130.svg";
 import { ImageWithProfiles } from "./components/ImageWithProfiles";
 import { useMemoryPostsByTimeOrder } from "../../hooks/api";
-import { Skeleton } from "../../components/ui/shadcn/skeleton";
 
-export const EventGallery = () => {
+interface EventGalleryProps {
+  onLoadingChange?: (isLoading: boolean) => void;
+}
+
+export const EventGallery = ({ onLoadingChange }: EventGalleryProps) => {
   const { data, isLoading, error } = useMemoryPostsByTimeOrder({
     page: 1,
     limit: 50, // 충분한 데이터를 가져와서 연도별 그룹화
     order: "desc", // 최신순 정렬
   });
+
+  // 로딩 상태 변경 알림
+  React.useEffect(() => {
+    if (onLoadingChange) {
+      onLoadingChange(isLoading);
+    }
+  }, [isLoading, onLoadingChange]);
 
   // 디버깅용 로그
   React.useEffect(() => {
@@ -33,40 +43,6 @@ export const EventGallery = () => {
       );
     }
   }, [data, isLoading, error]);
-
-  if (isLoading) {
-    return (
-      <div className="h-[calc(100vh-4rem)] px-5 overflow-y-auto hide-scrollbar">
-        {/* 스켈레톤 - 연도별 그룹 2개 정도 표시 */}
-        {Array.from({ length: 2 }).map((_, yearIndex) => (
-          <div key={yearIndex} className="mb-6">
-            {/* 연도 제목 스켈레톤 */}
-            <Skeleton className="h-6 w-16 mb-4 ml-2.5" />
-
-            {/* 이미지 그리드 스켈레톤 */}
-            <div className="grid grid-cols-2 gap-x-4 gap-y-4">
-              {Array.from({ length: 6 }).map((_, imageIndex) => (
-                <div key={imageIndex} className="relative">
-                  {/* 이미지 스켈레톤 */}
-                  <Skeleton className="rounded-[0.94rem] w-[10.625rem] h-[8.125rem]" />
-
-                  {/* 프로필 아이콘들 스켈레톤 */}
-                  <div className="absolute bottom-2 right-2 flex -space-x-1">
-                    {Array.from({ length: 2 }).map((_, profileIndex) => (
-                      <Skeleton
-                        key={profileIndex}
-                        className="w-6 h-6 rounded-full border-2 border-white"
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
 
   if (error) {
     return (
