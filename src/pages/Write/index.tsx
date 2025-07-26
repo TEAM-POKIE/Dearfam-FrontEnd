@@ -27,7 +27,7 @@ export function WritePage() {
 
   const handleConfirmDelete = () => {
     setShowConfirmModal(false);
-    navigate("/");
+    navigate(-1);
   };
 
   const handleCancelDelete = () => {
