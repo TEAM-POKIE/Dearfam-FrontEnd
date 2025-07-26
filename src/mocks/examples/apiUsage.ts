@@ -19,27 +19,6 @@ const API_BASE_URL = "/api/v1";
 
 // 인증 API 예시
 export const authExamples = {
-  // 카카오 로그인
-  async kakaoLogin(code: string) {
-    const response = await fetch(`${API_BASE_URL}/auth/oauth2/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        provider: "kakao",
-        code,
-      }),
-    });
-
-    const result: ApiResponse<{
-      user: User;
-      accessToken: string;
-      refreshToken: string;
-      isNewUser: boolean;
-    }> = await response.json();
-
-    return result;
-  },
-
   // 토큰 새로고침
   async refreshToken(refreshToken: string) {
     const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
@@ -272,28 +251,6 @@ export const likeExamples = {
 
 // 사용 예시
 export const usageExamples = {
-  // 로그인 후 사용자 정보 조회
-  async loginAndGetUser() {
-    try {
-      // 1. 카카오 로그인
-      const loginResult = await authExamples.kakaoLogin("test_code");
-
-      if (loginResult.success) {
-        console.log("로그인 성공:", loginResult.data);
-
-        // 2. 사용자 정보 조회
-        const userResult = await userExamples.getCurrentUser();
-
-        if (userResult.success) {
-          console.log("사용자 정보:", userResult.data);
-          return userResult.data;
-        }
-      }
-    } catch (error) {
-      console.error("로그인 실패:", error);
-    }
-  },
-
   // 게시글 생성 후 댓글 작성
   async createPostAndComment() {
     try {

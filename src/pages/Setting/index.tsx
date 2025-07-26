@@ -3,28 +3,50 @@ import { ArrowLeft, ChevronRight, Camera } from "lucide-react";
 import profileIcon from "@/assets/image/style_icon_profile.svg";
 import { useState } from "react";
 import BasicPopup from "@/components/BasicPopup";
+import { useAuthStore } from "@/context/store/authStore";
+
 
 // ArrowLeft 및 ChevronRight는 추후 Component로 정의해야함
 
 export function SettingPage() {
     const navigate = useNavigate();
+    const { logout } = useAuthStore();
     const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
     const [isWithdrawPopupOpen, setIsWithdrawPopupOpen] = useState(false);
 
     const handleLogout = () => {
         // 로그아웃 처리 로직
         console.log("로그아웃 처리");
+        // 로컬 스토리지에서 토큰 제거
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        
+        // Zustand store에서 로그아웃
+        logout();
+        
         setIsLogoutPopupOpen(false);
-        // 로그아웃 후 메인 페이지로 이동
-        navigate('/');
+        
+        // 로그아웃 후 로그인 페이지로 이동
+        navigate('/LoginPage');
+
     };
 
     const handleWithdraw = () => {
         // 회원탈퇴 처리 로직
         console.log("회원탈퇴 처리");
+
+        // 로컬 스토리지에서 토큰 제거
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        
+        // Zustand store에서 로그아웃
+        logout();
+        
         setIsWithdrawPopupOpen(false);
-        // 탈퇴 후 메인 페이지로 이동
-        navigate('/');
+        
+        // 탈퇴 후 로그인 페이지로 이동
+        navigate('/LoginPage');
+
     };
 
     return (

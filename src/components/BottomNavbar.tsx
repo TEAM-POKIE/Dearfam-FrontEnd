@@ -32,31 +32,31 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
       id: "home",
       label: "일상",
       icon: homeIcon,
-      path: "/",
+      path: "/home",
     },
     {
       id: "bookshelf",
       label: "책장",
       icon: bookcaseIcon,
-      path: "/bookshelf",
+      path: "/home/bookshelf",
     },
     {
       id: "write",
       label: "작성",
       icon: writeIcon,
-      path: "/write",
+      path: "/home/write",
     },
     {
       id: "goods",
       label: "굿즈",
       icon: goodsIcon,
-      path: "/goods",
+      path: "/home/goods",
     },
     {
       id: "family",
       label: "가족",
       icon: famIcon,
-      path: "/family",
+      path: "/home/family",
     },
   ];
 
