@@ -5,6 +5,7 @@ import { useState } from "react";
 import BasicPopup from "@/components/BasicPopup";
 import { useAuthStore } from "@/context/store/authStore";
 
+
 // ArrowLeft 및 ChevronRight는 추후 Component로 정의해야함
 
 export function SettingPage() {
@@ -16,7 +17,6 @@ export function SettingPage() {
     const handleLogout = () => {
         // 로그아웃 처리 로직
         console.log("로그아웃 처리");
-        
         // 로컬 스토리지에서 토큰 제거
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -28,12 +28,13 @@ export function SettingPage() {
         
         // 로그아웃 후 로그인 페이지로 이동
         navigate('/LoginPage');
+
     };
 
     const handleWithdraw = () => {
         // 회원탈퇴 처리 로직
         console.log("회원탈퇴 처리");
-        
+
         // 로컬 스토리지에서 토큰 제거
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -45,6 +46,7 @@ export function SettingPage() {
         
         // 탈퇴 후 로그인 페이지로 이동
         navigate('/LoginPage');
+
     };
 
     return (

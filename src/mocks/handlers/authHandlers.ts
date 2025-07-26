@@ -46,4 +46,5 @@ const logout = http.post("/api/v1/auth/logout", () => {
   return HttpResponse.json(response);
 });
 
+
 export const authHandlers = [refreshToken, logout];
