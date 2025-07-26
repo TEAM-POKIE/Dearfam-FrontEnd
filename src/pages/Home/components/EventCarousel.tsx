@@ -15,16 +15,17 @@ import BasicButton from "@/components/BasicButton";
 import { useCarouselStore } from "@/context/store/carouselStore";
 import { useSliderStore } from "@/context/store/sliderStore";
 import { useNavigate } from "react-router-dom";
-import { useRecentMemoryPosts } from "@/hooks/api/useMemoryPostAPI";
+import { type RecentMemoryPost } from "@/data/api/memory-post/memory";
 import { useToggleLike } from "@/hooks/api/useLikeAPI";
 
 interface EventCarouselProps {
   showLastItem?: boolean;
   limit?: number;
+  memoryPostsData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const EventCarousel = memo<EventCarouselProps>(
-  ({ showLastItem = true, limit = 10 }) => {
+  ({ showLastItem = true, memoryPostsData }) => {
     const navigate = useNavigate();
     const initialized = useRef(false);
     const [api, setApiState] = useState<CarouselApi | null>(null);
@@ -44,12 +45,6 @@ export const EventCarousel = memo<EventCarouselProps>(
     } = useCarouselStore();
     const { setSliderValue, step } = useSliderStore();
 
-    // 최근 메모리 포스트 데이터 가져오기
-    const {
-      data: memoryPostsData,
-      isLoading,
-      error,
-    } = useRecentMemoryPosts(limit);
     const toggleLikeMutation = useToggleLike();
 
     // 색상 보간 함수
@@ -157,22 +152,10 @@ export const EventCarousel = memo<EventCarouselProps>(
     const transformedItems = useMemo(() => {
       if (!memoryPostsData?.data) return [];
 
-      // 실제 API 응답 형식에 맞춰서 타입 변환
-      const posts = memoryPostsData.data as {
-        postId?: number;
-        title?: string;
-        content?: string;
-        commentCount?: number;
-        memoryDate?: string;
-        participants?: {
-          familyMemberId: number;
-          nickname: string;
-        }[];
-        liked?: boolean;
-        images?: string[];
-      }[];
+      // RecentMemoryPost 타입 사용
+      const posts: RecentMemoryPost[] = memoryPostsData.data;
 
-      return posts.map((post) => ({
+      return posts.map((post: RecentMemoryPost) => ({
         id: post.postId || 0,
         title: post.title || "",
         image:
@@ -343,26 +326,6 @@ export const EventCarousel = memo<EventCarouselProps>(
       },
       [toggleLikeMutation, likedEvents]
     );
-
-    // 로딩 상태
-    if (isLoading) {
-      return (
-        <div className="w-full flex flex-col justify-center items-center h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
-          <div className="text-h4 text-gray-3">로딩 중...</div>
-        </div>
-      );
-    }
-
-    // 에러 상태
-    if (error) {
-      return (
-        <div className="w-full flex flex-col justify-center items-center h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
-          <div className="text-h4 text-gray-3">
-            데이터를 불러오는 중 오류가 발생했습니다.
-          </div>
-        </div>
-      );
-    }
 
     // 실제 표시할 아이템들 (showLastItem이 true면 마지막에 추가 아이템 포함)
     const displayItems = showLastItem

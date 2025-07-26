@@ -1,6 +1,6 @@
 // 기존 API 함수 기반 훅 (deprecated)
 import { useQuery } from "@tanstack/react-query";
-import { getRecentMemoryPosts } from "../lib/api/memory-post/memory";
+import { getRecentMemoryPosts } from "../data/api/memory-post/memory";
 
 export const useRecentMemoryPostsLegacy = () => {
   return useQuery({
