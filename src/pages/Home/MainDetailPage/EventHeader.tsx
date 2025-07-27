@@ -6,7 +6,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/shadcn/dropdown-menu";
-export const EventHeader = () => {
+import { MemoryDetail } from "@/data/api/memory-post/type";
+
+interface EventHeaderProps {
+  data: MemoryDetail["data"];
+}
+
+export const EventHeader = ({ data }: EventHeaderProps) => {
   return (
     <div className="flex items-center justify-between w-full px-[1.25rem] h-[3.125rem] ">
       <div className="flex items-center gap-[0.62rem] ">

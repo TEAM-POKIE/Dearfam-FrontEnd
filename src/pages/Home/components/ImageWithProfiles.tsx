@@ -49,7 +49,7 @@ export const ImageWithProfiles: React.FC<ImageWithProfilesProps> = ({
   }, [imageSrc]);
 
   return (
-    <div className="flex justify-center  w-full bg-red-500">
+    <div className="flex justify-center  w-full ">
       {!isImageLoaded && !isImageError && (
         <div className="relative">
           <Skeleton className={` ${imageClassName}`} />

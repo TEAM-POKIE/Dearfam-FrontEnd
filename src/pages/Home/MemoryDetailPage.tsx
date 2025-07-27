@@ -5,15 +5,23 @@ import { DetailContentHeader } from "./MainDetailPage/DetailContentHeader";
 import { EventHeader } from "./MainDetailPage/EventHeader";
 import { SemiHeader } from "@/components/SemiHeader";
 import { ImageSlider } from "./MainDetailPage/ImageSlider";
+import { useParams } from "react-router-dom";
+import { useGetMemoryDetail } from "@/data/api/memory-post/memory";
 
 export function MemoryDetailPage() {
+  const { postId } = useParams();
+  const { data: memoryDetail, isLoading } = useGetMemoryDetail(
+    postId ? Number(postId) : null
+  );
+  console.log(memoryDetail);
+
   return (
     <div className="min-h-screen flex flex-col w-full">
       <div className="flex-1 pb-[4.125rem] overflow-y-auto">
-        <SemiHeader title="이벤트 제목" exit={false} />
-        <EventHeader />
+        <SemiHeader title={memoryDetail?.data.title} exit={false} />
+        {/* <EventHeader />
         <ImageSlider />
-        <DetailContentHeader />
+        <DetailContentHeader /> */}
         <DetailContent />
         <div className=" border-t-[0.0625rem] border-gray-3 ">
           <CommentContainer />

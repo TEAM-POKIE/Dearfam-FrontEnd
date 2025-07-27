@@ -2,7 +2,7 @@ import axios from "../axiosInstance";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { RecentMemoryPost } from "./type";
+
 import { useWritePostStore } from "@/context/store/writePostStore";
 import { AxiosError } from "axios";
 import axiosInstance from "../axiosInstance";
@@ -36,21 +36,31 @@ export type GetAllMemoryPostsResponse = {
   data: MemoryGroupByYear[];
 };
 
-export type GetRecentMemoryPostsResponse = {
-  code: number;
-  message: string;
-  data: RecentMemoryPost[];
+export const useGetMemoryDetail = (postId: number | null) => {
+  return useQuery({
+    queryKey: ["memory-post", "detail", postId],
+    queryFn: async () => {
+      if (!postId) throw new Error("Post ID is required");
+      const response = await axios.get(`${API_BASE_URL}/memory-post/${postId}`);
+      return response.data;
+    },
+    enabled: !!postId,
+  });
 };
 
-export const getAllMemoryPostsByTimeOrder =
-  async (): Promise<GetAllMemoryPostsResponse> => {
-    const res = await axios.get("/memory-post/time-order");
-    return res.data;
-  };
-
-export const getMemoryPostById = async () => {
-  const res = await axios.get(`${API_BASE_URL}/memory-post`);
-  return res.data;
+export const useGetMemoryTimeOrder = () => {
+  return useQuery({
+    queryKey: ["memory-post", "time-order"],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${API_BASE_URL}/memory-post/time-order`
+      );
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    retry: 3,
+  });
 };
 
 export const useGetMemoryRecentPosts = () => {
@@ -65,8 +75,6 @@ export const useGetMemoryRecentPosts = () => {
     retry: 3,
   });
 };
-
-import { resizeImage } from "@/utils/imageUtils";
 
 export const usePostMemoryPost = () => {
   const { getPostData } = useWritePostStore();

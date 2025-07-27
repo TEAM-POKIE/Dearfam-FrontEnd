@@ -1,6 +1,8 @@
 export type RecentMemoryPost = {
   postId: number;
   title: string;
+  thumbnailUrl: string;
+  imageCount: number;
   content: string;
   commentCount: number;
   memoryDate: string;
@@ -19,4 +21,37 @@ export type PostMemoryPostRequest = {
   memoryDate: string; // YYYY-MM-DD 형식
   participantFamilyMemberIds: number[];
   images?: File[]; // 파일 배열
+};
+
+export type TimeOrderMemoryPost = {
+  code: number;
+  message: string;
+  data: {
+    year: number;
+    posts: {
+      postId: number;
+      memoryDate: string;
+      thumbnailUrl: string;
+    }[];
+  }[];
+};
+
+export type MemoryDetail = {
+  code: number;
+  message: string;
+  data: {
+    writerId: number;
+    title: string;
+    content: string;
+    memoryDate: string;
+    participants: {
+      familyMemberId: number;
+      nickname: string;
+      profileImageUrl: string;
+    }[];
+    imageUrls: {
+      imageUrl: string;
+      imageOrder: number;
+    }[];
+  };
 };

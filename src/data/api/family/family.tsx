@@ -1,6 +1,6 @@
 import axios from "../axiosInstance";
 import { useQuery } from "@tanstack/react-query";
-import { FamilyData, FamilyApiResponse } from "../../types/family";
+import { FamilyData, FamilyApiResponse } from "./type";
 import { queryKeys } from "../queryKeys";
 import { useFamilyStore } from "@/context/store/familyStore";
 import { useEffect } from "react";
