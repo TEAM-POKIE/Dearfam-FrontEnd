@@ -2,14 +2,34 @@ import { http, HttpResponse } from "msw";
 import { currentUser, findUserById } from "../data/mockData";
 import { ApiResponse, User } from "../types";
 
-// 로그인한 사용자 정보 조회 - GET /users/user
-const getCurrentUser = http.get("/api/v1/users/user", () => {
+// 현재 사용자 정보 조회 - GET /users/user
+const getCurrentUser = http.get("/api/v1/users/user", ({ request }) => {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return HttpResponse.json({ success: false, message: "인증 토큰이 필요합니다.", code: "UNAUTHORIZED" }, { status: 401 });
+  }
+  const token = authHeader.replace("Bearer ", "");
+  if (!token || token === "invalid-token") {
+    return HttpResponse.json({ success: false, message: "유효하지 않은 토큰입니다.", code: "INVALID_TOKEN" }, { status: 401 });
+  }
+  if (token === "test-404-token") {
+    return HttpResponse.json({ success: false, message: "사용자를 찾을 수 없습니다.", code: "USER_NOT_FOUND" }, { status: 404 });
+  }
+  
+  // 정상 응답 (백엔드 형식)
   const response: ApiResponse<User> = {
-    success: true,
-    data: currentUser,
-    message: "현재 사용자 정보 조회가 완료되었습니다.",
+    code: 1073741824,
+    message: "사용자 정보 조회 성공",
+    data: {
+      id: 9007199254740991,
+      familyId: 9007199254740991,
+      userNickname: "테스트 사용자",
+      userRole: "USER",
+      userFamilyRole: "FATHER",
+      isFamilyRoomManager: true,
+      profileImage: "https://via.placeholder.com/150",
+    },
   };
-
   return HttpResponse.json(response);
 });
 

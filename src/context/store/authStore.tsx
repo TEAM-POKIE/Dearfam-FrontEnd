@@ -15,7 +15,7 @@ interface AuthActions {
   setError: (error: string | null) => void;
   logout: () => void;
   clearError: () => void;
-  login: (accessToken: string, refreshToken: string, user: User) => void;
+  login: (accessToken: string, refreshToken: string, user: User) => void; // refreshToken은 임시로 사용하지 않음
 }
 
 type AuthStore = AuthState & AuthActions;

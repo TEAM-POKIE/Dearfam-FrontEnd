@@ -16,13 +16,10 @@ export const KakaoCallback: React.FC = () => {
 
   useEffect(() => {
     const handleCallback = async () => {
-      console.log('3️⃣ 카카오 콜백 페이지 진입');
       
               const code = searchParams.get('code');
         const error = searchParams.get('error');
         const state = searchParams.get('state');
-
-        console.log('4️⃣ URL 파라미터 파싱 완료');
 
       // 에러가 있으면 먼저 처리
       if (error) {
@@ -37,7 +34,6 @@ export const KakaoCallback: React.FC = () => {
 
       // 코드가 없으면 처리하지 않음
       if (!code) {
-        console.log('5️⃣ 인가 코드가 없음');
         setError('인가 코드를 받을 수 없습니다.');
         setIsLoading(false);
         return;
@@ -45,25 +41,20 @@ export const KakaoCallback: React.FC = () => {
 
       // 이미 처리된 코드인지 확인
       if (processedCodeRef.current === code) {
-        console.log('6️⃣ 이미 처리된 코드 - 중복 실행 방지');
         return;
       }
 
       // 중복 실행 방지
       if (isProcessingRef.current) {
-        console.log('6️⃣ 이미 처리 중 - 중복 실행 방지');
         return;
       }
 
       isProcessingRef.current = true;
       processedCodeRef.current = code;
-      console.log('7️⃣ 카카오 콜백 처리 시작');
 
       try {
 
 
-
-        console.log('8️⃣ 카카오 인가 코드 확인됨');
 
         // 백엔드 API 호출
         const redirectUri = `${window.location.origin}/kakao/callback`;
@@ -73,20 +64,15 @@ export const KakaoCallback: React.FC = () => {
           redirectUri,
         };
 
-        console.log('9️⃣ 백엔드 API 요청 시작');
-
         const response = await axios.post(`${import.meta.env.VITE_API_URL || ''}/auth/oauth2/login`, requestData, {
           headers: {
             'Content-Type': 'application/json',
           },
         });
 
-        console.log('🔟 백엔드 API 응답 수신');
-
         const data = response.data;
 
         if (response.status !== 200) {
-          console.log('1️⃣1️⃣ API 오류 발생');
           setError('로그인 처리 중 오류가 발생했습니다.');
           setTimeout(() => {
             navigate('/LoginPage?error=oauth-fail');
@@ -97,32 +83,41 @@ export const KakaoCallback: React.FC = () => {
         if (response.status === 200 && data.code === 0) {
           const { accessToken, refreshToken, user } = data.data || {};
           
-          console.log('1️⃣2️⃣ 카카오 로그인 성공');
+          // 토큰을 localStorage에 저장 (Object를 String으로 변환)
+          if (accessToken) {
+            // JSON 객체인 경우 실제 토큰 값만 추출
+            let actualAccessToken = accessToken;
+            if (typeof accessToken === 'object' && accessToken.token) {
+              actualAccessToken = accessToken.token;
+            }
+            
+            localStorage.setItem('accessToken', String(actualAccessToken));
+          }
           
-          // 토큰을 localStorage에 저장
-          localStorage.setItem('accessToken', accessToken);
-          localStorage.setItem('refreshToken', refreshToken);
-          
-          console.log('1️⃣3️⃣ 토큰 저장 완료');
+          if (refreshToken) {
+            // JSON 객체인 경우 실제 토큰 값만 추출
+            let actualRefreshToken = refreshToken;
+            if (typeof refreshToken === 'object' && refreshToken.token) {
+              actualRefreshToken = refreshToken.token;
+            }
+            
+            localStorage.setItem('refreshToken', String(actualRefreshToken));
+          }
           
           // zustand store에 로그인 정보 저장
-          login(accessToken, refreshToken, user);
+          login(accessToken, '', user); // refreshToken 빈 문자열로 전달
 
-          console.log('1️⃣4️⃣ Zustand store 저장 완료');
-          
           // 성공 시 메인 페이지로 이동
           setTimeout(() => {
             navigate('/home');
           }, 1000);
         } else {
-          console.log('1️⃣2️⃣ 로그인 실패');
           setError(`로그인 실패: ${data.message || '알 수 없는 오류'}`);
           setTimeout(() => {
             navigate('/LoginPage?error=oauth-fail');
           }, 2000);
         }
       } catch (error: any) {
-        console.log('1️⃣5️⃣ 네트워크 오류 발생');
         
         setError('네트워크 오류가 발생했습니다.');
         setTimeout(() => {
@@ -139,10 +134,8 @@ export const KakaoCallback: React.FC = () => {
     const error = searchParams.get('error');
     
     if (code || error) {
-      console.log('1️⃣6️⃣ URL 파라미터 변경 감지');
       handleCallback();
     } else {
-      console.log('1️⃣7️⃣ 유효한 파라미터 없음');
       setError('유효하지 않은 접근입니다.');
       setIsLoading(false);
     }

@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiResponse, User } from "../../mocks/types";
+import axiosInstance from "../../lib/api/axiosInstance";
 
-// API 기본 URL
-const API_BASE_URL = "/api/v1";
+// API 기본 URL - 환경변수 사용
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Query Keys
 export const userQueryKeys = {
@@ -12,39 +13,40 @@ export const userQueryKeys = {
 } as const;
 
 // API 함수들
-const userAPI = {
+export const userAPI = {
   // 현재 사용자 정보 조회
   getCurrentUser: async (): Promise<ApiResponse<User>> => {
-    const response = await fetch(`${API_BASE_URL}/users/user`);
-    return response.json();
+    const response = await axiosInstance.get(`${API_BASE_URL}/users/user`);
+    return response.data;
   },
 
   // 특정 사용자 정보 조회
   getUserById: async (userId: string): Promise<ApiResponse<User>> => {
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`);
-    return response.json();
+    const response = await axiosInstance.get(`${API_BASE_URL}/users/${userId}`);
+    return response.data;
   },
 
   // 닉네임 변경
   updateNickname: async (nickname: string): Promise<ApiResponse<User>> => {
-    const response = await fetch(`${API_BASE_URL}/users/nickname`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname }),
+    const response = await axiosInstance.put(`${API_BASE_URL}/users/nickname`, {
+      nickname,
     });
-    return response.json();
+    return response.data;
   },
 };
 
 // React Query 훅들
 
 // 현재 사용자 정보 조회
-export const useCurrentUser = () => {
+export const useCurrentUser = (enabled: boolean = true) => {
+  const accessToken = localStorage.getItem('accessToken');
   return useQuery({
     queryKey: userQueryKeys.currentUser(),
     queryFn: userAPI.getCurrentUser,
-    staleTime: 10 * 60 * 1000, // 10분
-    gcTime: 15 * 60 * 1000, // 15분
+    enabled: !!accessToken && enabled, // accessToken이 있고 enabled가 true일 때만 실행
+    staleTime: 10 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    retry: false, // Prevent retries on 401
   });
 };
 
@@ -127,4 +129,10 @@ export const useOptimisticUpdateNickname = () => {
       queryClient.invalidateQueries({ queryKey: userQueryKeys.currentUser() });
     },
   });
+};
+
+// SettingsPage 등에서 사용할 수 있는 훅
+export const useUserData = () => {
+  const { data: userData } = useCurrentUser();
+  return userData?.data;
 };

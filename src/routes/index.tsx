@@ -57,7 +57,7 @@ const KakaoCallback = lazy(() =>
 );
 const LoginPage = lazy(() =>
   import("../pages/Start/LoginPage").then((module) => ({
-    default: module.LoginPage,
+    default: module.default,
   }))
 );
 const SplashPage = lazy(() =>
@@ -115,6 +115,14 @@ export function AppRoutes() {
         element={
           <Suspense fallback={<PageLoadingSpinner />}>
             <StartPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/Start"
+        element={
+          <Suspense fallback={<PageLoadingSpinner />}>
+            <FirstMakePage />
           </Suspense>
         }
       />

@@ -16,15 +16,15 @@ export interface ApiError {
   details?: unknown;
 }
 
-// 사용자 정보 스키마
+// 사용자 정보 스키마 (백엔드 응답 형식)
 export const UserSchema = z.object({
-  id: z.string(),
-  nickname: z.string(),
-  email: z.string().email(),
-  profilePicture: z.string().url().optional(),
-  role: z.string().optional(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  id: z.number(),
+  familyId: z.number(),
+  userNickname: z.string(),
+  userRole: z.string(),
+  userFamilyRole: z.string(),
+  isFamilyRoomManager: z.boolean(),
+  profileImage: z.string(),
 });
 
 export type User = z.infer<typeof UserSchema>;

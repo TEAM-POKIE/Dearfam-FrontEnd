@@ -6,7 +6,7 @@ import axios from "axios";
 import { useAuthStore } from "../../context/store/authStore";
 
 // API 기본 URL - 환경변수 사용
-const API_BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // 타입 정의
 interface KakaoLoginRequest {
@@ -48,7 +48,8 @@ const authAPI = {
     }
   },
 
-  // 토큰 새로고침
+  // 토큰 새로고침 (임시 비활성화)
+  /*
   refreshToken: async (): Promise<ApiResponse<TokenRefreshResponse>> => {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
@@ -68,6 +69,7 @@ const authAPI = {
     }
 
   },
+  */
 
   // 로그아웃
   logout: async (): Promise<ApiResponse<{ message: string }>> => {
@@ -95,6 +97,26 @@ export const useKakaoLogin = () => {
   return useMutation({
     mutationFn: authAPI.kakaoLogin,
     onSuccess: (data) => {
+      if (data.data?.accessToken) {
+        // JSON 객체인 경우 실제 토큰 값만 추출
+        let actualAccessToken = data.data.accessToken;
+        if (typeof data.data.accessToken === 'object' && data.data.accessToken.token) {
+          actualAccessToken = data.data.accessToken.token;
+        }
+        
+        localStorage.setItem("accessToken", String(actualAccessToken));
+      }
+      
+      if (data.data?.refreshToken) {
+        // JSON 객체인 경우 실제 토큰 값만 추출
+        let actualRefreshToken = data.data.refreshToken;
+        if (typeof data.data.refreshToken === 'object' && data.data.refreshToken.token) {
+          actualRefreshToken = data.data.refreshToken.token;
+        }
+        
+        localStorage.setItem("refreshToken", String(actualRefreshToken));
+      }
+      
       // 성공 시 사용자 정보 캐시 설정
       if (data.data?.user) {
         queryClient.setQueryData(userQueryKeys.currentUser(), {
@@ -103,14 +125,6 @@ export const useKakaoLogin = () => {
         });
         // Zustand 스토어에 사용자 정보 저장
         setUser(data.data.user);
-      }
-
-      // 토큰 저장 (실제 프로덕션에서는 secure storage 사용)
-      if (data.data?.accessToken) {
-        localStorage.setItem("accessToken", data.data.accessToken);
-      }
-      if (data.data?.refreshToken) {
-        localStorage.setItem("refreshToken", data.data.refreshToken);
       }
 
       console.log("카카오 로그인 성공:", data);
@@ -127,7 +141,8 @@ export const useKakaoLogin = () => {
   });
 };
 
-// 토큰 새로고침 뮤테이션
+// 토큰 새로고침 뮤테이션 (임시 비활성화)
+/*
 export const useRefreshToken = () => {
   return useMutation({
     mutationFn: authAPI.refreshToken,
@@ -150,6 +165,7 @@ export const useRefreshToken = () => {
     },
   });
 };
+*/
 
 // 로그아웃 뮤테이션
 export const useLogout = () => {

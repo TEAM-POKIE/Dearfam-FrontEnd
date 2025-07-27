@@ -52,7 +52,7 @@ export {
 // 인증 관련 API 훅들
 export {
   useKakaoLogin,
-  useRefreshToken,
+  // useRefreshToken, // 임시 비활성화
   useLogout,
   authUtils,
 } from "./useAuthAPI";

@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiResponse, Family, FamilyMember } from "../../mocks/types";
+import axiosInstance from "../../lib/api/axiosInstance";
 
-// API 기본 URL
-const API_BASE_URL = "/api/v1";
+// API 기본 URL - 환경변수 사용
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Query Keys
 export const familyQueryKeys = {
@@ -19,12 +20,8 @@ const familyAPI = {
   createFamily: async (data: {
     name: string;
   }): Promise<ApiResponse<Family>> => {
-    const response = await fetch(`${API_BASE_URL}/family`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    return response.json();
+    const response = await axiosInstance.post(`${API_BASE_URL}/family`, data);
+    return response.data;
   },
 
   // 가족 역할 설정
@@ -32,34 +29,30 @@ const familyAPI = {
     userId: string;
     role: string;
   }): Promise<ApiResponse<{ userId: string; role: string }>> => {
-    const response = await fetch(`${API_BASE_URL}/family/role`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    return response.json();
+    const response = await axiosInstance.post(`${API_BASE_URL}/family/role`, data);
+    return response.data;
   },
 
   // 가족 구성원 조회
   getFamilyMembers: async (): Promise<ApiResponse<FamilyMember[]>> => {
-    const response = await fetch(`${API_BASE_URL}/family/members`);
-    return response.json();
+    const response = await axiosInstance.get(`${API_BASE_URL}/family/members`);
+    return response.data;
   },
 
   // 가족 ID로 구성원 조회
   getFamilyMembersByFamilyId: async (
     familyId: string
   ): Promise<ApiResponse<FamilyMember[]>> => {
-    const response = await fetch(`${API_BASE_URL}/family/members/${familyId}`);
-    return response.json();
+    const response = await axiosInstance.get(`${API_BASE_URL}/family/members/${familyId}`);
+    return response.data;
   },
 
   // 가족 초대 링크 생성
   generateInviteLink: async (): Promise<
     ApiResponse<{ inviteLink: string; familyCode: string }>
   > => {
-    const response = await fetch(`${API_BASE_URL}/family/generate-link`);
-    return response.json();
+    const response = await axiosInstance.get(`${API_BASE_URL}/family/generate-link`);
+    return response.data;
   },
 
   // 가족 참여
@@ -67,24 +60,24 @@ const familyAPI = {
     familyCode: string;
     nickname?: string;
   }): Promise<ApiResponse<FamilyMember>> => {
-    const response = await fetch(`${API_BASE_URL}/family/join`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    return response.json();
+    const response = await axiosInstance.post(`${API_BASE_URL}/family/join`, data);
+    return response.data;
   },
 };
 
 // React Query 훅들
 
 // 가족 구성원 조회
-export const useFamilyMembers = () => {
+export const useFamilyMembers = (enabled: boolean = false) => {
+  const accessToken = localStorage.getItem('accessToken');
+  
   return useQuery({
     queryKey: familyQueryKeys.members(),
     queryFn: familyAPI.getFamilyMembers,
+    enabled: !!accessToken && enabled, // 토큰이 있고 enabled가 true일 때만 실행
     staleTime: 5 * 60 * 1000, // 5분
     gcTime: 10 * 60 * 1000, // 10분
+    retry: false, // 404 에러 시 재시도하지 않음
   });
 };
 

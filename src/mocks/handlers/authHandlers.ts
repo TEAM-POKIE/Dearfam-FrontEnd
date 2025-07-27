@@ -1,7 +1,8 @@
 import { http, HttpResponse } from "msw";
 import { ApiResponse } from "../types";
 
-// 토큰 새로고침 - POST /auth/refresh
+// 토큰 새로고침 - POST /auth/refresh (임시 비활성화)
+/*
 const refreshToken = http.post("/api/v1/auth/refresh", async ({ request }) => {
   const body = (await request.json()) as { refreshToken: string };
 
@@ -34,6 +35,7 @@ const refreshToken = http.post("/api/v1/auth/refresh", async ({ request }) => {
 
   return HttpResponse.json(response);
 });
+*/
 
 // 로그아웃 - POST /auth/logout
 const logout = http.post("/api/v1/auth/logout", () => {
@@ -47,4 +49,4 @@ const logout = http.post("/api/v1/auth/logout", () => {
 });
 
 
-export const authHandlers = [refreshToken, logout];
+export const authHandlers = [/* refreshToken, */ logout];

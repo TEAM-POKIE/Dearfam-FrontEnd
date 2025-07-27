@@ -4,7 +4,7 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "ax
 // Axios 설정 타입 확장
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   metadata?: { startTime: Date };
-  _retry?: boolean;
+  // _retry?: boolean; // 토큰 갱신 관련 - 임시 비활성화
 }
 
 
@@ -18,6 +18,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -32,12 +33,15 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// 응답 인터셉터 - 토큰 만료 처리
+// 응답 인터셉터 - 토큰 만료 처리 (임시 비활성화)
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
   async (error: AxiosError) => {
+    // 토큰 갱신 로직 임시 비활성화
+    // TODO: 나중에 필요할 때 활성화
+    /*
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
     
     // 401 에러이고 아직 재시도하지 않은 경우
@@ -79,6 +83,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
+    */
     
     return Promise.reject(error);
   }
