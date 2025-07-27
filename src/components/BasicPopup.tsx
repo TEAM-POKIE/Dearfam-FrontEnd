@@ -1,6 +1,7 @@
 import * as React from "react";
-import { X } from "lucide-react";
+
 import { BasicButton } from "./BasicButton";
+import exitIcon from "../assets/image/icon_exit_20.svg";
 
 interface PopupProps {
   isOpen: boolean;
@@ -42,16 +43,16 @@ export const BasicPopup: React.FC<PopupProps> = ({
           className="absolute top-[clamp(0.75rem,1.92vw,1.25rem)] right-[clamp(0.75rem,1.92vw,1.25rem)] text-main-3 hover:text-neutral-600"
           aria-label="Close"
         >
-          <X className="w-[clamp(1rem,1.54vw,1.5rem)] h-[clamp(1rem,1.54vw,1.5rem)]" />
+          <img src={exitIcon} alt="exitIcon" />
         </button>
 
         <div className="w-full flex flex-col items-center gap-[clamp(1rem,2.88vw,1.875rem)]">
-          <h4 className="text-h4 text-center">{title}</h4>
+          <h4 className="text-h4 text-center whitespace-pre-line">{title}</h4>
 
           <div>
             <div className="text-neutral-600 text-center">
               {typeof content === "string" ? (
-                <p className="text-body3">{content}</p>
+                <p className="text-body3 whitespace-pre-line">{content}</p>
               ) : (
                 content
               )}
@@ -63,6 +64,7 @@ export const BasicPopup: React.FC<PopupProps> = ({
             onClick={onButtonClick || onClose}
             color="main_1"
             size={290}
+            textStyle="text-h4"
           />
         </div>
       </div>

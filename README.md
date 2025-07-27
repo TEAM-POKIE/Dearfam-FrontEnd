@@ -1,125 +1,105 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    "react-x": reactX,
-    "react-dom": reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs["recommended-typescript"].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
-```
-
-# DearFam 프로젝트
-
-## 프로젝트 구조
+# 📁 DearFam 프로젝트 폴더 구조
 
 ```
 src/
-├── assets/            # 정적 파일 (이미지, 아이콘, 폰트 등)
-├── components/        # 공통적으로 사용하는 UI 컴포넌트 모음
-│   └── ui/            # 기본 UI 컴포넌트 (버튼, 카드, 입력 필드 등)
-├── features/          # 특정 도메인(기능) 단위 컴포넌트 및 상태 관리
-├── hooks/             # 커스텀 훅을 저장하는 곳
-├── lib/               # 외부 라이브러리나 프로젝트의 핵심 유틸리티 파일 관리
-│   ├── api/           # API 요청 관련 코드
-│   ├── store/         # 상태 관리 라이브러리
-│   └── validation/    # 입력값 검증 관련 로직
-├── pages/             # 개별 페이지 컴포넌트
-├── presenters/        # 비즈니스 로직 처리를 담당하는 부분
-├── viewmodels/        # 상태 및 UI 데이터 관리
-└── views/             # 실제 UI를 구성하는 부분
+├── assets/                 # 🖼️ 정적 리소스
+│   ├── font/              # 폰트 파일
+│   └── image/             # 이미지 파일
+│       ├── section1/      # 섹션별 이미지
+│       ├── section2/
+│       └── section7/
+│
+├── components/            # 🧩 전역 재사용 컴포넌트
+│   ├── form/             # 폼 관련 컴포넌트
+│   └── ui/               # UI 컴포넌트 (버튼, 카드 등)
+│       └── section1/     # 섹션별 UI 컴포넌트
+│
+├── context/              # 🌐 React Context (전역 상태)
+│
+├── data/                 # 📊 정적 데이터 및 상수
+│
+├── hooks/                # 🎣 전역 커스텀 훅
+│
+├── pages/                # 📄 페이지별 구조화
+│   ├── Home/             # 홈 페이지
+│   │   ├── components/   # 홈에서만 사용되는 컴포넌트
+│   │   ├── mainDetailPage/ # 상세 페이지 컴포넌트들
+│   │   └── index.tsx     # 메인 컴포넌트
+│   │
+│   ├── Start/            # 시작 페이지
+│   │   ├── index.tsx     # StartPage 컴포넌트
+│   │   ├── FirstMakePage.tsx
+│   │   ├── MakeConfirmPage.tsx
+│   │   └── ...
+│   │
+│   ├── Bookshelf/        # 책장 페이지
+│   │   ├── index.tsx
+│   │   ├── BookshelfView.tsx
+│   │   └── BookshelfViewModel.tsx
+│   │
+│   └── ... (기타 페이지들)
+│
+├── routes/               # 🛣️ 라우팅 설정
+│
+├── store/               # 🗄️ 전역 상태 관리 (Zustand)
+│   ├── headerStore.ts
+│   ├── carouselStore.ts
+│   └── ...
+│
+├── utils/               # 🛠️ 유틸리티 함수들
+│
+├── App.tsx             # 메인 앱 컴포넌트
+├── main.tsx            # 진입점
+└── index.css           # 글로벌 스타일
 ```
 
-## 폴더 구조 설명
+## 📂 폴더별 설명
 
-**🔹 assets/**
+### 🏠 **pages/**
+- **핵심 개념**: 각 페이지는 독립적인 폴더를 가지며, 해당 페이지에서만 사용되는 모든 파일들이 여기에 위치합니다.
+- **구조**: `index.tsx` (메인 컴포넌트) + 페이지별 전용 컴포넌트/훅
+- **장점**: 페이지별 코드 격리, 높은 응집도
 
-- 정적 파일 (이미지, 아이콘, 폰트 등)
+### 🧩 **components/**
+- **용도**: 여러 페이지에서 재사용되는 전역 컴포넌트
+- **하위 구조**: 
+  - `ui/`: 기본 UI 컴포넌트 (Button, Card, Input 등)
+  - `form/`: 폼 관련 컴포넌트
+- **원칙**: 페이지 특화 컴포넌트는 해당 페이지 폴더에 위치
 
-**🔹 components/**
+### 🗄️ **store/**
+- **용도**: Zustand를 사용한 전역 상태 관리
+- **파일명**: `[기능명]Store.ts` 형식
+- **범위**: 여러 페이지에서 공유되는 상태만 포함
 
-- 공통적으로 사용하는 UI 컴포넌트 모음 (버튼, 모달, 입력 필드 등)
+### 🎣 **hooks/**
+- **용도**: 여러 페이지에서 재사용되는 커스텀 훅
+- **범위**: 페이지별 전용 훅은 해당 페이지 폴더에 위치
 
-**🔹 features/**
+### 🛠️ **utils/**
+- **용도**: 순수 함수 기반의 유틸리티 함수들
+- **원칙**: 사이드 이펙트가 없는 함수만 포함
 
-- 특정 도메인(기능) 단위 컴포넌트 및 상태 관리 포함
-- (예: auth, dashboard, profile 같은 도메인별로 나뉘는 경우)
+### 🌐 **context/**
+- **용도**: React Context API를 사용한 전역 상태
+- **현재**: 빈 폴더 (필요시 추가)
 
-**🔹 hooks/**
+### 📊 **data/**
+- **용도**: 정적 데이터, 상수, 설정 파일
+- **예시**: API 엔드포인트, 테마 설정, 상수 값들
 
-- 커스텀 훅을 저장하는 곳
-- (예: useAuth.ts, useDebounce.ts 등)
+## 🎯 설계 원칙
 
-**🔹 lib/**
+1. **📍 지역성 우선**: 특정 페이지에서만 사용되는 코드는 해당 페이지 폴더에 위치
+2. **🔄 재사용성**: 여러 곳에서 사용되는 코드만 전역 폴더에 위치
+3. **🏗️ 명확한 책임**: 각 폴더는 명확한 역할과 책임을 가짐
+4. **📈 확장성**: 새로운 페이지나 기능 추가 시 일관된 구조 유지
 
-- 외부 라이브러리나 프로젝트의 핵심 유틸리티 파일 관리
-- api/: API 요청 관련 코드 (axios 관련 설정)
-- store/: 상태 관리 라이브러리 (예: Zustand 또는 Redux)
-- validation/: 입력값 검증 관련 로직 (예: Yup 또는 Zod)
-- utils.ts: 공통적으로 사용되는 유틸리티 함수 모음
+## 🚀 장점
 
-**🔹 pages/**
-
-- 개별 페이지 컴포넌트
-- (예: Login.tsx, Dashboard.tsx 등)
-
-**🔹 presenters/**
-
-- 비즈니스 로직 처리를 담당하는 부분
-- ViewModel과 분리해서 UI 로직과 데이터 처리 로직을 명확히 구분하는 역할
-- 예를 들면, 컴포넌트에서 직접 API 요청을 하지 않고 Presenter를 통해 호출하도록 설계 가능
-
-**🔹 viewmodels/**
-
-- ViewModel (상태 및 UI 데이터 관리)
-- 상태를 관리하면서 View(UI)와 Model(API, Store) 사이를 연결하는 역할
-- 예를 들어, React의 Zustand, Recoil 같은 상태 관리 라이브러리를 활용할 수 있음
-
-**🔹 views/**
-
-- 실제 UI를 구성하는 부분
-- Presenter 또는 ViewModel에서 데이터를 받아서 UI를 렌더링하는 역할
+- ✅ **높은 응집도**: 관련 코드들이 한 곳에 모여있음
+- ✅ **낮은 결합도**: 페이지별 코드가 독립적으로 관리됨
+- ✅ **쉬운 유지보수**: 기능 수정 시 해당 페이지 폴더만 확인
+- ✅ **명확한 구조**: 코드 위치를 직관적으로 파악 가능
+- ✅ **팀 협업 개선**: 일관된 구조로 팀원 간 이해도 향상 
+]
