@@ -6,12 +6,17 @@ import { AddPicture } from "./components/AddPicture";
 import BasicButton from "@/components/BasicButton";
 import ConfirmPopup from "@/components/ConfirmPopup";
 import { BasicLoading } from "@/components/BasicLoading";
+import { useWritePostStore } from "@/context/store/writePostStore";
+import { usePostMemoryPost } from "@/data/api/memory-post/memory";
 
 export function WritePage() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-
+  const { resetForm, validateForm } = useWritePostStore();
+  const { mutate: postMemoryPost } = usePostMemoryPost();
+  // 폼 유효성 검사 결과
+  const { isValid } = validateForm();
   // 컴포넌트가 마운트되면 로딩 완료
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -27,11 +32,19 @@ export function WritePage() {
 
   const handleConfirmDelete = () => {
     setShowConfirmModal(false);
+    resetForm();
     navigate(-1);
   };
 
   const handleCancelDelete = () => {
     setShowConfirmModal(false);
+  };
+
+  // 폼 제출 핸들러
+  const handleSubmit = () => {
+    if (isValid) {
+      postMemoryPost();
+    }
   };
 
   // 로딩 중일 때 로딩 화면 표시
@@ -57,8 +70,10 @@ export function WritePage() {
         <BasicButton
           text="작성하기"
           size={350}
-          color="bg-bg-3"
+          color={isValid ? "main_1" : "gray_3"}
           textStyle="text_body2"
+          onClick={handleSubmit}
+          disabled={!isValid}
         />
       </div>
 

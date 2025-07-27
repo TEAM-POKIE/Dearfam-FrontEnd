@@ -1,34 +1,15 @@
 import axios from "../axiosInstance";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { RecentMemoryPost } from "./type";
+import { useWritePostStore } from "@/context/store/writePostStore";
+import { AxiosError } from "axios";
+import axiosInstance from "../axiosInstance";
 
 export type MemoryPost = {
   postId: number;
   memoryDate: string;
-};
-
-export type RecentMemoryPost = {
-  postId: number;
-  title: string;
-  content: string;
-  commentCount: number;
-  memoryDate: string;
-  participants: {
-    familyMemberId: number;
-    nickname: string;
-  }[];
-  liked: boolean;
-  images?: string[]; // 이미지 속성 추가
-};
-
-// POST 요청을 위한 타입 정의 (API 스키마에 맞춰서)
-export type PostMemoryPostRequest = {
-  title: string;
-  content: string;
-  memoryDate: string; // YYYY-MM-DD 형식
-  participantFamilyMemberIds: number[];
-  images?: File[]; // 파일 배열
 };
 
 // POST 응답 타입
@@ -67,49 +48,6 @@ export const getAllMemoryPostsByTimeOrder =
     return res.data;
   };
 
-// 최근 메모리 포스트 가져오기
-
-// 메모리 포스트 생성 (FormData 사용 - 이미지 포함)
-export const postMemoryPost = async (
-  data: PostMemoryPostRequest
-): Promise<PostMemoryPostResponse> => {
-  const formData = new FormData();
-
-  // 기본 데이터 추가
-  formData.append("title", data.title);
-  formData.append("content", data.content);
-  formData.append("memoryDate", data.memoryDate);
-
-  // 참여자 ID 배열 추가
-  data.participantFamilyMemberIds.forEach((id, index) => {
-    formData.append(`participantFamilyMemberIds[${index}]`, id.toString());
-  });
-
-  // 이미지 파일들 추가
-  if (data.images && data.images.length > 0) {
-    data.images.forEach((file) => {
-      formData.append(`images`, file);
-    });
-  }
-
-  console.log("📤 POST 요청 데이터:", {
-    title: data.title,
-    content: data.content,
-    memoryDate: data.memoryDate,
-    participantFamilyMemberIds: data.participantFamilyMemberIds,
-    imageCount: data.images?.length || 0,
-  });
-
-  const response = await axios.post(`${API_BASE_URL}/memory-post`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-
-  console.log("✅ POST 응답:", response.data);
-  return response.data;
-};
-
 export const getMemoryPostById = async () => {
   const res = await axios.get(`${API_BASE_URL}/memory-post`);
   return res.data;
@@ -125,5 +63,77 @@ export const useGetMemoryRecentPosts = () => {
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: 3,
+  });
+};
+
+import { resizeImage } from "@/utils/imageUtils";
+
+export const usePostMemoryPost = () => {
+  const { getPostData } = useWritePostStore();
+
+  return useMutation({
+    mutationKey: ["memory-post", "post"],
+    mutationFn: async () => {
+      const postData = getPostData();
+      const formData = new FormData();
+
+      // request 객체를 JSON으로 구성
+      const requestData = {
+        title: postData.title,
+        content: postData.content,
+        memoryDate: postData.memoryDate,
+        participantFamilyMemberIds: postData.participantFamilyMemberIds,
+      };
+
+      // request 객체를 JSON 문자열로 추가
+      formData.append(
+        "request",
+        new Blob([JSON.stringify(requestData)], {
+          type: "application/json",
+        })
+      );
+
+      // 이미지 파일들을 images 배열로 추가
+      if (postData.images && postData.images.length > 0) {
+        postData.images.forEach((image) => {
+          formData.append("images", image);
+        });
+      }
+
+      console.log("전송할 데이터:", {
+        request: requestData,
+        imageCount: postData.images?.length || 0,
+      });
+
+      return axiosInstance.post(`${API_BASE_URL}/memory-post`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        timeout: 30000, // 30초로 타임아웃 연장 (파일 업로드용)
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            console.log(`업로드 진행률: ${percentCompleted}%`);
+          }
+        },
+      });
+    },
+    onSuccess: (data) => {
+      console.log("메모리 포스트 생성 성공", data);
+    },
+    onError: (error: AxiosError) => {
+      console.log("❌ 메모리 포스트 생성 실패");
+
+      if (error.response) {
+        console.log("📦 응답 상태 코드:", error.response.status);
+        console.log("📨 백엔드 응답 메시지:", error.response);
+      } else if (error.request) {
+        console.log("🕸 요청은 갔지만 응답 없음", error.request);
+      } else {
+        console.log("⚠️ 요청 생성 중 에러", error.response);
+      }
+    },
   });
 };

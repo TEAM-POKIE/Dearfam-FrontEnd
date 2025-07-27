@@ -2,13 +2,12 @@ import { EventSlideContainer } from "./EventSlideContainer";
 import { useHeaderStore } from "@/context/store/headerStore";
 import { BasicLoading } from "@/components/BasicLoading";
 
-import * as React from "react";
 import { HomeSlider } from "./HomeSlider";
 import { EventGallery } from "./EventGallery";
-
 import { useGetMemoryRecentPosts } from "@/data/api/memory-post/memory";
+import { memo } from "react";
 
-export function HomePage() {
+const HomePage = memo(function HomePage() {
   const { mode } = useHeaderStore();
 
   // 최근 메모리 포스트 데이터 가져오기
@@ -50,4 +49,6 @@ export function HomePage() {
       )}
     </div>
   );
-}
+});
+
+export { HomePage };

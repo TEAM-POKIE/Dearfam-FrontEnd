@@ -4,6 +4,7 @@ import { Slider } from "@/components/ui/shadcn/slider";
 import ConfirmPopup from "@/components/ConfirmPopup";
 import deleteIcon from "../../../assets/image/section3/icon_cancel.svg";
 import styles from "./AddPicture.module.css";
+import { useWritePostStore } from "@/context/store/writePostStore";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -31,7 +32,19 @@ const debounce = <T extends unknown[]>(
 };
 
 export const AddPicture = () => {
+  const { images, setImages } = useWritePostStore();
   const [files, setFiles] = useState<FileWithPreview[]>([]);
+
+  // zustand store의 images와 local files 상태 동기화
+  useEffect(() => {
+    setFiles(
+      images.map((image) => ({
+        ...image,
+        preview: URL.createObjectURL(image),
+        id: generateId(), // File 객체에는 id가 없으므로 새로 생성
+      }))
+    );
+  }, [images]);
   const [sliderValue, setSliderValue] = useState([0]);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
@@ -144,7 +157,7 @@ export const AddPicture = () => {
         })
       );
 
-      setFiles((prev) => [...prev, ...newFiles]);
+      setImages([...images, ...newFiles]);
 
       // 이미지가 추가될 때만 스크롤을 마지막으로 이동
       if (newFiles.length > 0) {
@@ -153,7 +166,7 @@ export const AddPicture = () => {
         }, 100);
       }
     },
-    [files.length]
+    [files.length, images, setImages]
   );
 
   // 삭제 확인 모달 띄우기
@@ -163,18 +176,21 @@ export const AddPicture = () => {
   }, []);
 
   // 실제 파일 삭제 함수
-  const removeFile = useCallback((fileId: string) => {
-    setFiles((prev) => {
-      const fileIndex = prev.findIndex((file) => file.id === fileId);
+  const removeFile = useCallback(
+    (fileId: string) => {
+      const fileIndex = files.findIndex((file) => file.id === fileId);
       if (fileIndex !== -1) {
         // URL.revokeObjectURL을 호출해서 메모리 누수 방지
-        URL.revokeObjectURL(prev[fileIndex].preview);
-        return prev.filter((file) => file.id !== fileId);
+        URL.revokeObjectURL(files[fileIndex].preview);
+
+        // zustand store의 images도 함께 업데이트
+        const newImages = images.filter((_, index) => index !== fileIndex);
+        setImages(newImages);
       }
-      return prev;
-    });
-    // 삭제 시에는 현재 스크롤 위치 유지 (자동 스크롤 없음)
-  }, []);
+      // 삭제 시에는 현재 스크롤 위치 유지 (자동 스크롤 없음)
+    },
+    [files, images, setImages]
+  );
 
   // 삭제 확인 처리
   const handleConfirmDelete = useCallback(() => {
@@ -247,25 +263,34 @@ export const AddPicture = () => {
         return;
       }
 
-      setFiles((prev) => {
-        const draggedIndex = prev.findIndex((file) => file.id === draggedItem);
-        const targetIndex = prev.findIndex((file) => file.id === targetFileId);
+      // files 배열 재정렬 후 zustand store 업데이트
+      const draggedFileIndex = files.findIndex(
+        (file) => file.id === draggedItem
+      );
+      const targetFileIndex = files.findIndex(
+        (file) => file.id === targetFileId
+      );
 
-        if (draggedIndex === -1 || targetIndex === -1) return prev;
+      if (draggedFileIndex !== -1 && targetFileIndex !== -1) {
+        const newFiles = [...files];
+        const [removed] = newFiles.splice(draggedFileIndex, 1);
+        newFiles.splice(targetFileIndex, 0, removed);
 
-        const newFiles = [...prev];
-        const [removed] = newFiles.splice(draggedIndex, 1);
-        newFiles.splice(targetIndex, 0, removed);
-
-        return newFiles;
-      });
+        // File 객체만 추출해서 zustand store에 저장 (preview와 id 제외)
+        const newImages = newFiles.map((file) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { preview, id, ...fileWithoutExtras } = file;
+          return fileWithoutExtras as File;
+        });
+        setImages(newImages);
+      }
 
       setDraggedItem(null);
       setDragOverItem(null);
       isDragging.current = false;
       stopAutoScroll(); // 드롭 완료 시 자동 스크롤 중지
     },
-    [draggedItem, stopAutoScroll]
+    [draggedItem, stopAutoScroll, files, setImages]
   );
 
   const handleDragEnd = useCallback(() => {
@@ -383,10 +408,10 @@ export const AddPicture = () => {
 
   // 첫 로드 시에만 슬라이더 초기화
   useEffect(() => {
-    if (files.length === 0) {
+    if (images.length === 0) {
       setSliderValue([0]);
     }
-  }, [files.length]);
+  }, [images.length]);
 
   // 드래그가 끝나면 자동 스크롤 중지
   useEffect(() => {
@@ -449,7 +474,7 @@ export const AddPicture = () => {
         }
       }
     }
-  }, []);
+  }, [files, images, setImages, isDragging, isAutoScrolling]);
 
   // 디바운스된 스크롤 핸들러
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 16), [
@@ -485,7 +510,7 @@ export const AddPicture = () => {
     <div className="w-full mt-[1.25rem] px-[0.625rem]">
       {/* 헤더 정보 */}
       <div>
-        <p className="text-body-4 ">선택된 이미지 ({files.length}/10)</p>
+        <p className="text-body-4 ">선택된 이미지 ({images.length}/10)</p>
       </div>
 
       {/* 가로 스크롤 이미지 영역 */}
@@ -586,7 +611,7 @@ export const AddPicture = () => {
             ))}
 
             {/* 추가 버튼 (드롭존) */}
-            {files.length < 10 && (
+            {images.length < 10 && (
               <figure className="shrink-0">
                 <div
                   {...getRootProps()}

@@ -15,8 +15,8 @@ import BasicButton from "@/components/BasicButton";
 import { useCarouselStore } from "@/context/store/carouselStore";
 import { useSliderStore } from "@/context/store/sliderStore";
 import { useNavigate } from "react-router-dom";
-import { type RecentMemoryPost } from "@/data/api/memory-post/memory";
 import { useToggleLike } from "@/hooks/api/useLikeAPI";
+import { RecentMemoryPost } from "@/data/api/memory-post/type";
 
 interface EventCarouselProps {
   showLastItem?: boolean;
@@ -154,14 +154,13 @@ export const EventCarousel = memo<EventCarouselProps>(
 
       // RecentMemoryPost 타입 사용
       const posts: RecentMemoryPost[] = memoryPostsData.data;
+      console.log(posts);
 
       return posts.map((post: RecentMemoryPost) => ({
         id: post.postId || 0,
         title: post.title || "",
-        image:
-          post.images && post.images.length > 0
-            ? post.images[0]
-            : imageNotFound,
+        image: post.thumbnailUrl || imageNotFound,
+        imageCount: post.imageCount || 0,
         content: post.content || "",
         liked: post.liked || false,
         commentCount: post.commentCount || 0,
@@ -335,6 +334,7 @@ export const EventCarousel = memo<EventCarouselProps>(
             id: -1,
             title: "",
             image: "",
+
             content: "",
             liked: false,
             commentCount: 0,
@@ -346,13 +346,13 @@ export const EventCarousel = memo<EventCarouselProps>(
       <div className="w-full flex flex-col justify-center items-center h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
         <div className="relative w-full">
           <Carousel className="w-full" setApi={setApi}>
-            <CarouselContent className="w-full -mx-0 flex items-center gap-x-2 h-full">
+            <CarouselContent className="w-full  -mx-0 flex items-center gap-x-2 h-full">
               {displayItems.map((item, index) => {
                 const dynamicStyle = getSlideStyle(index);
                 return (
                   <CarouselItem
                     key={`${item.id}-${index}`}
-                    className={`basis-[76.9%] cursor-pointer
+                    className={` basis-[76.9%]   cursor-pointer
                     ${index === 0 ? "ml-[2.81rem] pl-0" : ""}
                     ${index === displayItems.length - 1 ? "mr-[2.81rem]" : ""}
                     ${index !== 0 ? "px-0" : ""}
@@ -433,7 +433,7 @@ export const EventCarousel = memo<EventCarouselProps>(
                                   <ImageWithProfiles
                                     imageSrc={item.image}
                                     imageAlt={item.title}
-                                    imageClassName="w-full rounded-[0.88rem]"
+                                    imageClassName=" rounded-[0.88rem] h-[17.5rem] "
                                     profileCount={3}
                                   />
                                   <div className="text-h5 mt-[0.94rem]">

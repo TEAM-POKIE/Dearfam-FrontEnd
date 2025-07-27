@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Skeleton } from "../../../components/ui/shadcn/skeleton";
+import imageNotFound from "../../../assets/image/section2/image_not_found_270x280.svg";
 
 interface ImageWithProfilesProps {
   imageSrc: string;
@@ -13,13 +14,14 @@ export const ImageWithProfiles: React.FC<ImageWithProfilesProps> = ({
   imageSrc,
   imageAlt,
   imageClassName = "",
-  profileCount = 1,
+
+  profileCount,
   profileSize = "medium",
 }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isImageError, setIsImageError] = useState(false);
 
-  const profileImage = "/src/assets/image/style_icon_profile.svg";
+  //const profileImage = "/src/assets/image/style_icon_profile.svg";
   const profileSizeClasses = {
     small: "w-[0.8125rem] h-[0.8125rem]",
     medium: "w-[1.25rem] h-[1.25rem]",
@@ -47,15 +49,15 @@ export const ImageWithProfiles: React.FC<ImageWithProfilesProps> = ({
   }, [imageSrc]);
 
   return (
-    <div className="relative inline-block">
+    <div className="flex justify-center  w-full bg-red-500">
       {!isImageLoaded && !isImageError && (
         <div className="relative">
-          <Skeleton className={imageClassName} />
+          <Skeleton className={` ${imageClassName}`} />
           {/* 프로필 아이콘들 스켈레톤 */}
           <div
             className={`flex gap-[0.5rem] absolute ${profilePositionClasses[profileSize]}`}
           >
-            {Array.from({ length: profileCount }).map((_, index) => (
+            {Array.from({ length: profileCount || 0 }).map((_, index) => (
               <Skeleton
                 key={index}
                 className={`${profileSizeClasses[profileSize]} rounded-full`}
@@ -64,31 +66,30 @@ export const ImageWithProfiles: React.FC<ImageWithProfilesProps> = ({
           </div>
         </div>
       )}
-
       <img
-        className={` ${imageClassName} ${
-          !isImageLoaded && !isImageError ? "opacity-0 absolute" : ""
+        className={`  ${imageClassName} ${
+          isImageError ? "object-cover" : "object-cover"
         }`}
-        src={imageSrc}
+        src={isImageError ? imageNotFound : imageSrc}
         alt={imageAlt}
         onLoad={handleImageLoad}
         onError={handleImageError}
       />
 
-      {isImageLoaded && (
-        <div
-          className={`flex gap-[0.5rem] absolute ${profilePositionClasses[profileSize]}`}
-        >
-          {Array.from({ length: profileCount }).map((_, index) => (
-            <img
-              key={index}
-              className={profileSizeClasses[profileSize]}
-              src={profileImage}
-              alt="프로필 아이콘"
-            />
-          ))}
-        </div>
-      )}
+      {/* {isImageLoaded && (
+          <div
+            className={`flex gap-[0.5rem] absolute ${profilePositionClasses[profileSize]}`}
+          >
+            {Array.from({ length: profileCount || 0 }).map((_, index) => (
+              <img
+                key={index}
+                className={profileSizeClasses[profileSize]}
+                src={profileImage}
+                alt="프로필 아이콘"
+              />
+            ))}
+          </div>
+        )} */}
     </div>
   );
 };

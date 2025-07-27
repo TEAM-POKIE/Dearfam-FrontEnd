@@ -98,7 +98,7 @@ export function AppRoutes() {
     <Routes>
       {/* SplashPage를 루트 경로로 설정 */}
       <Route path="/" element={<SplashPage />} />
-      
+
       {/* 메인 앱 라우트 */}
       <Route path="/home" element={<Layout />}>
         <Route index element={<HomePage />} />

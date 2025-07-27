@@ -9,10 +9,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../../../components/ui/shadcn/popover";
+import { useWritePostStore } from "@/context/store/writePostStore";
+import { useEffect } from "react";
 
 export function DropdownCalender() {
+  const { memoryDate, setMemoryDate } = useWritePostStore();
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
@@ -31,6 +33,10 @@ export function DropdownCalender() {
 
     return `${year}년 ${month}월 ${day}일 ${weekday}`;
   };
+  useEffect(() => {
+    setMemoryDate(memoryDate || "");
+  }, [memoryDate]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -40,7 +46,9 @@ export function DropdownCalender() {
           className="flex px-0 outline-none font-normal border-none shadow-none bg-[#F3F3F3] gap-[0.625rem]"
         >
           <div className="text-h5 text-[#000000]">
-            {date ? formatDate(date) : "날짜를 선택하세요"}
+            {memoryDate
+              ? formatDate(new Date(memoryDate))
+              : "날짜를 선택하세요"}
           </div>
           <img src={dropdownDefaultIcon} alt="날짜 선택" />
         </Button>
@@ -54,10 +62,18 @@ export function DropdownCalender() {
       >
         <Calendar
           mode="single"
-          selected={date}
+          selected={memoryDate ? new Date(memoryDate) : undefined}
           captionLayout="dropdown"
           onSelect={(date) => {
-            setDate(date);
+            if (date) {
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, "0");
+              const day = String(date.getDate()).padStart(2, "0");
+              const formattedDate = `${year}-${month}-${day}`;
+              setMemoryDate(formattedDate);
+            } else {
+              setMemoryDate("");
+            }
             setOpen(false);
           }}
         />
