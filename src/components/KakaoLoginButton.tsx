@@ -37,13 +37,13 @@ export const KakaoLoginButton: React.FC<KakaoLoginButtonProps> = ({ className = 
   return (
     <button
       onClick={handleKakaoLogin}
-      className={`cursor-pointer transition-opacity hover:opacity-90 ${className}`}
+      className={`cursor-pointer transition-opacity hover:opacity-90 flex justify-center items-center ${className}`}
       type="button"
     >
       <img
         src={kakaoLoginImage}
         alt="카카오 로그인"
-        className="w-full h-auto"
+        className="w-full h-auto object-contain"
       />
     </button>
   );

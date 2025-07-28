@@ -1,6 +1,7 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { AppLayout } from "../AppLayout";
+import { AuthGuard } from "@/components/AuthGuard";
 
 // 동적 임포트를 통한 코드 스플리팅
 const HomePage = lazy(() =>
@@ -96,10 +97,10 @@ function Layout() {
 export function AppRoutes() {
   return (
     <Routes>
-      {/* SplashPage를 루트 경로로 설정 */}
+      {/* 1. SplashPage - AuthGuard 적용 */}
       <Route path="/" element={<SplashPage />} />
       
-      {/* 메인 앱 라우트 */}
+      {/* 메인 앱 라우트 - AuthGuard 제거 */}
       <Route path="/home" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="memoryDetailPage" element={<MemoryDetailPage />} />
@@ -110,19 +111,34 @@ export function AppRoutes() {
         <Route path="family" element={<FamilyPage />} />
       </Route>
 
+      {/* 2. LoginPage - AuthGuard 제거 (로그인 페이지는 인증 불필요) */}
+      <Route
+        path="/LoginPage"
+        element={
+          <Suspense fallback={<PageLoadingSpinner />}>
+            <LoginPage />
+          </Suspense>
+        }
+      />
+
+      {/* 3. /Start - AuthGuard 적용 */}
+      <Route
+        path="/Start"
+        element={
+          <AuthGuard mode="nofam">
+            <Suspense fallback={<PageLoadingSpinner />}>
+              <StartPage />
+            </Suspense>
+          </AuthGuard>
+        }
+      />
+
+      {/* 나머지 라우트들 - AuthGuard 제거 */}
       <Route
         path="/StartPage"
         element={
           <Suspense fallback={<PageLoadingSpinner />}>
             <StartPage />
-          </Suspense>
-        }
-      />
-      <Route
-        path="/Start"
-        element={
-          <Suspense fallback={<PageLoadingSpinner />}>
-            <FirstMakePage />
           </Suspense>
         }
       />
@@ -176,14 +192,6 @@ export function AppRoutes() {
         }
       />
       <Route
-        path="/LoginPage"
-        element={
-          <Suspense fallback={<PageLoadingSpinner />}>
-            <LoginPage />
-          </Suspense>
-        }
-      />
-      <Route
         path="/SplashPage"
         element={
           <Suspense fallback={<PageLoadingSpinner />}>
@@ -192,6 +200,7 @@ export function AppRoutes() {
         }
       />
 
+      {/* Setting 페이지들 - AuthGuard 제거 */}
       <Route
         path="/SettingPage"
         element={

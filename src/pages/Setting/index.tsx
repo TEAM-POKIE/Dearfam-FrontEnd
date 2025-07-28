@@ -1,34 +1,78 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ChevronRight, Camera } from "lucide-react";
 import profileIcon from "@/assets/image/style_icon_profile.svg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BasicPopup from "@/components/BasicPopup";
 import { useAuthStore } from "@/context/store/authStore";
-
+import { useCurrentUser } from "@/hooks/api/useUserAPI";
+import { useFamilyMembers } from "@/hooks/api/useFamilyAPI";
+import { BasicToast } from "@/components/BasicToast";
+import { useQueryClient } from "@tanstack/react-query";
 
 // ArrowLeft 및 ChevronRight는 추후 Component로 정의해야함
 
 export function SettingPage() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { logout } = useAuthStore();
+    const queryClient = useQueryClient();
     const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
     const [isWithdrawPopupOpen, setIsWithdrawPopupOpen] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+
+    // 최신 사용자 정보 가져오기 (설정 페이지에서는 항상 최신 정보 필요)
+    const { data: userData, isLoading: userLoading } = useCurrentUser(true);
+    const { data: familyData, isLoading: familyLoading } = useFamilyMembers(true);
+
+    // 사용자 정보 추출
+    const userNickname = userData?.data?.userNickname || "사용자";
+    const userFamilyRole = userData?.data?.userFamilyRole || "";
+    const familyName = familyData?.data?.familyName || "가족";
+
+    // 역할 한글 매핑
+    const roleMapping = {
+        "FATHER": "아빠",
+        "MOTHER": "엄마", 
+        "SON": "아들",
+        "DAUGHTER": "딸"
+    };
+
+    const koreanRole = roleMapping[userFamilyRole as keyof typeof roleMapping] || userFamilyRole;
+
+    // URL 파라미터 확인하여 토스트 메시지 표시
+    useEffect(() => {
+        const message = searchParams.get('message');
+        if (message === 'nickname-changed') {
+            setToastMessage('닉네임 변경이 완료되었어요!');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 5000);
+            
+            // URL에서 파라미터 제거
+            navigate('/SettingPage', { replace: true });
+        }
+    }, [searchParams, navigate]);
 
     const handleLogout = () => {
         // 로그아웃 처리 로직
         console.log("로그아웃 처리");
+        
         // 로컬 스토리지에서 토큰 제거
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        
+        // TanStack Query 캐시 정리
+        queryClient.clear();
         
         // Zustand store에서 로그아웃
         logout();
         
         setIsLogoutPopupOpen(false);
         
-        // 로그아웃 후 로그인 페이지로 이동
-        navigate('/LoginPage');
-
+        // 로그아웃 후 로그인 페이지로 이동 (토스트 메시지와 함께)
+        navigate('/LoginPage?message=logout-success');
     };
 
     const handleWithdraw = () => {
@@ -39,6 +83,9 @@ export function SettingPage() {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         
+        // TanStack Query 캐시 정리
+        queryClient.clear();
+        
         // Zustand store에서 로그아웃
         logout();
         
@@ -46,7 +93,6 @@ export function SettingPage() {
         
         // 탈퇴 후 로그인 페이지로 이동
         navigate('/LoginPage');
-
     };
 
     return (
@@ -79,11 +125,17 @@ export function SettingPage() {
                     </div>
                 </div>
                 <div className="ml-4 flex flex-col items-start">
-                    <p className="text-body2 font-normal">'유기농 가족'의 딸</p>
-                    <div className="flex items-center">
-                        <span className="text-h4 font-bold">홍동생</span>
-                        <span className="text-body2 font-normal">님</span>
-                    </div>
+                    {userLoading || familyLoading ? (
+                        <p className="text-body2 font-normal">로딩 중...</p>
+                    ) : (
+                        <>
+                            <p className="text-body2 font-normal">'{familyName}'의 {koreanRole}</p>
+                            <div className="flex items-center">
+                                <span className="text-h4 font-bold">{userNickname}</span>
+                                <span className="text-body2 font-normal">님</span>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
@@ -182,6 +234,13 @@ export function SettingPage() {
             buttonText="탈퇴하기"
             onButtonClick={handleWithdraw}
         />
+
+        {/* 토스트 메시지 */}
+        {showToast && (
+            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+                <BasicToast message={toastMessage} />
+            </div>
+        )}
     </div>
     );
 }

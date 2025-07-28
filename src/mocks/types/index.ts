@@ -29,7 +29,7 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>;
 
-// 가족 정보 스키마
+// 가족 정보 스키마 (기존)
 export const FamilySchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -40,7 +40,38 @@ export const FamilySchema = z.object({
 
 export type Family = z.infer<typeof FamilySchema>;
 
-// 가족 구성원 스키마
+// 가족 생성 API 응답 스키마 (POST /family)
+export const FamilyCreateResponseSchema = z.object({
+  id: z.number(),
+  familyName: z.string(),
+  parentCount: z.number(),
+  childCount: z.number(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export type FamilyCreateResponse = z.infer<typeof FamilyCreateResponseSchema>;
+
+// 가족 구성원 정보 스키마
+export const FamilyMemberInfoSchema = z.object({
+  familyMemberId: z.number(),
+  familyMemberNickname: z.string(),
+  familyMemberRole: z.string(),
+  familyMemberProfileImage: z.string(),
+});
+
+export type FamilyMemberInfo = z.infer<typeof FamilyMemberInfoSchema>;
+
+// GET /family/members 응답 스키마
+export const FamilyMembersResponseSchema = z.object({
+  familyId: z.number(),
+  familyName: z.string(),
+  familyMembers: z.array(FamilyMemberInfoSchema),
+});
+
+export type FamilyMembersResponse = z.infer<typeof FamilyMembersResponseSchema>;
+
+// 가족 구성원 스키마 (기존 - 다른 용도)
 export const FamilyMemberSchema = z.object({
   id: z.string(),
   user: UserSchema,

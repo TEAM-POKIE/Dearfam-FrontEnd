@@ -1,20 +1,35 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BasicInputBox } from "@/components/ui/section1/BasicInputBox";
 import BasicButton from "@/components/BasicButton";
 import { BasicAlert } from "@/components/ui/section1/BasicAlert";
 import BasicPopup from "@/components/BasicPopup";
+import { useCurrentUser } from "@/hooks/api/useUserAPI";
+import { useUpdateNickname } from "@/hooks/api/useUserAPI";
+import { BasicToast } from "@/components/BasicToast";
 
 export function NameChangePage() {
   const navigate = useNavigate();
   const [nickname, setNickname] = useState("");
   const [isValid, setIsValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isWithdrawPopupOpen, setIsWithdrawPopupOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  // 현재 사용자 정보 가져오기
+  const { data: userData } = useCurrentUser();
+  const updateNicknameMutation = useUpdateNickname();
+
+  // 현재 사용자 닉네임을 초기값으로 설정
+  useEffect(() => {
+    if (userData?.data?.userNickname) {
+      setNickname(userData.data.userNickname);
+    }
+  }, [userData]);
 
   // 닉네임 변경 처리
-  const handleNameChange = () => {
+  const handleNameChange = async () => {
     if (!nickname.trim()) {
       setIsValid(false);
       setErrorMessage("닉네임을 입력해주세요.");
@@ -41,14 +56,20 @@ export function NameChangePage() {
       return;
     }
 
-    // 닉네임 변경 성공 시 팝업 표시
-    setIsWithdrawPopupOpen(true);
-  };
-
-  // 닉네임 변경 완료 후 처리
-  const handleChangeComplete = () => {
-    setIsWithdrawPopupOpen(false);
-    navigate(-1); // 이전 페이지로 돌아가기
+    try {
+      // 닉네임 변경 API 호출
+      await updateNicknameMutation.mutateAsync(nickname);
+      
+                   // 성공 시 Setting 페이지로 리다이렉트 (토스트 메시지와 함께)
+             navigate('/SettingPage?message=nickname-changed', { replace: true });
+    } catch (error) {
+      console.error('닉네임 변경 실패:', error);
+      setToastMessage('닉네임 변경에 실패했습니다.\n다시 시도해주세요.');
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
+    }
   };
 
   // 닉네임 입력값 변경 핸들러
@@ -126,28 +147,21 @@ export function NameChangePage() {
         <div className="absolute bottom-[3.5rem] w-full flex justify-center">
           <div className="mx-[1.25rem]">
             <BasicButton
-              text="닉네임 변경하기"
+              text={updateNicknameMutation.isPending ? "변경 중..." : "닉네임 변경하기"}
               color={isValid && nickname.trim() ? "main_1" : "gray_3"}
               size={350}
               onClick={handleNameChange}
-              disabled={!isValid || !nickname.trim()}
+              disabled={!isValid || !nickname.trim() || updateNicknameMutation.isPending}
             />
           </div>
         </div>
 
-        {/* 닉네임 변경 완료 팝업 */}
-        <BasicPopup
-          isOpen={isWithdrawPopupOpen}
-          onClose={() => setIsWithdrawPopupOpen(false)}
-          title="닉네임 변경 완료"
-          content={
-            <div className="text-center text-body3 text-gray-3">
-              닉네임이 성공적으로 변경되었습니다.
-            </div>
-          }
-          buttonText="확인"
-          onButtonClick={handleChangeComplete}
-        />
+        {/* 토스트 메시지 */}
+        {showToast && (
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+            <BasicToast message={toastMessage} />
+          </div>
+        )}
       </div>
     </div>
   );

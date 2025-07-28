@@ -47,6 +47,10 @@ export const useCurrentUser = (enabled: boolean = true) => {
     staleTime: 10 * 60 * 1000,
     gcTime: 15 * 60 * 1000,
     retry: false, // Prevent retries on 401
+    retryDelay: 1000, // 재시도 간격
+    retryOnMount: false, // 마운트 시 재시도 비활성화
+    refetchOnWindowFocus: false, // 윈도우 포커스 시 재요청 비활성화
+    refetchOnReconnect: false, // 네트워크 재연결 시 재요청 비활성화
   });
 };
 
