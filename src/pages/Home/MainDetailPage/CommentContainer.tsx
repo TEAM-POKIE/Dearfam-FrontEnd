@@ -64,13 +64,22 @@ export function CommentContainer({ postId }: { postId: number }) {
           commentText={comment.content || comment.commentText || ""}
           userName={comment.commentWriterName || comment.userName || "익명"}
           onDelete={() => {
-            deleteComment({
-              postId,
-              commentId: comment.commentId!,
-            });
-            queryClient.invalidateQueries({
-              queryKey: ["memory-post", "comment", postId],
-            });
+            if (comment.commentId === undefined) return;
+
+            deleteComment(
+              { postId, commentId: comment.commentId },
+              {
+                onSuccess: () => {
+                  // 삭제가 성공한 후에만 캐시 무효화
+                  queryClient.invalidateQueries({
+                    queryKey: ["memory-post", "comment", postId],
+                  });
+                },
+                onError: (err) => {
+                  console.error("❌ 댓글 삭제 실패:", err);
+                },
+              }
+            );
           }}
         />
       ))}
