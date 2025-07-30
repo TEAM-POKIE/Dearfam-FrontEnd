@@ -6,22 +6,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/shadcn/dropdown-menu";
-import { MemoryDetail } from "@/data/api/memory-post/type";
+import { useDeleteMemoryPost } from "@/data/api/memory-post/memory";
 
 interface EventHeaderProps {
-  data: MemoryDetail["data"];
+  data: number;
+  postId: number;
 }
 
-export const EventHeader = ({ data }: EventHeaderProps) => {
+export const EventHeader = ({ data, postId }: EventHeaderProps) => {
+  const { mutate: deletePost } = useDeleteMemoryPost();
   return (
-    <div className="flex items-center justify-between w-full px-[1.25rem] h-[3.125rem] ">
+    <div className="flex items-center justify-between w-full px-[1.25rem] py-[0.62rem] h-[3.125rem] ">
       <div className="flex items-center gap-[0.62rem] ">
         <img
           src={iconImage}
           alt="프로필"
           className="w-[1.875rem] h-[1.875rem]"
         />
-        <div>EventWriter</div>
+        <div>{data}</div>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -41,7 +43,10 @@ export const EventHeader = ({ data }: EventHeaderProps) => {
           align="end"
           sideOffset={2}
         >
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => deletePost(postId)}
+          >
             삭제하기
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer">

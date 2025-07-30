@@ -44,6 +44,7 @@ export type MemoryDetail = {
     title: string;
     content: string;
     memoryDate: string;
+    liked: boolean;
     participants: {
       familyMemberId: number;
       nickname: string;
@@ -52,6 +53,12 @@ export type MemoryDetail = {
     imageUrls: {
       imageUrl: string;
       imageOrder: number;
+    }[];
+    participantFamilyMember?: {
+      familyMemberId: number;
+      familyMemberNickname: string;
+      familyMemberProfileImage: string | null;
+      familyMemberRole: string;
     }[];
   };
 };

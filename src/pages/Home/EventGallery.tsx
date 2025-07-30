@@ -101,7 +101,7 @@ export const EventGallery = ({ onLoadingChange }: EventGalleryProps) => {
                           <ImageWithProfiles
                             imageSrc={post.thumbnailUrl || imageNotFound}
                             imageAlt="메모리 이미지"
-                            imageClassName="object-cover rounded-[0.94rem] w-[10.625rem] h-[8.125rem] block"
+                            imageClassName="object-cover rounded-[0.94rem] w-[10.625rem] h-[8.125rem] "
                             profileSize="small"
                           />
                         </div>

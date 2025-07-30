@@ -12,12 +12,14 @@ interface CommentContentProps {
   commentText: string;
   profileImage?: string;
   onOptionsClick?: () => void;
+  onDelete?: () => void;
 }
 
 export function CommentContent({
   userName,
   commentText,
   profileImage,
+  onDelete,
 }: CommentContentProps) {
   return (
     <div className="flex items-start gap-[0.31rem] w-full">
@@ -61,7 +63,7 @@ export function CommentContent({
           </DropdownMenuTrigger>
         </div>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>삭제하기</DropdownMenuItem>
+          <DropdownMenuItem onClick={onDelete}>삭제하기</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

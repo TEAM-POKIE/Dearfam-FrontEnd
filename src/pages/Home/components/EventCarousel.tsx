@@ -15,8 +15,9 @@ import BasicButton from "@/components/BasicButton";
 import { useCarouselStore } from "@/context/store/carouselStore";
 import { useSliderStore } from "@/context/store/sliderStore";
 import { useNavigate } from "react-router-dom";
-import { useToggleLike } from "@/hooks/api/useLikeAPI";
+import { usePutLiked } from "@/data/api/memory-post/memory";
 import { RecentMemoryPost } from "@/data/api/memory-post/type";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EventCarouselProps {
   showLastItem?: boolean;
@@ -45,7 +46,13 @@ export const EventCarousel = memo<EventCarouselProps>(
     } = useCarouselStore();
     const { setSliderValue, step } = useSliderStore();
 
-    const toggleLikeMutation = useToggleLike();
+    const { mutate: putLiked } = usePutLiked();
+    const queryClient = useQueryClient();
+
+    // 컴포넌트 마운트 시 최신 데이터 가져오기
+    useEffect(() => {
+      queryClient.invalidateQueries({ queryKey: ["memory-post", "recent"] });
+    }, [queryClient]);
 
     // 색상 보간 함수
     const interpolateColor = useCallback((progress: number) => {
@@ -255,7 +262,7 @@ export const EventCarousel = memo<EventCarouselProps>(
     }, [shouldRememberIndex, resetIndex]);
 
     const handleCardClick = useCallback(
-      (event: React.MouseEvent, index: number) => {
+      (event: React.MouseEvent, index: number, postId: number) => {
         // 좋아요 버튼 클릭 시에는 이벤트 전파를 막음
         if ((event.target as HTMLElement).closest('img[alt="heart"]')) {
           return;
@@ -272,12 +279,30 @@ export const EventCarousel = memo<EventCarouselProps>(
           const newSliderValue = index * step;
           setSliderValue(newSliderValue);
           return;
+        } else {
+          navigate(`/home/memoryDetailPage/${postId}`);
         }
 
         // 현재 활성 슬라이드인 경우에만 상세 페이지로 이동
         saveIndexForDetailPage(currentIndex); // 상세 페이지로 이동할 때만 인덱스 저장
         if (!showLastItem) {
-          navigate("/memoryDetailPage");
+          // 실제 postId를 사용하여 네비게이션
+          const currentPost = memoryPostsData?.data?.[currentIndex];
+          const postId = currentPost?.postId;
+
+          console.log(
+            `🔗 EventCarousel 네비게이션: currentIndex=${currentIndex}, postId=${postId}`
+          );
+
+          if (postId) {
+            navigate(`/home/memoryDetailPage/${postId}`);
+          } else {
+            console.error("❌ postId를 찾을 수 없습니다:", {
+              currentIndex,
+              currentPost,
+              memoryPostsData,
+            });
+          }
         }
       },
       [
@@ -288,6 +313,7 @@ export const EventCarousel = memo<EventCarouselProps>(
         setSliderValue,
         step,
         saveIndexForDetailPage,
+        memoryPostsData,
       ]
     );
 
@@ -307,7 +333,19 @@ export const EventCarousel = memo<EventCarouselProps>(
         });
 
         // API 호출
-        toggleLikeMutation.mutate(postId.toString(), {
+        putLiked(postId, {
+          onSuccess: () => {
+            // 성공 시 관련된 모든 쿼리 무효화
+            queryClient.invalidateQueries({
+              queryKey: ["memory-post", "detail"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["memory-post", "recent"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["memory-post", "time-order"],
+            });
+          },
           onError: () => {
             // 실패 시 상태 롤백
             setLikedEvents((prev) => {
@@ -323,7 +361,7 @@ export const EventCarousel = memo<EventCarouselProps>(
           },
         });
       },
-      [toggleLikeMutation, likedEvents]
+      [putLiked, likedEvents, queryClient]
     );
 
     // 실제 표시할 아이템들 (showLastItem이 true면 마지막에 추가 아이템 포함)
@@ -378,7 +416,9 @@ export const EventCarousel = memo<EventCarouselProps>(
                             ? "none"
                             : "background-color 450ms linear(0, 0.1605, 0.4497, 0.7063, 0.8805, 0.9768, 1.0183, 1.0284, 1.0242, 1.0161, 1.0087, 1.0036, 1.0008, 0.9995, 1), box-shadow 500ms linear(0, 0.1144, 0.3475, 0.5885, 0.7844, 0.9194, 0.9987, 1.0359, 1.046, 1.0413, 1.0308, 1.0196, 1.0104, 1.004, 1.0002, 0.9984, 1)",
                         }}
-                        onClick={(e) => handleCardClick(e, index)}
+                        onClick={(e) => {
+                          handleCardClick(e, index, item.id);
+                        }}
                       >
                         {dynamicStyle.showContent && (
                           <div

@@ -102,7 +102,7 @@ export function AppRoutes() {
       {/* 메인 앱 라우트 */}
       <Route path="/home" element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="memoryDetailPage" element={<MemoryDetailPage />} />
+        <Route path="memoryDetailPage/:postId" element={<MemoryDetailPage />} />
         <Route path="daily" element={<DailyPage />} />
         <Route path="bookshelf" element={<BookshelfPage />} />
         <Route path="write" element={<WritePage />} />
