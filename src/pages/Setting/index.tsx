@@ -140,14 +140,8 @@ export function SettingPage() {
         
         setIsLogoutPopupOpen(false);
         
-<<<<<<< HEAD
         // 로그아웃 후 로그인 페이지로 이동 (토스트 메시지와 함께)
         navigate('/LoginPage?message=logout-success');
-=======
-        // 로그아웃 후 로그인 페이지로 이동
-        navigate('/LoginPage');
-
->>>>>>> main
     };
 
     const handleWithdraw = () => {

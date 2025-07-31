@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiResponse, User } from "../../mocks/types";
-import axiosInstance from "../../lib/api/axiosInstance";
+import axiosInstance from "../../data/api/axiosInstance";
 
 // API 기본 URL - 환경변수 사용
 const API_BASE_URL = import.meta.env.VITE_API_URL;

@@ -70,21 +70,17 @@ const SplashPage = lazy(() =>
   }))
 );
 
-// Setting 관련 페이지들
 const NameChangePage = lazy(() =>
   import("../pages/Setting/NameChangePage").then((module) => ({
     default: module.NameChangePage,
   }))
 );
 
-// Home 관련 페이지들
 const MemoryDetailPage = lazy(() =>
   import("@/pages/Home/MemoryDetailPage").then((module) => ({
     default: module.MemoryDetailPage,
   }))
 );
-
-// 로딩 컴포넌트 - 빈 화면으로 변경
 const PageLoadingSpinner = () => <div className="min-h-screen bg-bg-1"></div>;
 
 function Layout() {
@@ -102,13 +98,7 @@ export function AppRoutes() {
     <Routes>
       {/* 1. SplashPage - AuthGuard 적용 */}
       <Route path="/" element={<SplashPage />} />
-<<<<<<< HEAD
       
-      {/* 메인 앱 라우트 - AuthGuard 제거 */}
-=======
-
-      {/* 메인 앱 라우트 */}
->>>>>>> main
       <Route path="/home" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="memoryDetailPage/:postId" element={<MemoryDetailPage />} />
@@ -120,8 +110,6 @@ export function AppRoutes() {
         <Route path="family" element={<FamilyPage />} />
       </Route>
 
-<<<<<<< HEAD
-      {/* 2. LoginPage - AuthGuard 제거 (로그인 페이지는 인증 불필요) */}
       <Route
         path="/LoginPage"
         element={
@@ -131,11 +119,10 @@ export function AppRoutes() {
         }
       />
 
-      {/* 3. /Start - AuthGuard 적용 */}
       <Route
         path="/Start"
         element={
-          <AuthGuard mode="nofam">
+          <AuthGuard mode="nofam"> {/* AuthGuard 적용 */}
             <Suspense fallback={<PageLoadingSpinner />}>
               <StartPage />
             </Suspense>
@@ -143,9 +130,6 @@ export function AppRoutes() {
         }
       />
 
-      {/* 나머지 라우트들 - AuthGuard 제거 */}
-=======
->>>>>>> main
       <Route
         path="/StartPage"
         element={
@@ -212,10 +196,6 @@ export function AppRoutes() {
         }
       />
 
-<<<<<<< HEAD
-      {/* Setting 페이지들 - AuthGuard 제거 */}
-=======
->>>>>>> main
       <Route
         path="/SettingPage"
         element={
