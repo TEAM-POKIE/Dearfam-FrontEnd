@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiResponse, MemoryPost, FamilyMember } from "../../mocks/types";
 
-// API 기본 URL
-const API_BASE_URL = "/api/v1";
+// API 기본 URL - 환경변수 사용
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Query Keys
 export const memoryPostQueryKeys = {

@@ -1,5 +1,28 @@
 # 📁 DearFam 프로젝트 폴더 구조
 
+## 🚀 시작하기
+
+### 환경 변수 설정
+
+프로젝트를 실행하기 전에 `.env` 파일을 생성하고 다음 환경 변수들을 설정해주세요:
+
+```bash
+# API 설정
+VITE_API_URL=http://localhost:8080/api/v1
+
+# 카카오 로그인 설정
+VITE_KAKAO_REST_KEY=your_kakao_rest_api_key
+```
+
+**중요**: 환경 변수가 설정되지 않으면 인증 과정에서 무한 로딩이 발생할 수 있습니다.
+
+### 설치 및 실행
+
+```bash
+npm install
+npm run dev
+```
+
 ```
 src/
 ├── assets/                 # 🖼️ 정적 리소스

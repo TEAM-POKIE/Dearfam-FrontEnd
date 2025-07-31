@@ -1,6 +1,7 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { AppLayout } from "../AppLayout";
+import { AuthGuard } from "@/components/AuthGuard";
 
 // 동적 임포트를 통한 코드 스플리팅
 const HomePage = lazy(() =>
@@ -60,7 +61,7 @@ const KakaoCallback = lazy(() =>
 );
 const LoginPage = lazy(() =>
   import("../pages/Start/LoginPage").then((module) => ({
-    default: module.LoginPage,
+    default: module.default,
   }))
 );
 const SplashPage = lazy(() =>
@@ -69,21 +70,17 @@ const SplashPage = lazy(() =>
   }))
 );
 
-// Setting 관련 페이지들
 const NameChangePage = lazy(() =>
   import("../pages/Setting/NameChangePage").then((module) => ({
     default: module.NameChangePage,
   }))
 );
 
-// Home 관련 페이지들
 const MemoryDetailPage = lazy(() =>
   import("@/pages/Home/MemoryDetailPage").then((module) => ({
     default: module.MemoryDetailPage,
   }))
 );
-
-// 로딩 컴포넌트 - 빈 화면으로 변경
 const PageLoadingSpinner = () => <div className="min-h-screen bg-bg-1"></div>;
 
 function Layout() {
@@ -99,10 +96,9 @@ function Layout() {
 export function AppRoutes() {
   return (
     <Routes>
-      {/* SplashPage를 루트 경로로 설정 */}
+      {/* 1. SplashPage - AuthGuard 적용 */}
       <Route path="/" element={<SplashPage />} />
-
-      {/* 메인 앱 라우트 */}
+      
       <Route path="/home" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="memoryDetailPage/:postId" element={<MemoryDetailPage />} />
@@ -113,6 +109,26 @@ export function AppRoutes() {
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
       </Route>
+
+      <Route
+        path="/LoginPage"
+        element={
+          <Suspense fallback={<PageLoadingSpinner />}>
+            <LoginPage />
+          </Suspense>
+        }
+      />
+
+      <Route
+        path="/Start"
+        element={
+          <AuthGuard mode="nofam"> {/* AuthGuard 적용 */}
+            <Suspense fallback={<PageLoadingSpinner />}>
+              <StartPage />
+            </Suspense>
+          </AuthGuard>
+        }
+      />
 
       <Route
         path="/StartPage"
@@ -168,14 +184,6 @@ export function AppRoutes() {
         element={
           <Suspense fallback={<PageLoadingSpinner />}>
             <KakaoCallback />
-          </Suspense>
-        }
-      />
-      <Route
-        path="/LoginPage"
-        element={
-          <Suspense fallback={<PageLoadingSpinner />}>
-            <LoginPage />
           </Suspense>
         }
       />

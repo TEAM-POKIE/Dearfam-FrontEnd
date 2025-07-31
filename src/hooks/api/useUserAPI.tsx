@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiResponse, User } from "../../mocks/types";
+import axiosInstance from "../../data/api/axiosInstance";
 
-// API 기본 URL
-const API_BASE_URL = "/api/v1";
+// API 기본 URL - 환경변수 사용
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Query Keys
 export const userQueryKeys = {
@@ -12,39 +13,57 @@ export const userQueryKeys = {
 } as const;
 
 // API 함수들
-const userAPI = {
+export const userAPI = {
   // 현재 사용자 정보 조회
   getCurrentUser: async (): Promise<ApiResponse<User>> => {
-    const response = await fetch(`${API_BASE_URL}/users/user`);
-    return response.json();
+    const response = await axiosInstance.get(`${API_BASE_URL}/users/user`);
+    return response.data;
   },
 
   // 특정 사용자 정보 조회
   getUserById: async (userId: string): Promise<ApiResponse<User>> => {
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`);
-    return response.json();
+    const response = await axiosInstance.get(`${API_BASE_URL}/users/${userId}`);
+    return response.data;
   },
 
   // 닉네임 변경
   updateNickname: async (nickname: string): Promise<ApiResponse<User>> => {
-    const response = await fetch(`${API_BASE_URL}/users/nickname`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname }),
+    const response = await axiosInstance.put(`${API_BASE_URL}/users/nickname`, {
+      nickname,
     });
-    return response.json();
+    return response.data;
+  },
+
+  // 프로필 이미지 업로드
+  updateProfileImage: async (file: File): Promise<ApiResponse<{ profileImageUrl: string }>> => {
+    const formData = new FormData();
+    formData.append('profileImage', file);
+
+    const response = await axiosInstance.put(`${API_BASE_URL}/users/profile-image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
   },
 };
 
 // React Query 훅들
 
 // 현재 사용자 정보 조회
-export const useCurrentUser = () => {
+export const useCurrentUser = (enabled: boolean = true) => {
+  const accessToken = localStorage.getItem('accessToken');
   return useQuery({
     queryKey: userQueryKeys.currentUser(),
     queryFn: userAPI.getCurrentUser,
-    staleTime: 10 * 60 * 1000, // 10분
-    gcTime: 15 * 60 * 1000, // 15분
+    enabled: !!accessToken && enabled, // accessToken이 있고 enabled가 true일 때만 실행
+    staleTime: 10 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    retry: false, // Prevent retries on 401
+    retryDelay: 1000, // 재시도 간격
+    retryOnMount: false, // 마운트 시 재시도 비활성화
+    refetchOnWindowFocus: false, // 윈도우 포커스 시 재요청 비활성화
+    refetchOnReconnect: false, // 네트워크 재연결 시 재요청 비활성화
   });
 };
 
@@ -70,10 +89,9 @@ export const useUpdateNickname = () => {
       queryClient.setQueryData(userQueryKeys.currentUser(), data);
       // 사용자 관련 모든 캐시 무효화
       queryClient.invalidateQueries({ queryKey: userQueryKeys.all });
-      console.log("닉네임 변경 성공:", data);
     },
     onError: (error) => {
-      console.error("닉네임 변경 실패:", error);
+      // 에러 로그 제거 - 컴포넌트에서 처리
     },
   });
 };
@@ -125,6 +143,41 @@ export const useOptimisticUpdateNickname = () => {
     onSettled: () => {
       // 완료 후 관련 쿼리 refetch
       queryClient.invalidateQueries({ queryKey: userQueryKeys.currentUser() });
+    },
+  });
+};
+
+// SettingsPage 등에서 사용할 수 있는 훅
+export const useUserData = () => {
+  const { data: userData } = useCurrentUser();
+  return userData?.data;
+};
+
+// 프로필 이미지 업로드 뮤테이션
+export const useUpdateProfileImage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userAPI.updateProfileImage,
+    onSuccess: (data) => {
+      // 성공 시 현재 사용자 캐시 업데이트
+      const currentUserData = queryClient.getQueryData(userQueryKeys.currentUser());
+      if (currentUserData && data.data?.profileImageUrl) {
+        const updatedUserData = {
+          ...currentUserData,
+          data: {
+            ...(currentUserData as any).data,
+            profileImage: data.data.profileImageUrl,
+          },
+        };
+        queryClient.setQueryData(userQueryKeys.currentUser(), updatedUserData);
+      }
+      
+      // 사용자 관련 모든 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: userQueryKeys.all });
+    },
+    onError: (error) => {
+      // 에러 로그 제거 - 컴포넌트에서 처리
     },
   });
 };

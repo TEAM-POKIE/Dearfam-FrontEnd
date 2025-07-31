@@ -1,18 +1,129 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ChevronRight, Camera } from "lucide-react";
 import profileIcon from "@/assets/image/style_icon_profile.svg";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import BasicPopup from "@/components/BasicPopup";
 import { useAuthStore } from "@/context/store/authStore";
+import { useCurrentUser, useUpdateProfileImage } from "@/hooks/api/useUserAPI";
+import { useFamilyMembers } from "@/hooks/api/useFamilyAPI";
+import { BasicToast } from "@/components/BasicToast";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 // ArrowLeft 및 ChevronRight는 추후 Component로 정의해야함
 
 export function SettingPage() {
     const navigate = useNavigate();
-    const { logout } = useAuthStore();
+    const [searchParams] = useSearchParams();
+    const { logout, setUser } = useAuthStore();
+    const queryClient = useQueryClient();
     const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
     const [isWithdrawPopupOpen, setIsWithdrawPopupOpen] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    
+    // 파일 입력을 위한 ref
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // 최신 사용자 정보 가져오기 (설정 페이지에서는 항상 최신 정보 필요)
+    const { data: userData, isLoading: userLoading } = useCurrentUser(true);
+    const { data: familyData, isLoading: familyLoading } = useFamilyMembers(true);
+    
+    // 프로필 이미지 업로드 훅
+    const updateProfileImageMutation = useUpdateProfileImage();
+
+    // 사용자 정보 추출
+    const userNickname = userData?.data?.userNickname || "사용자";
+    const userFamilyRole = userData?.data?.userFamilyRole || "";
+    const familyName = familyData?.data?.familyName || "가족";
+    
+    // 프로필 이미지 URL - 기본 이미지 대체 로직
+    const profileImageUrl = userData?.data?.profileImage || profileIcon;
+
+    // 역할 한글 매핑
+    const roleMapping = {
+        "FATHER": "아빠",
+        "MOTHER": "엄마", 
+        "SON": "아들",
+        "DAUGHTER": "딸"
+    };
+
+    const koreanRole = roleMapping[userFamilyRole as keyof typeof roleMapping] || userFamilyRole;
+
+    // URL 파라미터 확인하여 토스트 메시지 표시
+    useEffect(() => {
+        const message = searchParams.get('message');
+        if (message === 'nickname-changed') {
+            setToastMessage('닉네임 변경이 완료되었어요!');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 5000);
+            
+            // URL에서 파라미터 제거
+            navigate('/SettingPage', { replace: true });
+        }
+    }, [searchParams, navigate]);
+
+    // 프로필 이미지 업로드 핸들러
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // 파일 크기 검증 (5MB 제한)
+        if (file.size > 5 * 1024 * 1024) {
+            setToastMessage('이미지 크기는 5MB 이하여야 합니다.');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+            return;
+        }
+
+        // 파일 타입 검증
+        if (!file.type.startsWith('image/')) {
+            setToastMessage('이미지 파일만 업로드 가능합니다.');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+            return;
+        }
+
+        try {
+            // 훅을 사용한 이미지 업로드
+            const result = await updateProfileImageMutation.mutateAsync(file);
+            
+            // 사용자 정보 업데이트 (Zustand 스토어)
+            if (userData?.data && result.data?.profileImageUrl) {
+                const updatedUser = { ...userData.data, profileImage: result.data.profileImageUrl };
+                setUser(updatedUser);
+            }
+
+            setToastMessage('프로필 이미지가 변경되었습니다!');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+
+        } catch (error: any) {
+            setToastMessage('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+        } finally {
+            // 파일 입력 초기화
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
+
+    // 카메라 버튼 클릭 핸들러
+    const handleCameraClick = () => {
+        fileInputRef.current?.click();
+    };
 
     const handleLogout = () => {
         // 로그아웃 처리 로직
@@ -21,14 +132,16 @@ export function SettingPage() {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         
+        // TanStack Query 캐시 정리
+        queryClient.clear();
+        
         // Zustand store에서 로그아웃
         logout();
         
         setIsLogoutPopupOpen(false);
         
-        // 로그아웃 후 로그인 페이지로 이동
-        navigate('/LoginPage');
-
+        // 로그아웃 후 로그인 페이지로 이동 (토스트 메시지와 함께)
+        navigate('/LoginPage?message=logout-success');
     };
 
     const handleWithdraw = () => {
@@ -38,6 +151,9 @@ export function SettingPage() {
         // 로컬 스토리지에서 토큰 제거
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        
+        // TanStack Query 캐시 정리
+        queryClient.clear();
         
         // Zustand store에서 로그아웃
         logout();
@@ -69,24 +185,43 @@ export function SettingPage() {
                 <div className="relative">
                     <div className="w-[72px] h-[72px] rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
                         <img 
-                            src={profileIcon} 
+                            src={profileImageUrl} 
                             alt="프로필 이미지" 
                             className="w-full h-full object-cover"
                         />
                     </div>
-                    <div className="absolute bottom-0 right-0 bg-gray-500 rounded-full p-1">
+                    <button 
+                        className={`absolute bottom-0 right-0 bg-gray-500 rounded-full p-1 hover:bg-gray-600 transition-colors ${updateProfileImageMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                        onClick={handleCameraClick}
+                        disabled={updateProfileImageMutation.isPending}
+                    >
                         <Camera size={16} color="#FFFFFF" />
-                    </div>
+                    </button>
                 </div>
                 <div className="ml-4 flex flex-col items-start">
-                    <p className="text-body2 font-normal">'유기농 가족'의 딸</p>
-                    <div className="flex items-center">
-                        <span className="text-h4 font-bold">홍동생</span>
-                        <span className="text-body2 font-normal">님</span>
-                    </div>
+                    {userLoading || familyLoading ? (
+                        <p className="text-body2 font-normal">로딩 중...</p>
+                    ) : (
+                        <>
+                            <p className="text-body2 font-normal">'{familyName}'의 {koreanRole}</p>
+                            <div className="flex items-center">
+                                <span className="text-h4 font-bold">{userNickname}</span>
+                                <span className="text-body2 font-normal">님</span>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
+
+        {/* 숨겨진 파일 입력 */}
+        <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            style={{ display: 'none' }}
+        />
 
         {/* 계정 설정 섹션 */}
         <div className="w-full border-t border-[#828282] border-t-[0.0625rem]">
@@ -182,6 +317,13 @@ export function SettingPage() {
             buttonText="탈퇴하기"
             onButtonClick={handleWithdraw}
         />
+
+        {/* 토스트 메시지 */}
+        {showToast && (
+            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+                <BasicToast message={toastMessage} />
+            </div>
+        )}
     </div>
     );
 }

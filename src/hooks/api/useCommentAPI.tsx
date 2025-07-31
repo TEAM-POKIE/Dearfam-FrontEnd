@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiResponse, Comment } from "../../mocks/types";
 
-// API 기본 URL
-const API_BASE_URL = "/api/v1";
+// API 기본 URL - 환경변수 사용
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Query Keys
 export const commentQueryKeys = {
@@ -138,13 +138,13 @@ export const useOptimisticCreateComment = () => {
             postId: newComment.postId,
             content: newComment.content,
             author: {
-              id: "current-user",
-              nickname: "나",
-              email: "current@user.com",
-              profilePicture: undefined,
-              role: "user",
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
+              id: 999999, // 임시 사용자 ID
+              familyId: 1,
+              userNickname: "나",
+              userRole: "user",
+              userFamilyRole: "MEMBER",
+              isFamilyRoomManager: false,
+              profileImage: "",
             },
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),

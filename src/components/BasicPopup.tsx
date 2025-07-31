@@ -10,6 +10,7 @@ interface PopupProps {
   content: string | React.ReactNode;
   buttonText: string;
   onButtonClick?: () => void;
+  disabled?: boolean;
 }
 
 /**
@@ -20,6 +21,7 @@ interface PopupProps {
  * @param {string|ReactNode} content - 팝업 내용 (문자열 또는 React 컴포넌트)
  * @param {string} buttonText - 버튼 텍스트
  * @param {Function} onButtonClick - 버튼 클릭 시 호출될 함수
+ * @param {boolean} disabled - 버튼 비활성화 여부
  */
 export const BasicPopup: React.FC<PopupProps> = ({
   isOpen,
@@ -28,6 +30,7 @@ export const BasicPopup: React.FC<PopupProps> = ({
   content = "this is content. this is content. this is content. this is content. this is content. this is content. this is content. this is content. this is content. ",
   buttonText = "buttonText",
   onButtonClick,
+  disabled = false,
 }) => {
   if (!isOpen) return null;
 
@@ -65,6 +68,7 @@ export const BasicPopup: React.FC<PopupProps> = ({
             color="main_1"
             size={290}
             textStyle="text-h4"
+            disabled={disabled}
           />
         </div>
       </div>

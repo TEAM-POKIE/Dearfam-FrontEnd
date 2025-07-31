@@ -28,7 +28,7 @@ const toggleLike = http.put(
       likeStorage.set(postId as string, likedUsers);
     }
 
-    const userId = currentUser.id;
+    const userId = String(currentUser.id);
     const isLiked = likedUsers.has(userId);
 
     if (isLiked) {
@@ -81,7 +81,7 @@ const getLikeStatus = http.get(
     }
 
     const likedUsers = likeStorage.get(postId as string) || new Set();
-    const isLiked = likedUsers.has(currentUser.id);
+    const isLiked = likedUsers.has(String(currentUser.id));
     const likeCount = likedUsers.size;
 
     const response: ApiResponse<{
