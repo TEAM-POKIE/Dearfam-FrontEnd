@@ -7,6 +7,41 @@ import { useWritePostStore } from "@/context/store/writePostStore";
 import { AxiosError } from "axios";
 import axiosInstance from "../axiosInstance";
 
+export const usePutMemoryPost = () => {
+  const { getPostData } = useWritePostStore();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["memory-post", "put"],
+    mutationFn: async (postId: number) => {
+      const postData = getPostData();
+
+      const requestData = {
+        title: postData.title,
+        content: postData.content,
+      };
+      console.log("requestData", requestData);
+
+      return axiosInstance.put(
+        `${API_BASE_URL}/memory-post/${postId}`,
+        requestData
+      );
+    },
+    onSuccess: (data, postId) => {
+      queryClient.invalidateQueries({ queryKey: ["memory-post"] });
+      queryClient.invalidateQueries({
+        queryKey: ["memory-post", "detail", postId],
+      });
+      setTimeout(() => {
+        window.history.back();
+      }, 100);
+    },
+    onError: (error: AxiosError) => {
+      console.log("❌ 메모리 포스트 수정 실패", error);
+    },
+  });
+};
+
 export const useDeleteMemoryComment = () => {
   return useMutation({
     mutationFn: async ({
@@ -219,91 +254,6 @@ export const usePostMemoryPost = () => {
     },
     onError: (error: AxiosError) => {
       console.log("❌ 메모리 포스트 생성 실패");
-
-      if (error.response) {
-        console.log("📦 응답 상태 코드:", error.response.status);
-        console.log("📨 백엔드 응답 메시지:", error.response);
-      } else if (error.request) {
-        console.log("🕸 요청은 갔지만 응답 없음", error.request);
-      } else {
-        console.log("⚠️ 요청 생성 중 에러", error.response);
-      }
-    },
-  });
-};
-
-export const usePutMemoryPost = () => {
-  const { getPostData } = useWritePostStore();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationKey: ["memory-post", "put"],
-    mutationFn: async (postId: number) => {
-      const postData = getPostData();
-      const formData = new FormData();
-
-      // request 객체를 JSON으로 구성
-      const requestData = {
-        title: postData.title,
-        content: postData.content,
-        memoryDate: postData.memoryDate,
-        participantFamilyMemberIds: postData.participantFamilyMemberIds,
-      };
-
-      // request 객체를 JSON 문자열로 추가
-      formData.append(
-        "request",
-        new Blob([JSON.stringify(requestData)], {
-          type: "application/json",
-        })
-      );
-
-      // 이미지 파일들을 images 배열로 추가
-      if (postData.images && postData.images.length > 0) {
-        postData.images.forEach((image) => {
-          formData.append("images", image);
-        });
-      }
-
-      console.log("수정할 데이터:", {
-        postId,
-        request: requestData,
-        imageCount: postData.images?.length || 0,
-      });
-
-      return axiosInstance.put(
-        `${API_BASE_URL}/memory-post/${postId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          timeout: 30000, // 30초로 타임아웃 연장 (파일 업로드용)
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percentCompleted = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total
-              );
-              console.log(`업로드 진행률: ${percentCompleted}%`);
-            }
-          },
-        }
-      );
-    },
-    onSuccess: (data, postId) => {
-      console.log("메모리 포스트 수정 성공", data);
-      // 관련 쿼리 무효화
-      queryClient.invalidateQueries({ queryKey: ["memory-post"] });
-      queryClient.invalidateQueries({
-        queryKey: ["memory-post", "detail", postId],
-      });
-      // 성공 시 이전 페이지로 이동
-      setTimeout(() => {
-        window.history.back();
-      }, 100);
-    },
-    onError: (error: AxiosError) => {
-      console.log("❌ 메모리 포스트 수정 실패");
 
       if (error.response) {
         console.log("📦 응답 상태 코드:", error.response.status);

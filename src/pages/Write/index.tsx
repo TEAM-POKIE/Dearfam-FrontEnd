@@ -26,6 +26,33 @@ export function WritePage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // 페이지 나갈 때 폼 초기화
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      resetForm();
+    };
+
+    const handlePopState = () => {
+      resetForm();
+    };
+
+    // 브라우저 뒤로가기/앞으로가기 감지
+    const handleNavigation = () => {
+      resetForm();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("beforeunload", handleNavigation);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("beforeunload", handleNavigation);
+      resetForm(); // 컴포넌트 언마운트 시에도 초기화
+    };
+  }, [resetForm]);
+
   const handleBackClick = () => {
     setShowConfirmModal(true);
   };
@@ -63,8 +90,8 @@ export function WritePage() {
         exit={false}
         onBackClick={handleBackClick}
       />
-      <Paper />
-      <AddPicture />
+      <Paper isEditMode={false} />
+      <AddPicture isEditMode={false} />
 
       <div className="w-full flex justify-center items-center mt-[3rem] ">
         <BasicButton

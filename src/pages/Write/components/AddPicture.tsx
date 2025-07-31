@@ -15,6 +15,7 @@ interface ImageWithPreview {
 
 interface AddPictureProps {
   existingImages?: string[]; // 기존 이미지 URL 배열
+  isEditMode?: boolean; // 수정 모드 여부
 }
 
 // 고유 ID 생성 함수
@@ -37,7 +38,10 @@ const debounce = <T extends unknown[]>(
   };
 };
 
-export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
+export const AddPicture = ({
+  existingImages = [],
+  isEditMode = false,
+}: AddPictureProps) => {
   const {
     images,
     setImages,
@@ -188,6 +192,11 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      // 수정 모드에서는 이미지 추가 비활성화
+      if (isEditMode) {
+        return;
+      }
+
       // 현재 파일 수와 새로 추가할 파일 수를 확인
       const remainingSlots = 10 - files.length;
       const filesToAdd = acceptedFiles.slice(0, remainingSlots);
@@ -208,18 +217,30 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
         }, 100);
       }
     },
-    [files.length, images, setImages]
+    [files.length, images, setImages, isEditMode]
   );
 
   // 삭제 확인 모달 띄우기
-  const handleDeleteClick = useCallback((fileId: string) => {
-    setFileToDelete(fileId);
-    setShowDeleteModal(true);
-  }, []);
+  const handleDeleteClick = useCallback(
+    (fileId: string) => {
+      // 수정 모드에서는 삭제 모달 비활성화
+      if (isEditMode) {
+        return;
+      }
+      setFileToDelete(fileId);
+      setShowDeleteModal(true);
+    },
+    [isEditMode]
+  );
 
   // 실제 파일 삭제 함수
   const removeFile = useCallback(
     (fileId: string) => {
+      // 수정 모드에서는 이미지 삭제 비활성화
+      if (isEditMode) {
+        return;
+      }
+
       const fileIndex = files.findIndex((file) => file.id === fileId);
       if (fileIndex !== -1) {
         const fileToRemove = files[fileIndex];
@@ -245,7 +266,7 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
       }
       // 삭제 시에는 현재 스크롤 위치 유지 (자동 스크롤 없음)
     },
-    [files, images, setImages]
+    [files, images, setImages, isEditMode]
   );
 
   // 삭제 확인 처리
@@ -264,14 +285,22 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
   }, []);
 
   // 드래그 앤 드롭 핸들러들
-  const handleDragStart = useCallback((e: React.DragEvent, fileId: string) => {
-    setDraggedItem(fileId);
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", fileId);
+  const handleDragStart = useCallback(
+    (e: React.DragEvent, fileId: string) => {
+      // 수정 모드에서는 드래그 앤 드롭 비활성화
+      if (isEditMode) {
+        e.preventDefault();
+        return;
+      }
+      setDraggedItem(fileId);
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", fileId);
 
-    // 드래그 중에는 스크롤 핸들러 비활성화
-    isDragging.current = true;
-  }, []);
+      // 드래그 중에는 스크롤 핸들러 비활성화
+      isDragging.current = true;
+    },
+    [isEditMode]
+  );
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -311,6 +340,14 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
   const handleDrop = useCallback(
     (e: React.DragEvent, targetFileId: string) => {
       e.preventDefault();
+
+      // 수정 모드에서는 드래그 앤 드롭 비활성화
+      if (isEditMode) {
+        setDraggedItem(null);
+        setDragOverItem(null);
+        isDragging.current = false;
+        return;
+      }
 
       if (!draggedItem || draggedItem === targetFileId) {
         setDraggedItem(null);
@@ -363,7 +400,14 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
       isDragging.current = false;
       stopAutoScroll(); // 드롭 완료 시 자동 스크롤 중지
     },
-    [draggedItem, stopAutoScroll, files, setImages, setExistingImages]
+    [
+      draggedItem,
+      stopAutoScroll,
+      files,
+      setImages,
+      setExistingImages,
+      isEditMode,
+    ]
   );
 
   const handleDragEnd = useCallback(() => {
@@ -379,7 +423,7 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
       "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
     },
     maxFiles: 10 - files.length,
-    disabled: files.length >= 10,
+    disabled: files.length >= 10 || isEditMode,
   });
 
   // 컴포넌트 언마운트 시 애니메이션 및 URL 정리
@@ -589,7 +633,7 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
     <div className="w-full mt-[1.25rem] px-[0.625rem]">
       {/* 헤더 정보 */}
       <div>
-        <p className="text-body-4 ">선택된 이미지 ({images.length}/10)</p>
+        <p className="text-body-4 ">선택된 이미지 ({files.length}/10)</p>
       </div>
 
       {/* 가로 스크롤 이미지 영역 */}
@@ -669,7 +713,12 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
                 {/* 삭제 버튼 */}
                 <button
                   onClick={() => handleDeleteClick(file.id)}
-                  className={`absolute top-[0.19rem] right-[0.19rem] w-[0.75rem] h-[0.75rem] z-10 ${styles.motionSpring} hover:scale-110 active:scale-95`}
+                  disabled={isEditMode}
+                  className={`absolute top-[0.19rem] right-[0.19rem] w-[0.75rem] h-[0.75rem] z-10 ${
+                    styles.motionSpring
+                  } hover:scale-110 active:scale-95 ${
+                    isEditMode ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                   aria-label="이미지 삭제"
                   onContextMenu={handleContextMenu}
                 >
@@ -696,11 +745,15 @@ export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
                   {...getRootProps()}
                   className={`
                     aspect-square h-[4.375rem] w-[4.375rem] border-2 border-dashed rounded-md 
-                    flex items-center justify-center cursor-pointer ${
-                      styles.motionSpring
-                    } ${styles.addButtonHover}
+                    flex items-center justify-center ${
+                      isEditMode
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-pointer"
+                    } ${styles.motionSpring} ${
+                    !isEditMode ? styles.addButtonHover : ""
+                  }
                     ${
-                      isDragActive
+                      isDragActive && !isEditMode
                         ? "border-blue-400 bg-blue-50 scale-102"
                         : "border-gray-300"
                     }

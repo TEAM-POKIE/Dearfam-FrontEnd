@@ -14,6 +14,7 @@ import {
 
 export function EditPage() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showEditConfirmModal, setShowEditConfirmModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { postId } = useParams<{ postId: string }>();
@@ -25,6 +26,8 @@ export function EditPage() {
     setMemoryDate,
     setParticipantIds,
     setRemovedExistingImages,
+    title,
+    content,
   } = useWritePostStore();
   const { mutate: putMemoryPost } = usePutMemoryPost();
   const { data: postData, isLoading: isDataLoading } = useGetMemoryDetail(
@@ -82,9 +85,49 @@ export function EditPage() {
   // 폼 제출 핸들러
   const handleSubmit = () => {
     if (isValid && postId) {
-      putMemoryPost(parseInt(postId));
+      setShowEditConfirmModal(true);
     }
   };
+
+  // 수정 확인 처리
+  const handleConfirmEdit = () => {
+    if (isValid && postId) {
+      putMemoryPost(parseInt(postId));
+      setShowEditConfirmModal(false);
+    }
+  };
+
+  // 수정 취소 처리
+  const handleCancelEdit = () => {
+    setShowEditConfirmModal(false);
+  };
+
+  // 페이지 나갈 때 폼 초기화
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      resetForm();
+    };
+
+    const handlePopState = () => {
+      resetForm();
+    };
+
+    // 브라우저 뒤로가기/앞으로가기 감지
+    const handleNavigation = () => {
+      resetForm();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("beforeunload", handleNavigation);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("beforeunload", handleNavigation);
+      resetForm(); // 컴포넌트 언마운트 시에도 초기화
+    };
+  }, [resetForm]);
 
   // 로딩 중일 때 로딩 화면 표시
   if (isLoading || isDataLoading) {
@@ -102,13 +145,14 @@ export function EditPage() {
         exit={false}
         onBackClick={handleBackClick}
       />
-      <Paper />
+      <Paper isEditMode={true} />
       <AddPicture
         existingImages={
           postData.data?.imageUrls?.map(
             (img: { imageUrl: string }) => img.imageUrl
           ) || []
         }
+        isEditMode={true}
       />
 
       <div className="w-full flex justify-center items-center mt-[3rem] ">
@@ -131,6 +175,33 @@ export function EditPage() {
         cancelText="계속 수정"
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
+      />
+
+      {/* 수정 확인 팝업 */}
+      <ConfirmPopup
+        isOpen={showEditConfirmModal}
+        onClose={() => setShowEditConfirmModal(false)}
+        title="수정하시겠습니까?"
+        content={
+          <div className="text-left space-y-2">
+            <div>
+              <span className="font-medium">제목:</span>
+              <div className="mt-1 p-2 bg-gray-100 rounded text-sm max-h-20 overflow-y-auto">
+                {title || "(제목 없음)"}
+              </div>
+            </div>
+            <div>
+              <span className="font-medium">내용:</span>
+              <div className="mt-1 p-2 bg-gray-100 rounded text-sm max-h-32 overflow-y-auto">
+                {content || "(내용 없음)"}
+              </div>
+            </div>
+          </div>
+        }
+        confirmText="수정"
+        cancelText="취소"
+        onConfirm={handleConfirmEdit}
+        onCancel={handleCancelEdit}
       />
     </div>
   );
