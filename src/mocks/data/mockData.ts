@@ -4,40 +4,40 @@ import { User, Family, FamilyMember, MemoryPost, Comment } from "../types";
 // 기본 사용자 데이터
 export const mockUsers: User[] = [
   {
-    id: "user-1",
-    nickname: "김아빠",
-    email: "dad@dearfam.com",
-    profilePicture: "https://picsum.photos/150/150?random=1",
-    role: "아빠",
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
+    id: 1,
+    familyId: 1,
+    userNickname: "김아빠",
+    userRole: "user",
+    userFamilyRole: "FATHER",
+    isFamilyRoomManager: true,
+    profileImage: "https://picsum.photos/150/150?random=1",
   },
   {
-    id: "user-2",
-    nickname: "김엄마",
-    email: "mom@dearfam.com",
-    profilePicture: "https://picsum.photos/150/150?random=2",
-    role: "엄마",
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
+    id: 2,
+    familyId: 1,
+    userNickname: "김엄마",
+    userRole: "user",
+    userFamilyRole: "MOTHER",
+    isFamilyRoomManager: false,
+    profileImage: "https://picsum.photos/150/150?random=2",
   },
   {
-    id: "user-3",
-    nickname: "김첫째",
-    email: "first@dearfam.com",
-    profilePicture: "https://picsum.photos/150/150?random=3",
-    role: "첫째",
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
+    id: 3,
+    familyId: 1,
+    userNickname: "김첫째",
+    userRole: "user",
+    userFamilyRole: "SON",
+    isFamilyRoomManager: false,
+    profileImage: "https://picsum.photos/150/150?random=3",
   },
   {
-    id: "user-4",
-    nickname: "김둘째",
-    email: "second@dearfam.com",
-    profilePicture: "https://picsum.photos/150/150?random=4",
-    role: "둘째",
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
+    id: 4,
+    familyId: 1,
+    userNickname: "김둘째",
+    userRole: "user",
+    userFamilyRole: "DAUGHTER",
+    isFamilyRoomManager: false,
+    profileImage: "https://picsum.photos/150/150?random=4",
   },
 ];
 
@@ -57,31 +57,28 @@ export const mockFamilyMembers: FamilyMember[] = mockUsers.map(
   (user, index) => ({
     id: `member-${index + 1}`,
     user,
-    role: user.role || "가족",
+    role: user.userFamilyRole || "MEMBER",
     joinedAt: "2024-01-01T00:00:00Z",
   })
 );
 
 // Mock 데이터 생성 함수들
 export const generateMockUser = (override?: Partial<User>): User => ({
-  id: faker.string.uuid(),
-  nickname: faker.person.fullName(),
-  email: faker.internet.email(),
-  profilePicture: `https://picsum.photos/150/150?random=${faker.number.int({
+  id: faker.number.int({ min: 1000, max: 9999 }),
+  familyId: faker.number.int({ min: 1, max: 10 }),
+  userNickname: faker.person.fullName(),
+  userRole: "user",
+  userFamilyRole: faker.helpers.arrayElement([
+    "FATHER",
+    "MOTHER", 
+    "SON",
+    "DAUGHTER",
+  ]),
+  isFamilyRoomManager: faker.datatype.boolean(),
+  profileImage: `https://picsum.photos/150/150?random=${faker.number.int({
     min: 1,
     max: 1000,
   })}`,
-  role: faker.helpers.arrayElement([
-    "아빠",
-    "엄마",
-    "첫째",
-    "둘째",
-    "막내",
-    "할아버지",
-    "할머니",
-  ]),
-  createdAt: faker.date.past().toISOString(),
-  updatedAt: faker.date.recent().toISOString(),
   ...override,
 });
 
@@ -157,7 +154,7 @@ export const currentUser = mockUsers[0];
 export const currentFamily = mockFamilies[0];
 
 // 유틸리티 함수
-export const findUserById = (id: string): User | undefined =>
+export const findUserById = (id: number): User | undefined =>
   mockUsers.find((user) => user.id === id);
 
 export const findMemoryPostById = (id: string): MemoryPost | undefined => {

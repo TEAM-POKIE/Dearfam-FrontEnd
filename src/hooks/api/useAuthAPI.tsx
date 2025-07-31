@@ -100,8 +100,8 @@ export const useKakaoLogin = () => {
       if (data.data?.accessToken) {
         // JSON 객체인 경우 실제 토큰 값만 추출
         let actualAccessToken = data.data.accessToken;
-        if (typeof data.data.accessToken === 'object' && data.data.accessToken.token) {
-          actualAccessToken = data.data.accessToken.token;
+        if (typeof data.data.accessToken === 'object' && data.data.accessToken && 'token' in data.data.accessToken) {
+          actualAccessToken = (data.data.accessToken as any).token;
         }
         
         localStorage.setItem("accessToken", String(actualAccessToken));
@@ -110,8 +110,8 @@ export const useKakaoLogin = () => {
       if (data.data?.refreshToken) {
         // JSON 객체인 경우 실제 토큰 값만 추출
         let actualRefreshToken = data.data.refreshToken;
-        if (typeof data.data.refreshToken === 'object' && data.data.refreshToken.token) {
-          actualRefreshToken = data.data.refreshToken.token;
+        if (typeof data.data.refreshToken === 'object' && data.data.refreshToken && 'token' in data.data.refreshToken) {
+          actualRefreshToken = (data.data.refreshToken as any).token;
         }
         
         localStorage.setItem("refreshToken", String(actualRefreshToken));

@@ -18,7 +18,7 @@ const getCurrentUser = http.get("/api/v1/users/user", ({ request }) => {
   
   // 정상 응답 (백엔드 형식)
   const response: ApiResponse<User> = {
-    code: 1073741824,
+    success: true,
     message: "사용자 정보 조회 성공",
     data: {
       id: 9007199254740991,
@@ -36,7 +36,7 @@ const getCurrentUser = http.get("/api/v1/users/user", ({ request }) => {
 // id로 사용자 정보 조회 - GET /users/{userId}
 const getUserById = http.get("/api/v1/users/:userId", ({ params }) => {
   const { userId } = params;
-  const user = findUserById(userId as string);
+  const user = findUserById(Number(userId));
 
   if (!user) {
     const errorResponse: ApiResponse = {
@@ -64,8 +64,7 @@ const updateUserNickname = http.put(
 
     const updatedUser: User = {
       ...currentUser,
-      nickname: body.nickname,
-      updatedAt: new Date().toISOString(),
+      userNickname: body.nickname,
     };
 
     const response: ApiResponse<User> = {

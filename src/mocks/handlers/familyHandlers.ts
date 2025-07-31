@@ -117,7 +117,7 @@ const joinFamily = http.post("/api/v1/family/join", async ({ request }) => {
   const newMember = generateMockFamilyMember({
     user: {
       ...mockUsers[0],
-      nickname: body.nickname || mockUsers[0].nickname,
+      userNickname: body.nickname || mockUsers[0].userNickname,
     },
   });
 
