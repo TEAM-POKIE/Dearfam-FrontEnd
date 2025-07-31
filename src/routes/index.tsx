@@ -16,6 +16,9 @@ const BookshelfPage = lazy(() =>
 const WritePage = lazy(() =>
   import("../pages").then((module) => ({ default: module.WritePage }))
 );
+const EditPage = lazy(() =>
+  import("../pages/Edit").then((module) => ({ default: module.EditPage }))
+);
 const GoodsPage = lazy(() =>
   import("../pages").then((module) => ({ default: module.GoodsPage }))
 );
@@ -99,18 +102,25 @@ export function AppRoutes() {
     <Routes>
       {/* 1. SplashPage - AuthGuard 적용 */}
       <Route path="/" element={<SplashPage />} />
+<<<<<<< HEAD
       
       {/* 메인 앱 라우트 - AuthGuard 제거 */}
+=======
+
+      {/* 메인 앱 라우트 */}
+>>>>>>> main
       <Route path="/home" element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="memoryDetailPage" element={<MemoryDetailPage />} />
+        <Route path="memoryDetailPage/:postId" element={<MemoryDetailPage />} />
         <Route path="daily" element={<DailyPage />} />
         <Route path="bookshelf" element={<BookshelfPage />} />
         <Route path="write" element={<WritePage />} />
+        <Route path="edit/:postId" element={<EditPage />} />
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
       </Route>
 
+<<<<<<< HEAD
       {/* 2. LoginPage - AuthGuard 제거 (로그인 페이지는 인증 불필요) */}
       <Route
         path="/LoginPage"
@@ -134,6 +144,8 @@ export function AppRoutes() {
       />
 
       {/* 나머지 라우트들 - AuthGuard 제거 */}
+=======
+>>>>>>> main
       <Route
         path="/StartPage"
         element={
@@ -200,7 +212,10 @@ export function AppRoutes() {
         }
       />
 
+<<<<<<< HEAD
       {/* Setting 페이지들 - AuthGuard 제거 */}
+=======
+>>>>>>> main
       <Route
         path="/SettingPage"
         element={

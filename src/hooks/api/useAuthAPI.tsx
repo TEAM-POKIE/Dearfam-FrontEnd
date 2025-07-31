@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiResponse, User } from "../../mocks/types";
 import { userQueryKeys } from "./useUserAPI";
-import axiosInstance from "../../lib/api/axiosInstance";
+import axiosInstance from "../../data/api/axiosInstance";
 import axios from "axios";
 import { useAuthStore } from "../../context/store/authStore";
 
@@ -32,17 +32,24 @@ interface TokenRefreshResponse {
 // API 함수들
 const authAPI = {
   // 카카오 로그인
-  kakaoLogin: async (params: KakaoLoginRequest): Promise<ApiResponse<KakaoLoginResponse>> => {
+  kakaoLogin: async (
+    params: KakaoLoginRequest
+  ): Promise<ApiResponse<KakaoLoginResponse>> => {
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}/auth/oauth2/login`, {
-        provider: "kakao",
-        code: params.code,
-        redirectUri: params.redirectUri,
-      });
+      const response = await axiosInstance.post(
+        `${API_BASE_URL}/auth/oauth2/login`,
+        {
+          provider: "kakao",
+          code: params.code,
+          redirectUri: params.redirectUri,
+        }
+      );
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || "카카오 로그인에 실패했습니다.");
+        throw new Error(
+          error.response?.data?.message || "카카오 로그인에 실패했습니다."
+        );
       }
       throw error;
     }
@@ -57,13 +64,18 @@ const authAPI = {
         throw new Error("리프레시 토큰이 없습니다.");
       }
 
-      const response = await axiosInstance.post(`${API_BASE_URL}/auth/refresh`, {
-        refreshToken,
-      });
+      const response = await axiosInstance.post(
+        `${API_BASE_URL}/auth/refresh`,
+        {
+          refreshToken,
+        }
+      );
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || "토큰 새로고침에 실패했습니다.");
+        throw new Error(
+          error.response?.data?.message || "토큰 새로고침에 실패했습니다."
+        );
       }
       throw error;
     }
@@ -78,7 +90,9 @@ const authAPI = {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || "로그아웃에 실패했습니다.");
+        throw new Error(
+          error.response?.data?.message || "로그아웃에 실패했습니다."
+        );
       }
       throw error;
     }
@@ -132,9 +146,11 @@ export const useKakaoLogin = () => {
       // 에러 시 토큰 정리
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      
+
       // 에러 상태 설정
-      setError(error instanceof Error ? error.message : "로그인에 실패했습니다.");
+      setError(
+        error instanceof Error ? error.message : "로그인에 실패했습니다."
+      );
     },
   });
 };
@@ -234,12 +250,14 @@ export const authUtils = {
   getKakaoLoginUrl: (): string => {
     const KAKAO_REST_KEY = import.meta.env.VITE_KAKAO_REST_KEY;
     const REDIRECT_URI = `${window.location.origin}/kakao/callback`;
-    
+
     if (!KAKAO_REST_KEY) {
       throw new Error("카카오 REST API 키가 설정되지 않았습니다.");
     }
 
-    return `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_KEY}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code`;
+    return `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_KEY}&redirect_uri=${encodeURIComponent(
+      REDIRECT_URI
+    )}&response_type=code`;
   },
 
   // URL에서 인증 코드 추출

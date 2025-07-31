@@ -4,7 +4,11 @@ import { DropdownCalender } from "./DropdownCalender";
 import { InputContent } from "./InputContent";
 import { AddFam } from "./AddFam";
 
-export const Paper = () => {
+interface PaperProps {
+  isEditMode?: boolean;
+}
+
+export const Paper = ({ isEditMode = false }: PaperProps) => {
   return (
     <div className=" flex flex-col items-center mx-[0.625rem] mt-[1.25rem]">
       <div className="flex  w-[23.125rem] h-[36.0625rem]   bg-[#F3F3F3] rounded-[0.625rem]  ">
@@ -20,8 +24,12 @@ export const Paper = () => {
         </div>
         <div className="flex flex-col w-full h-full  p-[0.625rem]">
           <div className="flex justify-between items-center mb-[0.81rem]">
-            <DropdownCalender />
-            <AddFam />
+            <div className={isEditMode ? "opacity-50 pointer-events-none" : ""}>
+              <DropdownCalender />
+            </div>
+            <div className={isEditMode ? "opacity-50 pointer-events-none" : ""}>
+              <AddFam />
+            </div>
           </div>
           <InputTitle />
           <InputContent />

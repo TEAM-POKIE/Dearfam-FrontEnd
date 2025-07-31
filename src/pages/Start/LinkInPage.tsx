@@ -12,9 +12,9 @@ export function LinkInPage() {
   const isValid = link.includes("링크"); // 임시로 "링크" 텍스트 포함 여부로만 판단 중
 
   // 임시 테스트용 데이터 (추후 백엔드 API 연동 시 대체 예정)
-  const userName = "${유저}";  // 현재 접속한 사용자 이름
-  const managerName = "${방장}";  // 가족 페이지 생성한 방장 이름
-  const familyName = "${가족이름}";  // 임시 샘플 데이터
+  const userName = "${유저}"; // 현재 접속한 사용자 이름
+  const managerName = "${방장}"; // 가족 페이지 생성한 방장 이름
+  const familyName = "${가족이름}"; // 임시 샘플 데이터
 
   const handleNext = () => {
     if (isValid) {
@@ -23,7 +23,9 @@ export function LinkInPage() {
   };
 
   const handleJoin = () => {
-    navigate('/MakeConfirmPage', { state: { fromLink: true, familyName: familyName, managerName } });
+    navigate("/MakeConfirmPage", {
+      state: { fromLink: true, familyName: familyName, managerName },
+    });
   };
 
   return (

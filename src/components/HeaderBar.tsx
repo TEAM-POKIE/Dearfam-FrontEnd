@@ -41,6 +41,7 @@ export function HeaderBar() {
   const { mode, pageType, handleIconClick } = useHeaderStore();
   const { resetIndex } = useCarouselStore();
 
+
   // 현재 모드에 따라 다른 스타일 적용
   const getIconStyle = (iconMode: HeaderMode) => {
     return mode === iconMode ? "text-[#F5751E]" : "text-[#9A9893]";

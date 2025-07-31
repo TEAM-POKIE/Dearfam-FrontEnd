@@ -17,8 +17,7 @@
 
 @layer components {
   .mobile-container {
-    @apply w-full min-h-screen overflow-hidden hide-scrollbar bg-bg-1 shadow-soft relative;
-    width: 100vw;
+    @apply max-w-[24.375rem] min-h-screen overflow-hidden hide-scrollbar bg-bg-1 shadow-soft;
   }
 
   /* Motion AI 애니메이션 클래스들 */

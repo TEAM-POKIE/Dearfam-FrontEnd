@@ -15,16 +15,18 @@ import BasicButton from "@/components/BasicButton";
 import { useCarouselStore } from "@/context/store/carouselStore";
 import { useSliderStore } from "@/context/store/sliderStore";
 import { useNavigate } from "react-router-dom";
-import { useRecentMemoryPosts } from "@/hooks/api/useMemoryPostAPI";
-import { useToggleLike } from "@/hooks/api/useLikeAPI";
+import { usePutLiked } from "@/data/api/memory-post/memory";
+import { RecentMemoryPost } from "@/data/api/memory-post/type";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EventCarouselProps {
   showLastItem?: boolean;
   limit?: number;
+  memoryPostsData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const EventCarousel = memo<EventCarouselProps>(
-  ({ showLastItem = true, limit = 10 }) => {
+  ({ showLastItem = true, memoryPostsData }) => {
     const navigate = useNavigate();
     const initialized = useRef(false);
     const [api, setApiState] = useState<CarouselApi | null>(null);
@@ -44,13 +46,13 @@ export const EventCarousel = memo<EventCarouselProps>(
     } = useCarouselStore();
     const { setSliderValue, step } = useSliderStore();
 
-    // 최근 메모리 포스트 데이터 가져오기
-    const {
-      data: memoryPostsData,
-      isLoading,
-      error,
-    } = useRecentMemoryPosts(limit);
-    const toggleLikeMutation = useToggleLike();
+    const { mutate: putLiked } = usePutLiked();
+    const queryClient = useQueryClient();
+
+    // 컴포넌트 마운트 시 최신 데이터 가져오기
+    useEffect(() => {
+      queryClient.invalidateQueries({ queryKey: ["memory-post", "recent"] });
+    }, [queryClient]);
 
     // 색상 보간 함수
     const interpolateColor = useCallback((progress: number) => {
@@ -157,28 +159,15 @@ export const EventCarousel = memo<EventCarouselProps>(
     const transformedItems = useMemo(() => {
       if (!memoryPostsData?.data) return [];
 
-      // 실제 API 응답 형식에 맞춰서 타입 변환
-      const posts = memoryPostsData.data as {
-        postId?: number;
-        title?: string;
-        content?: string;
-        commentCount?: number;
-        memoryDate?: string;
-        participants?: {
-          familyMemberId: number;
-          nickname: string;
-        }[];
-        liked?: boolean;
-        images?: string[];
-      }[];
+      // RecentMemoryPost 타입 사용
+      const posts: RecentMemoryPost[] = memoryPostsData.data;
+      console.log(posts);
 
-      return posts.map((post) => ({
+      return posts.map((post: RecentMemoryPost) => ({
         id: post.postId || 0,
         title: post.title || "",
-        image:
-          post.images && post.images.length > 0
-            ? post.images[0]
-            : imageNotFound,
+        image: post.thumbnailUrl || imageNotFound,
+        imageCount: post.imageCount || 0,
         content: post.content || "",
         liked: post.liked || false,
         commentCount: post.commentCount || 0,
@@ -273,7 +262,7 @@ export const EventCarousel = memo<EventCarouselProps>(
     }, [shouldRememberIndex, resetIndex]);
 
     const handleCardClick = useCallback(
-      (event: React.MouseEvent, index: number) => {
+      (event: React.MouseEvent, index: number, postId: number) => {
         // 좋아요 버튼 클릭 시에는 이벤트 전파를 막음
         if ((event.target as HTMLElement).closest('img[alt="heart"]')) {
           return;
@@ -290,12 +279,30 @@ export const EventCarousel = memo<EventCarouselProps>(
           const newSliderValue = index * step;
           setSliderValue(newSliderValue);
           return;
+        } else {
+          navigate(`/home/memoryDetailPage/${postId}`);
         }
 
         // 현재 활성 슬라이드인 경우에만 상세 페이지로 이동
         saveIndexForDetailPage(currentIndex); // 상세 페이지로 이동할 때만 인덱스 저장
         if (!showLastItem) {
-          navigate("/memoryDetailPage");
+          // 실제 postId를 사용하여 네비게이션
+          const currentPost = memoryPostsData?.data?.[currentIndex];
+          const postId = currentPost?.postId;
+
+          console.log(
+            `🔗 EventCarousel 네비게이션: currentIndex=${currentIndex}, postId=${postId}`
+          );
+
+          if (postId) {
+            navigate(`/home/memoryDetailPage/${postId}`);
+          } else {
+            console.error("❌ postId를 찾을 수 없습니다:", {
+              currentIndex,
+              currentPost,
+              memoryPostsData,
+            });
+          }
         }
       },
       [
@@ -306,6 +313,7 @@ export const EventCarousel = memo<EventCarouselProps>(
         setSliderValue,
         step,
         saveIndexForDetailPage,
+        memoryPostsData,
       ]
     );
 
@@ -325,7 +333,19 @@ export const EventCarousel = memo<EventCarouselProps>(
         });
 
         // API 호출
-        toggleLikeMutation.mutate(postId.toString(), {
+        putLiked(postId, {
+          onSuccess: () => {
+            // 성공 시 관련된 모든 쿼리 무효화
+            queryClient.invalidateQueries({
+              queryKey: ["memory-post", "detail"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["memory-post", "recent"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["memory-post", "time-order"],
+            });
+          },
           onError: () => {
             // 실패 시 상태 롤백
             setLikedEvents((prev) => {
@@ -341,28 +361,8 @@ export const EventCarousel = memo<EventCarouselProps>(
           },
         });
       },
-      [toggleLikeMutation, likedEvents]
+      [putLiked, likedEvents, queryClient]
     );
-
-    // 로딩 상태
-    if (isLoading) {
-      return (
-        <div className="w-full flex flex-col justify-center items-center h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
-          <div className="text-h4 text-gray-3">로딩 중...</div>
-        </div>
-      );
-    }
-
-    // 에러 상태
-    if (error) {
-      return (
-        <div className="w-full flex flex-col justify-center items-center h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
-          <div className="text-h4 text-gray-3">
-            데이터를 불러오는 중 오류가 발생했습니다.
-          </div>
-        </div>
-      );
-    }
 
     // 실제 표시할 아이템들 (showLastItem이 true면 마지막에 추가 아이템 포함)
     const displayItems = showLastItem
@@ -372,6 +372,7 @@ export const EventCarousel = memo<EventCarouselProps>(
             id: -1,
             title: "",
             image: "",
+
             content: "",
             liked: false,
             commentCount: 0,
@@ -383,13 +384,13 @@ export const EventCarousel = memo<EventCarouselProps>(
       <div className="w-full flex flex-col justify-center items-center h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
         <div className="relative w-full">
           <Carousel className="w-full" setApi={setApi}>
-            <CarouselContent className="w-full -mx-0 flex items-center gap-x-2 h-full">
+            <CarouselContent className="w-full  -mx-0 flex items-center gap-x-2 h-full">
               {displayItems.map((item, index) => {
                 const dynamicStyle = getSlideStyle(index);
                 return (
                   <CarouselItem
                     key={`${item.id}-${index}`}
-                    className={`basis-[76.9%] cursor-pointer
+                    className={` basis-[76.9%]   cursor-pointer
                     ${index === 0 ? "ml-[2.81rem] pl-0" : ""}
                     ${index === displayItems.length - 1 ? "mr-[2.81rem]" : ""}
                     ${index !== 0 ? "px-0" : ""}
@@ -415,7 +416,9 @@ export const EventCarousel = memo<EventCarouselProps>(
                             ? "none"
                             : "background-color 450ms linear(0, 0.1605, 0.4497, 0.7063, 0.8805, 0.9768, 1.0183, 1.0284, 1.0242, 1.0161, 1.0087, 1.0036, 1.0008, 0.9995, 1), box-shadow 500ms linear(0, 0.1144, 0.3475, 0.5885, 0.7844, 0.9194, 0.9987, 1.0359, 1.046, 1.0413, 1.0308, 1.0196, 1.0104, 1.004, 1.0002, 0.9984, 1)",
                         }}
-                        onClick={(e) => handleCardClick(e, index)}
+                        onClick={(e) => {
+                          handleCardClick(e, index, item.id);
+                        }}
                       >
                         {dynamicStyle.showContent && (
                           <div
@@ -470,7 +473,7 @@ export const EventCarousel = memo<EventCarouselProps>(
                                   <ImageWithProfiles
                                     imageSrc={item.image}
                                     imageAlt={item.title}
-                                    imageClassName="w-full rounded-[0.88rem]"
+                                    imageClassName=" rounded-[0.88rem] h-[17.5rem] "
                                     profileCount={3}
                                   />
                                   <div className="text-h5 mt-[0.94rem]">

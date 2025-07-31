@@ -71,9 +71,9 @@ export const KakaoCallback: React.FC = () => {
     };
 
     // 코드가 있을 때만 실행
-    const code = searchParams.get('code');
-    const error = searchParams.get('error');
-    
+    const code = searchParams.get("code");
+    const error = searchParams.get("error");
+
     if (code || error) {
       handleCallback();
     } else {

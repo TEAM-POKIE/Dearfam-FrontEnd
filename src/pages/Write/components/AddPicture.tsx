@@ -4,10 +4,18 @@ import { Slider } from "@/components/ui/shadcn/slider";
 import ConfirmPopup from "@/components/ConfirmPopup";
 import deleteIcon from "../../../assets/image/section3/icon_cancel.svg";
 import styles from "./AddPicture.module.css";
+import { useWritePostStore } from "@/context/store/writePostStore";
 
-interface FileWithPreview extends File {
-  preview: string;
+interface ImageWithPreview {
   id: string;
+  preview: string;
+  file?: File;
+  isExisting: boolean;
+}
+
+interface AddPictureProps {
+  existingImages?: string[]; // 기존 이미지 URL 배열
+  isEditMode?: boolean; // 수정 모드 여부
 }
 
 // 고유 ID 생성 함수
@@ -30,8 +38,58 @@ const debounce = <T extends unknown[]>(
   };
 };
 
-export const AddPicture = () => {
-  const [files, setFiles] = useState<FileWithPreview[]>([]);
+export const AddPicture = ({
+  existingImages = [],
+  isEditMode = false,
+}: AddPictureProps) => {
+  const {
+    images,
+    setImages,
+    existingImages: storeExistingImages,
+    setExistingImages,
+    removedExistingImages,
+    addRemovedExistingImage,
+  } = useWritePostStore();
+  const [files, setFiles] = useState<ImageWithPreview[]>([]);
+
+  // zustand store의 images와 local files 상태 동기화
+  useEffect(() => {
+    // 순서 변경 중이면 업데이트하지 않음
+    if (isReordering.current) {
+      return;
+    }
+
+    // 기존 이미지들 (삭제되지 않은 것만)
+    const existing = storeExistingImages
+      .filter((url) => !removedExistingImages.includes(url))
+      .map((url) => ({
+        id: generateId(),
+        preview: url,
+        isExisting: true,
+      }));
+
+    // 새로 추가된 이미지들
+    const added = images.map((file) => ({
+      id: generateId(),
+      preview: URL.createObjectURL(file),
+      file,
+      isExisting: false,
+    }));
+
+    setFiles([...existing, ...added]);
+
+    // cleanup: 새로 추가된 이미지들의 URL 정리
+    return () => {
+      added.forEach((f) => URL.revokeObjectURL(f.preview));
+    };
+  }, [images, storeExistingImages, removedExistingImages]);
+
+  // props로 받은 existingImages를 store에 초기화
+  useEffect(() => {
+    if (existingImages.length > 0 && storeExistingImages.length === 0) {
+      setExistingImages(existingImages);
+    }
+  }, [existingImages, storeExistingImages, setExistingImages]);
   const [sliderValue, setSliderValue] = useState([0]);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
@@ -44,6 +102,7 @@ export const AddPicture = () => {
   const isDragging = useRef(false);
   const autoScrollAnimationId = useRef<number | null>(null);
   const isAutoScrolling = useRef(false);
+  const isReordering = useRef(false);
 
   // 컨텍스트 메뉴 방지 핸들러
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
@@ -133,6 +192,11 @@ export const AddPicture = () => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      // 수정 모드에서는 이미지 추가 비활성화
+      if (isEditMode) {
+        return;
+      }
+
       // 현재 파일 수와 새로 추가할 파일 수를 확인
       const remainingSlots = 10 - files.length;
       const filesToAdd = acceptedFiles.slice(0, remainingSlots);
@@ -144,7 +208,7 @@ export const AddPicture = () => {
         })
       );
 
-      setFiles((prev) => [...prev, ...newFiles]);
+      setImages([...images, ...newFiles]);
 
       // 이미지가 추가될 때만 스크롤을 마지막으로 이동
       if (newFiles.length > 0) {
@@ -153,28 +217,57 @@ export const AddPicture = () => {
         }, 100);
       }
     },
-    [files.length]
+    [files.length, images, setImages, isEditMode]
   );
 
   // 삭제 확인 모달 띄우기
-  const handleDeleteClick = useCallback((fileId: string) => {
-    setFileToDelete(fileId);
-    setShowDeleteModal(true);
-  }, []);
+  const handleDeleteClick = useCallback(
+    (fileId: string) => {
+      // 수정 모드에서는 삭제 모달 비활성화
+      if (isEditMode) {
+        return;
+      }
+      setFileToDelete(fileId);
+      setShowDeleteModal(true);
+    },
+    [isEditMode]
+  );
 
   // 실제 파일 삭제 함수
-  const removeFile = useCallback((fileId: string) => {
-    setFiles((prev) => {
-      const fileIndex = prev.findIndex((file) => file.id === fileId);
-      if (fileIndex !== -1) {
-        // URL.revokeObjectURL을 호출해서 메모리 누수 방지
-        URL.revokeObjectURL(prev[fileIndex].preview);
-        return prev.filter((file) => file.id !== fileId);
+  const removeFile = useCallback(
+    (fileId: string) => {
+      // 수정 모드에서는 이미지 삭제 비활성화
+      if (isEditMode) {
+        return;
       }
-      return prev;
-    });
-    // 삭제 시에는 현재 스크롤 위치 유지 (자동 스크롤 없음)
-  }, []);
+
+      const fileIndex = files.findIndex((file) => file.id === fileId);
+      if (fileIndex !== -1) {
+        const fileToRemove = files[fileIndex];
+
+        if (fileToRemove.isExisting) {
+          // 기존 이미지인 경우 - 삭제된 이미지 목록에 추가
+          addRemovedExistingImage(fileToRemove.preview);
+          // store에서도 기존 이미지 제거
+          const newExistingImages = storeExistingImages.filter(
+            (url) => url !== fileToRemove.preview
+          );
+          setExistingImages(newExistingImages);
+        } else {
+          // 새로 추가된 이미지인 경우 - URL 정리
+          URL.revokeObjectURL(fileToRemove.preview);
+
+          // zustand store의 images도 함께 업데이트
+          if (fileToRemove.file) {
+            const newImages = images.filter((img) => img !== fileToRemove.file);
+            setImages(newImages);
+          }
+        }
+      }
+      // 삭제 시에는 현재 스크롤 위치 유지 (자동 스크롤 없음)
+    },
+    [files, images, setImages, isEditMode]
+  );
 
   // 삭제 확인 처리
   const handleConfirmDelete = useCallback(() => {
@@ -192,14 +285,22 @@ export const AddPicture = () => {
   }, []);
 
   // 드래그 앤 드롭 핸들러들
-  const handleDragStart = useCallback((e: React.DragEvent, fileId: string) => {
-    setDraggedItem(fileId);
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", fileId);
+  const handleDragStart = useCallback(
+    (e: React.DragEvent, fileId: string) => {
+      // 수정 모드에서는 드래그 앤 드롭 비활성화
+      if (isEditMode) {
+        e.preventDefault();
+        return;
+      }
+      setDraggedItem(fileId);
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", fileId);
 
-    // 드래그 중에는 스크롤 핸들러 비활성화
-    isDragging.current = true;
-  }, []);
+      // 드래그 중에는 스크롤 핸들러 비활성화
+      isDragging.current = true;
+    },
+    [isEditMode]
+  );
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -240,6 +341,14 @@ export const AddPicture = () => {
     (e: React.DragEvent, targetFileId: string) => {
       e.preventDefault();
 
+      // 수정 모드에서는 드래그 앤 드롭 비활성화
+      if (isEditMode) {
+        setDraggedItem(null);
+        setDragOverItem(null);
+        isDragging.current = false;
+        return;
+      }
+
       if (!draggedItem || draggedItem === targetFileId) {
         setDraggedItem(null);
         setDragOverItem(null);
@@ -247,25 +356,58 @@ export const AddPicture = () => {
         return;
       }
 
-      setFiles((prev) => {
-        const draggedIndex = prev.findIndex((file) => file.id === draggedItem);
-        const targetIndex = prev.findIndex((file) => file.id === targetFileId);
+      // files 배열 재정렬 후 zustand store 업데이트
+      const draggedFileIndex = files.findIndex(
+        (file) => file.id === draggedItem
+      );
+      const targetFileIndex = files.findIndex(
+        (file) => file.id === targetFileId
+      );
 
-        if (draggedIndex === -1 || targetIndex === -1) return prev;
+      if (draggedFileIndex !== -1 && targetFileIndex !== -1) {
+        isReordering.current = true;
 
-        const newFiles = [...prev];
-        const [removed] = newFiles.splice(draggedIndex, 1);
-        newFiles.splice(targetIndex, 0, removed);
+        const newFiles = [...files];
+        const [removed] = newFiles.splice(draggedFileIndex, 1);
+        newFiles.splice(targetFileIndex, 0, removed);
 
-        return newFiles;
-      });
+        // files 상태 직접 업데이트 (UI 즉시 반영)
+        setFiles(newFiles);
+
+        // 새로 추가된 이미지들 추출
+        const newImages = newFiles
+          .filter((file) => !file.isExisting)
+          .map((file) => file.file)
+          .filter((file): file is File => file !== undefined);
+
+        // 기존 이미지들 추출 (새로운 순서로)
+        const newExistingImages = newFiles
+          .filter((file) => file.isExisting)
+          .map((file) => file.preview);
+
+        // store 업데이트
+        setImages(newImages);
+        setExistingImages(newExistingImages);
+
+        // 순서 변경 완료
+        setTimeout(() => {
+          isReordering.current = false;
+        }, 100);
+      }
 
       setDraggedItem(null);
       setDragOverItem(null);
       isDragging.current = false;
       stopAutoScroll(); // 드롭 완료 시 자동 스크롤 중지
     },
-    [draggedItem, stopAutoScroll]
+    [
+      draggedItem,
+      stopAutoScroll,
+      files,
+      setImages,
+      setExistingImages,
+      isEditMode,
+    ]
   );
 
   const handleDragEnd = useCallback(() => {
@@ -281,13 +423,19 @@ export const AddPicture = () => {
       "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
     },
     maxFiles: 10 - files.length,
-    disabled: files.length >= 10,
+    disabled: files.length >= 10 || isEditMode,
   });
 
-  // 컴포넌트 언마운트 시 URL 정리
+  // 컴포넌트 언마운트 시 애니메이션 및 URL 정리
   useEffect(() => {
     return () => {
-      files.forEach((file) => URL.revokeObjectURL(file.preview));
+      // 현재 표시된 모든 새 이미지의 URL 정리
+      files.forEach((file) => {
+        if (!file.isExisting) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
+
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
@@ -383,10 +531,10 @@ export const AddPicture = () => {
 
   // 첫 로드 시에만 슬라이더 초기화
   useEffect(() => {
-    if (files.length === 0) {
+    if (images.length === 0) {
       setSliderValue([0]);
     }
-  }, [files.length]);
+  }, [images.length]);
 
   // 드래그가 끝나면 자동 스크롤 중지
   useEffect(() => {
@@ -449,7 +597,7 @@ export const AddPicture = () => {
         }
       }
     }
-  }, []);
+  }, [files, images, setImages, isDragging, isAutoScrolling]);
 
   // 디바운스된 스크롤 핸들러
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 16), [
@@ -565,7 +713,12 @@ export const AddPicture = () => {
                 {/* 삭제 버튼 */}
                 <button
                   onClick={() => handleDeleteClick(file.id)}
-                  className={`absolute top-[0.19rem] right-[0.19rem] w-[0.75rem] h-[0.75rem] z-10 ${styles.motionSpring} hover:scale-110 active:scale-95`}
+                  disabled={isEditMode}
+                  className={`absolute top-[0.19rem] right-[0.19rem] w-[0.75rem] h-[0.75rem] z-10 ${
+                    styles.motionSpring
+                  } hover:scale-110 active:scale-95 ${
+                    isEditMode ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                   aria-label="이미지 삭제"
                   onContextMenu={handleContextMenu}
                 >
@@ -586,17 +739,21 @@ export const AddPicture = () => {
             ))}
 
             {/* 추가 버튼 (드롭존) */}
-            {files.length < 10 && (
+            {images.length < 10 && (
               <figure className="shrink-0">
                 <div
                   {...getRootProps()}
                   className={`
                     aspect-square h-[4.375rem] w-[4.375rem] border-2 border-dashed rounded-md 
-                    flex items-center justify-center cursor-pointer ${
-                      styles.motionSpring
-                    } ${styles.addButtonHover}
+                    flex items-center justify-center ${
+                      isEditMode
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-pointer"
+                    } ${styles.motionSpring} ${
+                    !isEditMode ? styles.addButtonHover : ""
+                  }
                     ${
-                      isDragActive
+                      isDragActive && !isEditMode
                         ? "border-blue-400 bg-blue-50 scale-102"
                         : "border-gray-300"
                     }

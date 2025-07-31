@@ -1,5 +1,9 @@
 // src/lib/api/axiosInstance.ts
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
 
 // Axios 설정 타입 확장
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -22,10 +26,10 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     // 중복 요청 방지를 위한 요청 ID 추가
     (config as ExtendedAxiosRequestConfig).metadata = { startTime: new Date() };
-    
+
     return config;
   },
   (error) => {
@@ -43,11 +47,15 @@ axiosInstance.interceptors.response.use(
     // TODO: 나중에 필요할 때 활성화
     /*
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
-    
+
     // 401 에러이고 아직 재시도하지 않은 경우
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
-      
+
       try {
         // 토큰 새로고침 시도
         const refreshToken = localStorage.getItem("refreshToken");
@@ -61,25 +69,26 @@ axiosInstance.interceptors.response.use(
           { withCredentials: true }
         );
 
-        const { accessToken, refreshToken: newRefreshToken } = response.data.data;
-        
+        const { accessToken, refreshToken: newRefreshToken } =
+          response.data.data;
+
         // 새 토큰 저장
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
-        
+
         // 원래 요청 재시도
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // 토큰 새로고침 실패 시 로그아웃 처리
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        
-        // 로그인 페이지로 리다이렉트 (필요시)
-        if (window.location.pathname !== "/login") {
-          window.location.href = "/login";
-        }
-        
+        // localStorage.removeItem("accessToken");
+        // localStorage.removeItem("refreshToken");
+
+        // // 로그인 페이지로 리다이렉트 (필요시)
+        // if (window.location.pathname !== "/login") {
+        //   window.location.href = "/login";
+        // }
+
         return Promise.reject(refreshError);
       }
     }

@@ -24,19 +24,16 @@ export const useCarouselStore = create<CarouselState>((set, get) => ({
 
   setCarouselApi: (api) => {
     set({ carouselApi: api });
-    console.log("CarouselApi set:", api);
   },
 
   setCurrentIndex: (index) => {
     set({
       currentIndex: index,
     });
-    console.log("CurrentIndex set:", index);
   },
 
   setTotalSlides: (count) => {
     set({ totalSlides: count });
-    console.log("TotalSlides set:", count);
   },
 
   saveIndexForDetailPage: (index) => {
@@ -44,7 +41,6 @@ export const useCarouselStore = create<CarouselState>((set, get) => ({
       currentIndex: index,
       shouldRememberIndex: true,
     });
-    console.log("Index saved for detail page:", index);
   },
 
   resetIndex: () => {
@@ -52,7 +48,6 @@ export const useCarouselStore = create<CarouselState>((set, get) => ({
       currentIndex: 0,
       shouldRememberIndex: false,
     });
-    console.log("Index reset to 0");
   },
 
   handleSelect: () => {
@@ -64,7 +59,7 @@ export const useCarouselStore = create<CarouselState>((set, get) => ({
 
     try {
       const index = carouselApi.selectedScrollSnap();
-      console.log("Selected index:", index);
+
       set({ currentIndex: index });
     } catch (error) {
       console.error("Error handling selection:", error);
@@ -79,7 +74,6 @@ export const useCarouselStore = create<CarouselState>((set, get) => ({
     }
 
     try {
-      console.log("Scrolling to index:", index);
       carouselApi.scrollTo(index);
       set({ currentIndex: index });
     } catch (error) {

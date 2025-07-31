@@ -9,6 +9,7 @@ import { useFamilyMembers } from "@/hooks/api/useFamilyAPI";
 import { BasicToast } from "@/components/BasicToast";
 import { useQueryClient } from "@tanstack/react-query";
 
+
 // ArrowLeft 및 ChevronRight는 추후 Component로 정의해야함
 
 export function SettingPage() {
@@ -127,7 +128,6 @@ export function SettingPage() {
     const handleLogout = () => {
         // 로그아웃 처리 로직
         console.log("로그아웃 처리");
-        
         // 로컬 스토리지에서 토큰 제거
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -140,8 +140,14 @@ export function SettingPage() {
         
         setIsLogoutPopupOpen(false);
         
+<<<<<<< HEAD
         // 로그아웃 후 로그인 페이지로 이동 (토스트 메시지와 함께)
         navigate('/LoginPage?message=logout-success');
+=======
+        // 로그아웃 후 로그인 페이지로 이동
+        navigate('/LoginPage');
+
+>>>>>>> main
     };
 
     const handleWithdraw = () => {
@@ -162,6 +168,7 @@ export function SettingPage() {
         
         // 탈퇴 후 로그인 페이지로 이동
         navigate('/LoginPage');
+
     };
 
     return (
