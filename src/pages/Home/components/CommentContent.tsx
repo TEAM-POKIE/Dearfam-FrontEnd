@@ -6,19 +6,31 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/shadcn/dropdown-menu";
+import { useToastStore } from "@/context/store/toastStore";
 
 interface CommentContentProps {
   userName: string;
   commentText: string;
   profileImage?: string;
   onOptionsClick?: () => void;
+  onDelete?: () => void;
 }
 
 export function CommentContent({
   userName,
   commentText,
   profileImage,
+  onDelete,
 }: CommentContentProps) {
+  const { showToast } = useToastStore();
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete();
+      showToast("댓글이 성공적으로 삭제되었습니다.", "success");
+    }
+  };
+
   return (
     <div className="flex items-start gap-[0.31rem] w-full">
       {/* 프로필 이미지 */}
@@ -61,7 +73,7 @@ export function CommentContent({
           </DropdownMenuTrigger>
         </div>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>삭제하기</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDelete}>삭제하기</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

@@ -251,7 +251,7 @@ const CarouselDots = () => {
   }, [api]);
 
   return (
-    <div className="flex  justify-center gap-[0.5rem] bg-main-3 w-[4rem] h-[1.5rem] px-[0.75rem] py-[0.5rem] rounded-[3.125rem]">
+    <div className="flex  justify-center gap-[0.5rem] bg-main-3  h-[1.5rem] px-[0.75rem] py-[0.5rem] rounded-[3.125rem]">
       {scrollSnaps.map((_, index) => (
         <button
           key={index}

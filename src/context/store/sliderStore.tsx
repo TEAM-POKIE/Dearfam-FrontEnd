@@ -16,7 +16,6 @@ export const useSliderStore = create<SliderState>((set, get) => ({
 
   setSliderValue: (value) => {
     set({ sliderValue: value });
-    console.log("Slider value set:", value);
   },
 
   updateStep: () => {
@@ -25,15 +24,12 @@ export const useSliderStore = create<SliderState>((set, get) => ({
 
     const newStep = 100 / (totalSlides - 1);
     set({ step: newStep });
-    console.log("Step updated:", newStep);
   },
 
   handleSliderChange: (value) => {
     try {
       const { step } = get();
       const index = Math.round(value[0] / step);
-
-      console.log("Slider changed to index:", index);
 
       // 먼저 슬라이더 값 업데이트
       set({

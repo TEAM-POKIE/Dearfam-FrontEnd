@@ -1,18 +1,29 @@
 import { EventSlideContainer } from "./EventSlideContainer";
 import { useHeaderStore } from "@/context/store/headerStore";
 import { BasicLoading } from "@/components/BasicLoading";
-
-import * as React from "react";
 import { HomeSlider } from "./HomeSlider";
 import { EventGallery } from "./EventGallery";
+import {
+  useGetMemoryRecentPosts,
+  useGetMemoryTimeOrder,
+} from "@/data/api/memory-post/memory";
+import { memo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import React from "react";
 
-import { useGetMemoryRecentPosts } from "@/data/api/memory-post/memory";
-
-export function HomePage() {
+const HomePage = memo(function HomePage() {
   const { mode } = useHeaderStore();
+  const queryClient = useQueryClient();
 
   // 최근 메모리 포스트 데이터 가져오기
   const { data: memoryPostsData, isLoading, error } = useGetMemoryRecentPosts();
+  useGetMemoryTimeOrder();
+
+  // 컴포넌트 마운트 시 캐시 무효화하여 최신 데이터 가져오기
+  React.useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["memory-post", "recent"] });
+    queryClient.invalidateQueries({ queryKey: ["memory-post", "time-order"] });
+  }, [queryClient]);
 
   // 로딩 중일 때 로딩 화면 표시
   if (isLoading) {
@@ -40,7 +51,7 @@ export function HomePage() {
   }
 
   return (
-    <div className="h-full ">
+    <div className="h-full">
       {mode === "gallery" && <EventGallery />}
       {mode === "slider" && (
         <div>
@@ -50,4 +61,6 @@ export function HomePage() {
       )}
     </div>
   );
-}
+});
+
+export { HomePage };

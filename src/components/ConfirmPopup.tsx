@@ -7,7 +7,7 @@ interface ConfirmPopupProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  content: string | React.ReactNode;
+  content?: string | React.ReactNode;
   confirmText?: string;
   cancelText?: string;
   onConfirm: () => void;

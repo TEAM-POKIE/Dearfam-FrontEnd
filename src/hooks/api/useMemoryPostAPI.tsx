@@ -72,24 +72,6 @@ const memoryPostAPI = {
     return response.json();
   },
 
-  // 게시글 생성
-  createMemoryPost: async (data: {
-    title: string;
-    content: string;
-    images: File[];
-  }): Promise<ApiResponse<MemoryPost>> => {
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("content", data.content);
-    data.images.forEach((image) => formData.append("images", image));
-
-    const response = await fetch(`${API_BASE_URL}/memory-post`, {
-      method: "POST",
-      body: formData,
-    });
-    return response.json();
-  },
-
   // 게시글 수정
   updateMemoryPost: async (data: {
     postId: string;
@@ -169,23 +151,6 @@ export const useMemoryPostFamilyMembers = (postId: string) => {
     enabled: !!postId,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-  });
-};
-
-// 게시글 생성 뮤테이션
-export const useCreateMemoryPost = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: memoryPostAPI.createMemoryPost,
-    onSuccess: (data) => {
-      // 성공 시 게시글 목록 캐시 무효화
-      queryClient.invalidateQueries({ queryKey: memoryPostQueryKeys.all });
-      console.log("게시글 생성 성공:", data);
-    },
-    onError: (error) => {
-      console.error("게시글 생성 실패:", error);
-    },
   });
 };
 

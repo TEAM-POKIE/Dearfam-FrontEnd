@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./InputContent.module.css";
+import { useWritePostStore } from "@/context/store/writePostStore";
 
 export const InputContent = () => {
-  const [content, setContent] = useState<string>("");
+  const { content, setContent } = useWritePostStore();
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= 500) {

@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import { useState, memo } from "react";
 import addFamProfile from "../../../assets/image/section3/icon_add_fam_profile.svg";
 import addFamPlus from "../../../assets/image/section3/icon_add_fam_plus.svg";
 import AddFamPopup from "./AddFamPopup";
+import { useFamilyMembers } from "@/data/api/family/family";
 
-export const AddFam = () => {
+const AddFam = memo(function AddFam() {
+  // 전역 상태에서 가족 정보 가져오기 (API 호출 없음)
+  const { data: familyMembersData } = useFamilyMembers();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -18,14 +21,7 @@ export const AddFam = () => {
       <AddFamPopup
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        familyMembers={[
-          { id: "1", name: "엄마" },
-          { id: "2", name: "아빠" },
-          { id: "3", name: "형" },
-          { id: "4", name: "형" },
-          { id: "5", name: "형" },
-          { id: "6", name: "형" },
-        ]}
+        familyMembers={familyMembersData?.familyMembers || []}
         onConfirm={(selectedMembers) => {
           console.log("선택된 가족:", selectedMembers);
           setIsOpen(false);
@@ -33,4 +29,6 @@ export const AddFam = () => {
       />
     </>
   );
-};
+});
+
+export { AddFam };

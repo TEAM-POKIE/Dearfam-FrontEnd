@@ -16,7 +16,6 @@ export {
   useMemoryPostsByTimeOrder,
   useMemoryPost,
   useMemoryPostFamilyMembers,
-  useCreateMemoryPost,
   useUpdateMemoryPost,
   useDeleteMemoryPost,
   useOptimisticUpdateMemoryPost,

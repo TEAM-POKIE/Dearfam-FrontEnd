@@ -1,14 +1,10 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useEffect } from "react";
 import { BasicButton } from "../../../components/BasicButton";
 import exitIcon from "../../../assets/image/icon_exit_20.svg";
 import { usePopupAnimation } from "@/hooks/usePopupAnimation";
 import { AddFamillyButton } from "./AddFamillyButton";
-
-interface FamilyMember {
-  id: string;
-  name: string;
-  profileImage?: string;
-}
+import { useWritePostStore } from "@/context/store/writePostStore";
+import { FamilyMember } from "@/data/api/family/type";
 
 const ANIMATION_DURATION = 450;
 const GRID_GAP = "3.44rem";
@@ -17,30 +13,35 @@ export const AddFamPopup = ({
   isOpen,
   onClose,
   familyMembers = [],
+  onConfirm,
 }: {
   isOpen: boolean;
   onClose: () => void;
   familyMembers: FamilyMember[];
-  onConfirm?: (selectedMembers: FamilyMember[]) => void;
+  onConfirm?: (selectedMembers: number[]) => void;
 }) => {
-  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
+  const { participantFamilyMemberIds, setParticipantIds } = useWritePostStore();
   const { isAnimating, shouldRender, closeWithAnimation } = usePopupAnimation(
     isOpen,
     ANIMATION_DURATION
   );
 
-  const handleMemberClick = useCallback((memberId: string) => {
-    setSelectedMemberIds((prev) =>
-      prev.includes(memberId)
-        ? prev.filter((id) => id !== memberId)
-        : [...prev, memberId]
-    );
-  }, []);
+  const handleMemberClick = useCallback(
+    (memberId: number) => {
+      const currentIds = participantFamilyMemberIds;
+      const newIds = currentIds.includes(memberId)
+        ? currentIds.filter((id: number) => id !== memberId)
+        : [...currentIds, memberId];
+      setParticipantIds(newIds);
+    },
+    [participantFamilyMemberIds, setParticipantIds]
+  );
 
   const memberClickHandlers = useMemo(() => {
-    const handlers: Record<string, () => void> = {};
+    const handlers: Record<number, () => void> = {};
     familyMembers.forEach((member) => {
-      handlers[member.id] = () => handleMemberClick(member.id);
+      handlers[member.familyMemberId] = () =>
+        handleMemberClick(member.familyMemberId);
     });
     return handlers;
   }, [familyMembers, handleMemberClick]);
@@ -58,11 +59,11 @@ export const AddFamPopup = ({
     return [];
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
-      setSelectedMemberIds([]);
+      setParticipantIds([]);
     }
-  }, [isOpen]);
+  }, [isOpen, setParticipantIds]);
 
   if (!shouldRender) return null;
 
@@ -111,12 +112,14 @@ export const AddFamPopup = ({
               >
                 {group.map((member) => (
                   <AddFamillyButton
-                    key={member.id}
-                    id={member.id}
-                    name={member.name}
-                    profileImage={member.profileImage}
-                    isSelected={selectedMemberIds.includes(member.id)}
-                    onClick={memberClickHandlers[member.id]}
+                    key={member.familyMemberId}
+                    id={member.familyMemberId.toString()}
+                    name={member.familyMemberNickname}
+                    profileImage={member.familyMemberProfileImage}
+                    isSelected={participantFamilyMemberIds.includes(
+                      member.familyMemberId
+                    )}
+                    onClick={memberClickHandlers[member.familyMemberId]}
                   />
                 ))}
               </div>
@@ -127,6 +130,7 @@ export const AddFamPopup = ({
             text="선택하기"
             onClick={() => {
               onClose();
+              onConfirm?.(participantFamilyMemberIds);
             }}
             color="main_1"
             size={290}
