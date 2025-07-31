@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/shadcn/dropdown-menu";
 import { useDeleteMemoryPost } from "@/data/api/memory-post/memory";
+import { useNavigate } from "react-router-dom";
 
 interface EventHeaderProps {
   data: number;
@@ -15,6 +16,7 @@ interface EventHeaderProps {
 
 export const EventHeader = ({ data, postId }: EventHeaderProps) => {
   const { mutate: deletePost } = useDeleteMemoryPost();
+  const navigate = useNavigate();
   return (
     <div className="flex items-center justify-between w-full px-[1.25rem] py-[0.62rem] h-[3.125rem] ">
       <div className="flex items-center gap-[0.62rem] ">
@@ -49,7 +51,10 @@ export const EventHeader = ({ data, postId }: EventHeaderProps) => {
           >
             삭제하기
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => navigate(`/home/edit/${postId}`)}
+          >
             수정하기
           </DropdownMenuItem>
         </DropdownMenuContent>

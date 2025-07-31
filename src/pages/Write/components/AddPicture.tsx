@@ -6,9 +6,15 @@ import deleteIcon from "../../../assets/image/section3/icon_cancel.svg";
 import styles from "./AddPicture.module.css";
 import { useWritePostStore } from "@/context/store/writePostStore";
 
-interface FileWithPreview extends File {
-  preview: string;
+interface ImageWithPreview {
   id: string;
+  preview: string;
+  file?: File;
+  isExisting: boolean;
+}
+
+interface AddPictureProps {
+  existingImages?: string[]; // 기존 이미지 URL 배열
 }
 
 // 고유 ID 생성 함수
@@ -31,20 +37,55 @@ const debounce = <T extends unknown[]>(
   };
 };
 
-export const AddPicture = () => {
-  const { images, setImages } = useWritePostStore();
-  const [files, setFiles] = useState<FileWithPreview[]>([]);
+export const AddPicture = ({ existingImages = [] }: AddPictureProps) => {
+  const {
+    images,
+    setImages,
+    existingImages: storeExistingImages,
+    setExistingImages,
+    removedExistingImages,
+    addRemovedExistingImage,
+  } = useWritePostStore();
+  const [files, setFiles] = useState<ImageWithPreview[]>([]);
 
   // zustand store의 images와 local files 상태 동기화
   useEffect(() => {
-    setFiles(
-      images.map((image) => ({
-        ...image,
-        preview: URL.createObjectURL(image),
-        id: generateId(), // File 객체에는 id가 없으므로 새로 생성
-      }))
-    );
-  }, [images]);
+    // 순서 변경 중이면 업데이트하지 않음
+    if (isReordering.current) {
+      return;
+    }
+
+    // 기존 이미지들 (삭제되지 않은 것만)
+    const existing = storeExistingImages
+      .filter((url) => !removedExistingImages.includes(url))
+      .map((url) => ({
+        id: generateId(),
+        preview: url,
+        isExisting: true,
+      }));
+
+    // 새로 추가된 이미지들
+    const added = images.map((file) => ({
+      id: generateId(),
+      preview: URL.createObjectURL(file),
+      file,
+      isExisting: false,
+    }));
+
+    setFiles([...existing, ...added]);
+
+    // cleanup: 새로 추가된 이미지들의 URL 정리
+    return () => {
+      added.forEach((f) => URL.revokeObjectURL(f.preview));
+    };
+  }, [images, storeExistingImages, removedExistingImages]);
+
+  // props로 받은 existingImages를 store에 초기화
+  useEffect(() => {
+    if (existingImages.length > 0 && storeExistingImages.length === 0) {
+      setExistingImages(existingImages);
+    }
+  }, [existingImages, storeExistingImages, setExistingImages]);
   const [sliderValue, setSliderValue] = useState([0]);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
@@ -57,6 +98,7 @@ export const AddPicture = () => {
   const isDragging = useRef(false);
   const autoScrollAnimationId = useRef<number | null>(null);
   const isAutoScrolling = useRef(false);
+  const isReordering = useRef(false);
 
   // 컨텍스트 메뉴 방지 핸들러
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
@@ -180,12 +222,26 @@ export const AddPicture = () => {
     (fileId: string) => {
       const fileIndex = files.findIndex((file) => file.id === fileId);
       if (fileIndex !== -1) {
-        // URL.revokeObjectURL을 호출해서 메모리 누수 방지
-        URL.revokeObjectURL(files[fileIndex].preview);
+        const fileToRemove = files[fileIndex];
 
-        // zustand store의 images도 함께 업데이트
-        const newImages = images.filter((_, index) => index !== fileIndex);
-        setImages(newImages);
+        if (fileToRemove.isExisting) {
+          // 기존 이미지인 경우 - 삭제된 이미지 목록에 추가
+          addRemovedExistingImage(fileToRemove.preview);
+          // store에서도 기존 이미지 제거
+          const newExistingImages = storeExistingImages.filter(
+            (url) => url !== fileToRemove.preview
+          );
+          setExistingImages(newExistingImages);
+        } else {
+          // 새로 추가된 이미지인 경우 - URL 정리
+          URL.revokeObjectURL(fileToRemove.preview);
+
+          // zustand store의 images도 함께 업데이트
+          if (fileToRemove.file) {
+            const newImages = images.filter((img) => img !== fileToRemove.file);
+            setImages(newImages);
+          }
+        }
       }
       // 삭제 시에는 현재 스크롤 위치 유지 (자동 스크롤 없음)
     },
@@ -272,17 +328,34 @@ export const AddPicture = () => {
       );
 
       if (draggedFileIndex !== -1 && targetFileIndex !== -1) {
+        isReordering.current = true;
+
         const newFiles = [...files];
         const [removed] = newFiles.splice(draggedFileIndex, 1);
         newFiles.splice(targetFileIndex, 0, removed);
 
-        // File 객체만 추출해서 zustand store에 저장 (preview와 id 제외)
-        const newImages = newFiles.map((file) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { preview, id, ...fileWithoutExtras } = file;
-          return fileWithoutExtras as File;
-        });
+        // files 상태 직접 업데이트 (UI 즉시 반영)
+        setFiles(newFiles);
+
+        // 새로 추가된 이미지들 추출
+        const newImages = newFiles
+          .filter((file) => !file.isExisting)
+          .map((file) => file.file)
+          .filter((file): file is File => file !== undefined);
+
+        // 기존 이미지들 추출 (새로운 순서로)
+        const newExistingImages = newFiles
+          .filter((file) => file.isExisting)
+          .map((file) => file.preview);
+
+        // store 업데이트
         setImages(newImages);
+        setExistingImages(newExistingImages);
+
+        // 순서 변경 완료
+        setTimeout(() => {
+          isReordering.current = false;
+        }, 100);
       }
 
       setDraggedItem(null);
@@ -290,7 +363,7 @@ export const AddPicture = () => {
       isDragging.current = false;
       stopAutoScroll(); // 드롭 완료 시 자동 스크롤 중지
     },
-    [draggedItem, stopAutoScroll, files, setImages]
+    [draggedItem, stopAutoScroll, files, setImages, setExistingImages]
   );
 
   const handleDragEnd = useCallback(() => {
@@ -309,10 +382,16 @@ export const AddPicture = () => {
     disabled: files.length >= 10,
   });
 
-  // 컴포넌트 언마운트 시 URL 정리
+  // 컴포넌트 언마운트 시 애니메이션 및 URL 정리
   useEffect(() => {
     return () => {
-      files.forEach((file) => URL.revokeObjectURL(file.preview));
+      // 현재 표시된 모든 새 이미지의 URL 정리
+      files.forEach((file) => {
+        if (!file.isExisting) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
+
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }

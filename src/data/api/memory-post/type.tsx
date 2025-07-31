@@ -21,6 +21,8 @@ export type PostMemoryPostRequest = {
   memoryDate: string; // YYYY-MM-DD 형식
   participantFamilyMemberIds: number[];
   images?: File[]; // 파일 배열
+  existingImages?: string[]; // 기존 이미지 URL 배열 (순서 포함)
+  removedExistingImages?: string[]; // 삭제된 기존 이미지 URL 배열 (수정 시 사용)
 };
 
 export type TimeOrderMemoryPost = {

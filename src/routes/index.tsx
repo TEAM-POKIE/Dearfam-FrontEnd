@@ -15,6 +15,9 @@ const BookshelfPage = lazy(() =>
 const WritePage = lazy(() =>
   import("../pages").then((module) => ({ default: module.WritePage }))
 );
+const EditPage = lazy(() =>
+  import("../pages/Edit").then((module) => ({ default: module.EditPage }))
+);
 const GoodsPage = lazy(() =>
   import("../pages").then((module) => ({ default: module.GoodsPage }))
 );
@@ -106,6 +109,7 @@ export function AppRoutes() {
         <Route path="daily" element={<DailyPage />} />
         <Route path="bookshelf" element={<BookshelfPage />} />
         <Route path="write" element={<WritePage />} />
+        <Route path="edit/:postId" element={<EditPage />} />
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
       </Route>

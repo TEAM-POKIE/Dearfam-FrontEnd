@@ -9,6 +9,8 @@ interface WritePostState {
   memoryDate: string;
   participantFamilyMemberIds: number[];
   images: File[];
+  existingImages: string[]; // 기존 이미지 URL 배열 (순서 포함)
+  removedExistingImages: string[]; // 삭제된 기존 이미지 URL들
 
   // UI 상태
   isSubmitting: boolean;
@@ -23,6 +25,10 @@ interface WritePostState {
   setImages: (images: File[]) => void;
   addImage: (image: File) => void;
   removeImage: (index: number) => void;
+  setExistingImages: (urls: string[]) => void;
+  setRemovedExistingImages: (urls: string[]) => void;
+  addRemovedExistingImage: (url: string) => void;
+  removeRemovedExistingImage: (url: string) => void;
   setIsSubmitting: (isSubmitting: boolean) => void;
 
   // 유틸리티
@@ -43,6 +49,8 @@ const initialState = {
   memoryDate: new Date().toISOString().split("T")[0], // 오늘 날짜를 기본값으로
   participantFamilyMemberIds: [],
   images: [],
+  existingImages: [],
+  removedExistingImages: [],
   isSubmitting: false,
 };
 
@@ -59,6 +67,10 @@ export const useWritePostStore = create<WritePostState>()(
       setParticipantIds: (participantFamilyMemberIds) =>
         set({ participantFamilyMemberIds }, false, "setParticipantIds"),
       setImages: (images) => set({ images }, false, "setImages"),
+      setExistingImages: (existingImages) =>
+        set({ existingImages }, false, "setExistingImages"),
+      setRemovedExistingImages: (removedExistingImages) =>
+        set({ removedExistingImages }, false, "setRemovedExistingImages"),
       setIsSubmitting: (isSubmitting) =>
         set({ isSubmitting }, false, "setIsSubmitting"),
 
@@ -102,6 +114,31 @@ export const useWritePostStore = create<WritePostState>()(
         );
       },
 
+      // 삭제된 기존 이미지 관리
+      addRemovedExistingImage: (url) => {
+        const { removedExistingImages } = get();
+        if (!removedExistingImages.includes(url)) {
+          set(
+            { removedExistingImages: [...removedExistingImages, url] },
+            false,
+            "addRemovedExistingImage"
+          );
+        }
+      },
+
+      removeRemovedExistingImage: (url) => {
+        const { removedExistingImages } = get();
+        set(
+          {
+            removedExistingImages: removedExistingImages.filter(
+              (removedUrl) => removedUrl !== url
+            ),
+          },
+          false,
+          "removeRemovedExistingImage"
+        );
+      },
+
       // API 요청용 데이터 반환
       getPostData: (): PostMemoryPostRequest => {
         const {
@@ -110,6 +147,8 @@ export const useWritePostStore = create<WritePostState>()(
           memoryDate,
           participantFamilyMemberIds,
           images,
+          existingImages,
+          removedExistingImages,
         } = get();
         return {
           title,
@@ -117,6 +156,12 @@ export const useWritePostStore = create<WritePostState>()(
           memoryDate,
           participantFamilyMemberIds,
           images: images.length > 0 ? images : undefined,
+          existingImages:
+            existingImages.length > 0 ? existingImages : undefined,
+          removedExistingImages:
+            removedExistingImages.length > 0
+              ? removedExistingImages
+              : undefined,
         };
       },
 
