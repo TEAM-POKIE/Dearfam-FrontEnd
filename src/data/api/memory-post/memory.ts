@@ -3,6 +3,26 @@ import axios from "../axiosInstance";
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+// 타입 정의
+export interface MemoryPost {
+  postId: number;
+  title: string;
+  content: string;
+  commentCount: number;
+  memoryDate: string;
+  participants: {
+    familyMemberId: number;
+    nickname: string;
+  }[];
+  liked: boolean;
+}
+
+export interface GetRecentMemoryPostsResponse {
+  code: number;
+  message: string;
+  data: MemoryPost[];
+}
+
 import { useWritePostStore } from "@/context/store/writePostStore";
 import { AxiosError } from "axios";
 import axiosInstance from "../axiosInstance";
@@ -283,4 +303,10 @@ export const usePostMemoryPost = () => {
       }
     },
   });
+};
+
+// 누락된 함수 추가
+export const getAllMemoryPostsByTimeOrder = async () => {
+  const response = await axios.get(`${API_BASE_URL}/memory-post/time-order`);
+  return response.data;
 };

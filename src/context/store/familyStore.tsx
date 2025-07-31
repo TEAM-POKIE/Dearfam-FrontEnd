@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
-import { FamilyData, FamilyMember } from "@/data/types/family";
+import { FamilyData, FamilyMember } from "@/data/api/family/type";
 
 interface FamilyState {
   // 상태
@@ -39,7 +39,7 @@ export const useFamilyStore = create<FamilyState>()(
 
       setError: (error) => set({ error, isLoading: false }, false, "setError"),
 
-      addFamilyMember: (member) =>
+      addFamilyMember: (member: FamilyMember) =>
         set(
           (state) => ({
             familyData: state.familyData
@@ -59,7 +59,7 @@ export const useFamilyStore = create<FamilyState>()(
             familyData: state.familyData
               ? {
                   ...state.familyData,
-                  familyMembers: state.familyData.familyMembers.map((member) =>
+                  familyMembers: state.familyData.familyMembers.map((member: FamilyMember) =>
                     member.familyMemberId === memberId
                       ? { ...member, ...updates }
                       : member
