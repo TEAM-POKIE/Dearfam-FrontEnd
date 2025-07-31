@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/shadcn/dropdown-menu";
 import { useDeleteMemoryPost } from "@/data/api/memory-post/memory";
 import { useNavigate } from "react-router-dom";
+import { useToastStore } from "@/context/store/toastStore";
+import { useEffect } from "react";
 
 interface EventHeaderProps {
   data: number;
@@ -15,8 +17,25 @@ interface EventHeaderProps {
 }
 
 export const EventHeader = ({ data, postId }: EventHeaderProps) => {
-  const { mutate: deletePost } = useDeleteMemoryPost();
+  const {
+    mutate: deletePost,
+    isSuccess,
+    isError,
+    isPending,
+  } = useDeleteMemoryPost();
+  const { showToast } = useToastStore();
   const navigate = useNavigate();
+
+  // 삭제 상태 관리
+  useEffect(() => {
+    if (isSuccess) {
+      showToast("게시글이 성공적으로 삭제되었습니다.", "success");
+      // 즉시 이전 페이지로 이동
+      navigate(-1);
+    } else if (isError) {
+      showToast("게시글 삭제에 실패했습니다. 다시 시도해주세요.", "error");
+    }
+  }, [isSuccess, isError, navigate, showToast]);
   return (
     <div className="flex items-center justify-between w-full px-[1.25rem] py-[0.62rem] h-[3.125rem] ">
       <div className="flex items-center gap-[0.62rem] ">
@@ -46,10 +65,13 @@ export const EventHeader = ({ data, postId }: EventHeaderProps) => {
           sideOffset={2}
         >
           <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => deletePost(postId)}
+            className={`cursor-pointer ${
+              isPending ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={() => !isPending && deletePost(postId)}
+            disabled={isPending}
           >
-            삭제하기
+            {isPending ? "삭제 중..." : "삭제하기"}
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"

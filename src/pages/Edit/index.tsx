@@ -7,6 +7,7 @@ import BasicButton from "@/components/BasicButton";
 import ConfirmPopup from "@/components/ConfirmPopup";
 import { BasicLoading } from "@/components/BasicLoading";
 import { useWritePostStore } from "@/context/store/writePostStore";
+import { useToastStore } from "@/context/store/toastStore";
 import {
   usePutMemoryPost,
   useGetMemoryDetail,
@@ -18,6 +19,7 @@ export function EditPage() {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { postId } = useParams<{ postId: string }>();
+  const { showToast } = useToastStore();
   const {
     resetForm,
     validateForm,
@@ -29,13 +31,30 @@ export function EditPage() {
     title,
     content,
   } = useWritePostStore();
-  const { mutate: putMemoryPost } = usePutMemoryPost();
+  const {
+    mutate: putMemoryPost,
+    isSuccess,
+    isError,
+    isPending,
+  } = usePutMemoryPost();
   const { data: postData, isLoading: isDataLoading } = useGetMemoryDetail(
     postId ? parseInt(postId) : null
   );
 
   // 폼 유효성 검사 결과
   const { isValid } = validateForm();
+
+  // 업로드 상태 관리
+  useEffect(() => {
+    if (isSuccess) {
+      showToast("게시글이 성공적으로 수정되었습니다! 🎉", "success");
+      resetForm();
+      // 즉시 이전 페이지로 이동
+      navigate(-1);
+    } else if (isError) {
+      showToast("게시글 수정에 실패했습니다. 다시 시도해주세요.", "error");
+    }
+  }, [isSuccess, isError, navigate, resetForm, showToast]);
 
   // 기존 데이터로 폼 초기화
   useEffect(() => {
@@ -138,6 +157,19 @@ export function EditPage() {
     );
   }
 
+  // 업로드 중일 때 로딩 화면 표시
+  if (isPending) {
+    return (
+      <div className="bg-bg-1 min-h-screen">
+        <BasicLoading
+          fullscreen
+          text="게시글을 수정하고 있습니다..."
+          size={80}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className=" bg-bg-1 pb-[1.88rem]  ">
       <SemiHeader
@@ -162,7 +194,7 @@ export function EditPage() {
           color={isValid ? "main_1" : "gray_3"}
           textStyle="text_body2"
           onClick={handleSubmit}
-          disabled={!isValid}
+          disabled={!isValid || isPending}
         />
       </div>
 
@@ -182,22 +214,6 @@ export function EditPage() {
         isOpen={showEditConfirmModal}
         onClose={() => setShowEditConfirmModal(false)}
         title="수정하시겠습니까?"
-        content={
-          <div className="text-left space-y-2">
-            <div>
-              <span className="font-medium">제목:</span>
-              <div className="mt-1 p-2 bg-gray-100 rounded text-sm max-h-20 overflow-y-auto">
-                {title || "(제목 없음)"}
-              </div>
-            </div>
-            <div>
-              <span className="font-medium">내용:</span>
-              <div className="mt-1 p-2 bg-gray-100 rounded text-sm max-h-32 overflow-y-auto">
-                {content || "(내용 없음)"}
-              </div>
-            </div>
-          </div>
-        }
         confirmText="수정"
         cancelText="취소"
         onConfirm={handleConfirmEdit}

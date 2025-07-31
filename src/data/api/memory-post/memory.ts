@@ -28,13 +28,16 @@ export const usePutMemoryPost = () => {
       );
     },
     onSuccess: (data, postId) => {
+      console.log("메모리 포스트 수정 성공", data);
+      // 관련 쿼리 무효화하여 최신 데이터 반영
       queryClient.invalidateQueries({ queryKey: ["memory-post"] });
       queryClient.invalidateQueries({
         queryKey: ["memory-post", "detail", postId],
       });
-      setTimeout(() => {
-        window.history.back();
-      }, 100);
+      queryClient.invalidateQueries({ queryKey: ["memory-post", "recent"] });
+      queryClient.invalidateQueries({
+        queryKey: ["memory-post", "time-order"],
+      });
     },
     onError: (error: AxiosError) => {
       console.log("❌ 메모리 포스트 수정 실패", error);
@@ -126,7 +129,7 @@ export const usePutLiked = () => {
     onSuccess: (data, postId) => {
       // 성공 시 모든 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["memory-post"] });
-      // 특정 게시물의 상세 정보도 명시적으로 무효화
+      // 특정 게시물의 상세 정보도   명시적으로 무효화
       queryClient.invalidateQueries({
         queryKey: ["memory-post", "detail", postId],
       });
@@ -138,6 +141,8 @@ export const usePutLiked = () => {
 };
 
 export const useDeleteMemoryPost = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (postId: number) => {
       const response = await axios.delete(
@@ -147,6 +152,12 @@ export const useDeleteMemoryPost = () => {
     },
     onSuccess: (data) => {
       console.log("메모리 포스트 삭제 성공", data);
+      // 관련 쿼리 무효화하여 최신 데이터 반영
+      queryClient.invalidateQueries({ queryKey: ["memory-post"] });
+      queryClient.invalidateQueries({ queryKey: ["memory-post", "recent"] });
+      queryClient.invalidateQueries({
+        queryKey: ["memory-post", "time-order"],
+      });
     },
     onError: (error) => {
       console.log("메모리 포스트 삭제 실패", error);
@@ -197,6 +208,7 @@ export const useGetMemoryRecentPosts = () => {
 
 export const usePostMemoryPost = () => {
   const { getPostData } = useWritePostStore();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: ["memory-post", "post"],
@@ -238,7 +250,7 @@ export const usePostMemoryPost = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        timeout: 30000, // 30초로 타임아웃 연장 (파일 업로드용)
+        timeout: 300000, // 30초로 타임아웃 연장 (파일 업로드용)
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const percentCompleted = Math.round(
@@ -251,6 +263,12 @@ export const usePostMemoryPost = () => {
     },
     onSuccess: (data) => {
       console.log("메모리 포스트 생성 성공", data);
+      // 관련 쿼리 무효화하여 최신 데이터 반영
+      queryClient.invalidateQueries({ queryKey: ["memory-post"] });
+      queryClient.invalidateQueries({ queryKey: ["memory-post", "recent"] });
+      queryClient.invalidateQueries({
+        queryKey: ["memory-post", "time-order"],
+      });
     },
     onError: (error: AxiosError) => {
       console.log("❌ 메모리 포스트 생성 실패");

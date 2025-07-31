@@ -4,6 +4,7 @@ import { BottomNavbar, NavItem } from "./components/BottomNavbar";
 import { HeaderBar, PageType } from "./components/HeaderBar";
 import { useHeaderStore } from "@/context/store/headerStore";
 import { useGetFamilyMembers } from "@/data/api/family/family";
+import { GlobalToast } from "./components/GlobalToast";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -42,6 +43,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="mobile-container flex flex-col align-middle m-auto">
+      <GlobalToast />
       {!isWritePage &&
         !path.includes("/memoryDetailPage") &&
         !path.includes("/edit") && <HeaderBar />}
