@@ -1,10 +1,10 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ChevronRight, Camera } from "lucide-react";
 import profileIcon from "@/assets/image/style_icon_profile.svg";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import BasicPopup from "@/components/BasicPopup";
 import { useAuthStore } from "@/context/store/authStore";
-import { useCurrentUser } from "@/hooks/api/useUserAPI";
+import { useCurrentUser, useUpdateProfileImage } from "@/hooks/api/useUserAPI";
 import { useFamilyMembers } from "@/hooks/api/useFamilyAPI";
 import { BasicToast } from "@/components/BasicToast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,21 +14,30 @@ import { useQueryClient } from "@tanstack/react-query";
 export function SettingPage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const { logout } = useAuthStore();
+    const { logout, setUser } = useAuthStore();
     const queryClient = useQueryClient();
     const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
     const [isWithdrawPopupOpen, setIsWithdrawPopupOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
+    
+    // 파일 입력을 위한 ref
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // 최신 사용자 정보 가져오기 (설정 페이지에서는 항상 최신 정보 필요)
     const { data: userData, isLoading: userLoading } = useCurrentUser(true);
     const { data: familyData, isLoading: familyLoading } = useFamilyMembers(true);
+    
+    // 프로필 이미지 업로드 훅
+    const updateProfileImageMutation = useUpdateProfileImage();
 
     // 사용자 정보 추출
     const userNickname = userData?.data?.userNickname || "사용자";
     const userFamilyRole = userData?.data?.userFamilyRole || "";
     const familyName = familyData?.data?.familyName || "가족";
+    
+    // 프로필 이미지 URL - 기본 이미지 대체 로직
+    const profileImageUrl = userData?.data?.profileImage || profileIcon;
 
     // 역할 한글 매핑
     const roleMapping = {
@@ -54,6 +63,66 @@ export function SettingPage() {
             navigate('/SettingPage', { replace: true });
         }
     }, [searchParams, navigate]);
+
+    // 프로필 이미지 업로드 핸들러
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // 파일 크기 검증 (5MB 제한)
+        if (file.size > 5 * 1024 * 1024) {
+            setToastMessage('이미지 크기는 5MB 이하여야 합니다.');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+            return;
+        }
+
+        // 파일 타입 검증
+        if (!file.type.startsWith('image/')) {
+            setToastMessage('이미지 파일만 업로드 가능합니다.');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+            return;
+        }
+
+        try {
+            // 훅을 사용한 이미지 업로드
+            const result = await updateProfileImageMutation.mutateAsync(file);
+            
+            // 사용자 정보 업데이트 (Zustand 스토어)
+            if (userData?.data && result.data?.profileImageUrl) {
+                const updatedUser = { ...userData.data, profileImage: result.data.profileImageUrl };
+                setUser(updatedUser);
+            }
+
+            setToastMessage('프로필 이미지가 변경되었습니다!');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+
+        } catch (error: any) {
+            setToastMessage('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+        } finally {
+            // 파일 입력 초기화
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
+
+    // 카메라 버튼 클릭 핸들러
+    const handleCameraClick = () => {
+        fileInputRef.current?.click();
+    };
 
     const handleLogout = () => {
         // 로그아웃 처리 로직
@@ -115,14 +184,18 @@ export function SettingPage() {
                 <div className="relative">
                     <div className="w-[72px] h-[72px] rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
                         <img 
-                            src={profileIcon} 
+                            src={profileImageUrl} 
                             alt="프로필 이미지" 
                             className="w-full h-full object-cover"
                         />
                     </div>
-                    <div className="absolute bottom-0 right-0 bg-gray-500 rounded-full p-1">
+                    <button 
+                        className={`absolute bottom-0 right-0 bg-gray-500 rounded-full p-1 hover:bg-gray-600 transition-colors ${updateProfileImageMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                        onClick={handleCameraClick}
+                        disabled={updateProfileImageMutation.isPending}
+                    >
                         <Camera size={16} color="#FFFFFF" />
-                    </div>
+                    </button>
                 </div>
                 <div className="ml-4 flex flex-col items-start">
                     {userLoading || familyLoading ? (
@@ -139,6 +212,15 @@ export function SettingPage() {
                 </div>
             </div>
         </div>
+
+        {/* 숨겨진 파일 입력 */}
+        <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            style={{ display: 'none' }}
+        />
 
         {/* 계정 설정 섹션 */}
         <div className="w-full border-t border-[#828282] border-t-[0.0625rem]">

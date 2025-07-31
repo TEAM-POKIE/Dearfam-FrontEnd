@@ -126,8 +126,6 @@ export const useKakaoLogin = () => {
         // Zustand 스토어에 사용자 정보 저장
         setUser(data.data.user);
       }
-
-      console.log("카카오 로그인 성공:", data);
     },
     onError: (error) => {
       console.error("카카오 로그인 실패:", error);

@@ -52,8 +52,6 @@ export const KakaoCallback: React.FC = () => {
       processedCodeRef.current = code;
 
       try {
-        console.log('🔍 카카오 로그인 시작:', code);
-        
         // TanStack Query 뮤테이션 실행
         const redirectUri = `${window.location.origin}/kakao/callback`;
         const result = await kakaoLoginMutation.mutateAsync({
@@ -61,7 +59,6 @@ export const KakaoCallback: React.FC = () => {
           redirectUri,
         });
 
-        console.log('✅ 카카오 로그인 성공:', result);
         setIsKakaoLoginComplete(true);
         
       } catch (error: any) {

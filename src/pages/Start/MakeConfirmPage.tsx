@@ -62,13 +62,10 @@ export function MakeConfirmPage() {
   const handleConfirm = async () => {
     try {
       const familyRole = roleMapping[selectedRole as keyof typeof roleMapping];
-      console.log('🔍 가족 역할 설정 시작:', { selectedRole, familyRole });
       
       const result = await setFamilyRoleMutation.mutateAsync({ 
         familyRole: familyRole
       });
-      
-      console.log('✅ 가족 역할 설정 성공:', result);
       
       // 성공 시 홈 페이지로 이동
       navigate('/home', { replace: true });

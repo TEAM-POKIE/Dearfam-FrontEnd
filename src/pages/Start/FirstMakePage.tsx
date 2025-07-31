@@ -31,11 +31,7 @@ export function FirstMakePage() {
 
   const handleConfirm = async () => {
     try {
-      console.log('🔍 가족 생성 시작:', familyName);
-      
       const result = await createFamilyMutation.mutateAsync({ familyName: familyName });
-      
-      console.log('✅ 가족 생성 성공:', result);
       
       // 성공 시 역할 선택 페이지로 이동
       navigate('/MakeConfirmPage', { state: { familyName } });
@@ -63,7 +59,6 @@ export function FirstMakePage() {
             break;
           case 404:
             // 사용자 없음 - LoginPage로 리다이렉트
-            console.log('   → 사용자 정보 없음 - 로그인 페이지로 이동');
             navigate('/LoginPage?error=user-not-found', { replace: true });
             break;
           case 500:

@@ -79,26 +79,6 @@ export default function LoginPage() {
     }
   }, [searchParams, navigate]);
 
-  const handleGuestLogin = () => {
-    // TODO: 게스트 로그인 또는 체험하기 기능
-    console.log("게스트 로그인 버튼 클릭");
-    navigate('/StartPage');
-  };
-
-  const handleClearTokens = () => {
-    // 디버깅용: 로컬스토리지 토큰 삭제
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    console.log('🔧 디버깅: 토큰 삭제 완료');
-    
-    // 토스트 메시지 표시
-    setToastMessage('토큰이 삭제되었습니다.');
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
-  };
-
   return (
     <div className="flex justify-center items-center h-app bg-bg-1 select-none">
       <div className="mobile-container flex flex-col items-center relative w-full max-w-md px-4">
@@ -123,24 +103,9 @@ export default function LoginPage() {
         {/* 하단 텍스트 */}
         <div className="mt-4 text-center">
           <p className="text-body3 text-gray-4">
-            로그인 시 <span className="text-main-2">개인정보처리방침</span> 및 <span className="text-main-2">이용약관</span>에 동의하게 됩니다.
+            로그인 시 <a href="about:blank" target="_blank" rel="noopener noreferrer" className="text-main-2 hover:underline cursor-pointer">개인정보처리방침</a> 및 <a href="about:blank" target="_blank" rel="noopener noreferrer" className="text-main-2 hover:underline cursor-pointer">이용약관</a>에<br />
+            동의하게 됩니다.
           </p>
-        </div>
-
-        {/* 작은 버튼들 */}
-        <div className="mt-4 flex flex-row items-center justify-center gap-2">
-          <button 
-            onClick={handleGuestLogin}
-            className="px-4 py-2 text-body3 text-gray-3 bg-gray-5 rounded-lg hover:bg-gray-4 transition-colors"
-          >
-            둘러보기
-          </button>
-          <button 
-            onClick={handleClearTokens}
-            className="px-4 py-2 text-body3 text-red-500 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
-          >
-            토큰 삭제
-          </button>
         </div>
 
         {/* 토스트 메시지 */}

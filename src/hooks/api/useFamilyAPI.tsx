@@ -19,12 +19,6 @@ export const familyAPI = {
   createFamily: async (data: {
     familyName: string;
   }): Promise<ApiResponse<FamilyCreateResponse>> => {
-    console.log('🔍 가족 생성 API 요청:', {
-      url: `${API_BASE_URL}/family`,
-      data: data,
-      method: 'POST'
-    });
-    
     const response = await axiosInstance.post(`${API_BASE_URL}/family`, data);
     return response.data;
   },
@@ -33,12 +27,6 @@ export const familyAPI = {
   setFamilyRole: async (data: {
     familyRole: string;
   }): Promise<ApiResponse<{ userId: string; role: string }>> => {
-    console.log('🔍 가족 역할 설정 API 요청:', {
-      url: `${API_BASE_URL}/family/role`,
-      data: data,
-      method: 'POST'
-    });
-    
     const response = await axiosInstance.post(`${API_BASE_URL}/family/role`, data);
     return response.data;
   },
@@ -139,8 +127,6 @@ export const useCreateFamily = () => {
           message: "가족 생성 성공",
           code: "200"
         });
-        
-        console.log('✅ 가족 생성 성공 - 캐시에 가족 정보 저장됨');
       }
       
       // 가족 관련 모든 캐시 무효화

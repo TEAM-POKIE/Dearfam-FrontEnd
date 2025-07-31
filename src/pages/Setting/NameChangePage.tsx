@@ -63,7 +63,6 @@ export function NameChangePage() {
                    // 성공 시 Setting 페이지로 리다이렉트 (토스트 메시지와 함께)
              navigate('/SettingPage?message=nickname-changed', { replace: true });
     } catch (error) {
-      console.error('닉네임 변경 실패:', error);
       setToastMessage('닉네임 변경에 실패했습니다.\n다시 시도해주세요.');
       setShowToast(true);
       setTimeout(() => {

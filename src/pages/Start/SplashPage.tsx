@@ -8,7 +8,6 @@ export const SplashPage = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log('🎬 SplashPage: 2초 후 AuthGuard 시작');
       setShowAuthGuard(true);
     }, 2000);
     return () => clearTimeout(timer);

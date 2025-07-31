@@ -33,6 +33,19 @@ export const userAPI = {
     });
     return response.data;
   },
+
+  // 프로필 이미지 업로드
+  updateProfileImage: async (file: File): Promise<ApiResponse<{ profileImageUrl: string }>> => {
+    const formData = new FormData();
+    formData.append('profileImage', file);
+
+    const response = await axiosInstance.put(`${API_BASE_URL}/users/profile-image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
 };
 
 // React Query 훅들
@@ -76,10 +89,9 @@ export const useUpdateNickname = () => {
       queryClient.setQueryData(userQueryKeys.currentUser(), data);
       // 사용자 관련 모든 캐시 무효화
       queryClient.invalidateQueries({ queryKey: userQueryKeys.all });
-      console.log("닉네임 변경 성공:", data);
     },
     onError: (error) => {
-      console.error("닉네임 변경 실패:", error);
+      // 에러 로그 제거 - 컴포넌트에서 처리
     },
   });
 };
@@ -139,4 +151,33 @@ export const useOptimisticUpdateNickname = () => {
 export const useUserData = () => {
   const { data: userData } = useCurrentUser();
   return userData?.data;
+};
+
+// 프로필 이미지 업로드 뮤테이션
+export const useUpdateProfileImage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userAPI.updateProfileImage,
+    onSuccess: (data) => {
+      // 성공 시 현재 사용자 캐시 업데이트
+      const currentUserData = queryClient.getQueryData(userQueryKeys.currentUser());
+      if (currentUserData && data.data?.profileImageUrl) {
+        const updatedUserData = {
+          ...currentUserData,
+          data: {
+            ...(currentUserData as any).data,
+            profileImage: data.data.profileImageUrl,
+          },
+        };
+        queryClient.setQueryData(userQueryKeys.currentUser(), updatedUserData);
+      }
+      
+      // 사용자 관련 모든 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: userQueryKeys.all });
+    },
+    onError: (error) => {
+      // 에러 로그 제거 - 컴포넌트에서 처리
+    },
+  });
 };
