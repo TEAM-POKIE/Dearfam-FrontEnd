@@ -9,7 +9,8 @@ import { useGetMemoryDetail } from "@/data/api/memory-post/memory";
 import { DetailHeader } from "./MainDetailPage/DetailHeader";
 import { Skeleton } from "@/components/ui/shadcn/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { userAPI } from "@/hooks/api/useUserAPI";
 
 export function MemoryDetailPage() {
   const { postId } = useParams();
@@ -24,6 +25,9 @@ export function MemoryDetailPage() {
     postId ? Number(postId) : null
   );
 
+  const [userNickname, setUserNickname] = useState<string | null>(null);
+  const [isUserLoading, setIsUserLoading] = useState(false);
+
   console.log(
     `📄 MemoryDetailPage 렌더링: postId=${postId}, isLoading=${isLoading}, liked=${memoryDetail?.data?.liked}`
   );
@@ -37,6 +41,27 @@ export function MemoryDetailPage() {
       });
     }
   }, [postId, queryClient]);
+
+  // 사용자 닉네임 가져오기
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (memoryDetail?.data?.writerId) {
+        setIsUserLoading(true);
+        try {
+          const user = await userAPI.getUserById(
+            memoryDetail.data.writerId.toString()
+          );
+          setUserNickname(user.data?.userNickname || "");
+        } catch (error) {
+          console.error("사용자 정보 가져오기 실패:", error);
+          setUserNickname("사용자");
+        } finally {
+          setIsUserLoading(false);
+        }
+      }
+    };
+    fetchUserData();
+  }, [memoryDetail?.data?.writerId]);
 
   // 데이터 변화 추적
   useEffect(() => {
@@ -62,8 +87,14 @@ export function MemoryDetailPage() {
     );
   }
 
-  if (isLoading || !memoryDetail?.data) {
-    console.log(`⏳ MemoryDetailPage 로딩 중: postId=${postId}`);
+  // 전체 로딩 상태 (게시물 데이터 + 사용자 데이터)
+  const isOverallLoading =
+    isLoading || isUserLoading || !memoryDetail?.data || !userNickname;
+
+  if (isOverallLoading) {
+    console.log(
+      `⏳ MemoryDetailPage 로딩 중: postId=${postId}, isLoading=${isLoading}, isUserLoading=${isUserLoading}, userNickname=${userNickname}`
+    );
     return (
       <div className="min-h-screen flex flex-col w-full">
         <div className="flex-1 pb-[4.125rem] overflow-y-auto">
@@ -77,17 +108,14 @@ export function MemoryDetailPage() {
   }
 
   console.log(
-    `✅ MemoryDetailPage 렌더링 완료: postId=${postId}, liked=${memoryDetail.data.liked}`
+    `✅ MemoryDetailPage 렌더링 완료: postId=${postId}, liked=${memoryDetail.data.liked}, userNickname=${userNickname}`
   );
 
   return (
     <div className="min-h-screen flex flex-col w-full">
       <div className="flex-1 pb-[4.125rem] overflow-y-auto">
         <SemiHeader title={memoryDetail.data.title} exit={false} />
-        <EventHeader
-          data={memoryDetail.data.writerId}
-          postId={Number(postId)}
-        />
+        <EventHeader data={userNickname} postId={Number(postId)} />
         <ImageSlider data={memoryDetail.data} />
         <DetailHeader
           postId={Number(postId)}

@@ -12,7 +12,7 @@ import { useToastStore } from "@/context/store/toastStore";
 import { useEffect } from "react";
 
 interface EventHeaderProps {
-  data: number;
+  data: string;
   postId: number;
 }
 
