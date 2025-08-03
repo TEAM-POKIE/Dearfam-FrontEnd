@@ -5,7 +5,6 @@ import {
   useGetMemoryDetail,
   useGetMemoryTimeOrder,
 } from "@/data/api/memory-post/memory";
-import { Skeleton } from "@/components/ui/shadcn/skeleton";
 import { TimeOrderMemoryPost } from "@/data/api/memory-post/type";
 import { useNavigate } from "react-router-dom";
 
@@ -49,12 +48,15 @@ export const EventGallery = ({ onLoadingChange }: EventGalleryProps) => {
       {isLoading || !data?.data
         ? Array.from({ length: 2 }).map((_, index) => (
             <div key={index} className="mb-6">
-              <Skeleton className="w-[5rem] h-[2rem] mb-[0.62rem] ml-[0.62rem]" />
+              {/* 연도 스켈레톤 */}
+              <div className="w-[5rem] h-[2rem] mb-[0.62rem] ml-[0.62rem] bg-gray-300 rounded animate-pulse"></div>
+
+              {/* 2열 그리드 스켈레톤 */}
               <div className="grid grid-cols-2 gap-[0.62rem]">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <Skeleton
+                  <div
                     key={i}
-                    className="rounded-[0.94rem] w-[10.625rem] h-[8.125rem]"
+                    className="rounded-[0.94rem] w-[10.625rem] h-[8.125rem] bg-gray-300 animate-pulse"
                   />
                 ))}
               </div>
