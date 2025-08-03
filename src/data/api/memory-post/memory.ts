@@ -207,9 +207,10 @@ export const useGetMemoryTimeOrder = () => {
       );
       return response.data;
     },
-    staleTime: 0, // 항상 최신 데이터 확인
-    gcTime: 1 * 60 * 1000, // 1분
+    staleTime: 30 * 1000, // 30초간 신선한 데이터로 간주
+    gcTime: 5 * 60 * 1000, // 5분간 캐시 유지
     retry: 3,
+    refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 재요청 비활성화
   });
 };
 
@@ -220,9 +221,10 @@ export const useGetMemoryRecentPosts = () => {
       const response = await axios.get(`${API_BASE_URL}/memory-post/recent`);
       return response.data;
     },
-    staleTime: 0, // 항상 최신 데이터 확인
-    gcTime: 5 * 60 * 1000, // 5분
+    staleTime: 30 * 1000, // 30초간 신선한 데이터로 간주
+    gcTime: 5 * 60 * 1000, // 5분간 캐시 유지
     retry: 3,
+    refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 재요청 비활성화
   });
 };
 

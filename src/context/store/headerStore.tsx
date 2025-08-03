@@ -10,6 +10,7 @@ interface HeaderState {
   setPageType: (pageType: PageType) => void;
   setIsWritePage: (isWritePage: boolean) => void;
   handleIconClick: (newMode: HeaderMode) => void;
+  resetToDefault: () => void;
 }
 
 export const useHeaderStore = create<HeaderState>((set, get) => ({
@@ -17,7 +18,15 @@ export const useHeaderStore = create<HeaderState>((set, get) => ({
   pageType: "home",
   isWritePage: false,
 
-  setMode: (mode) => set({ mode }),
+  setMode: (mode) => {
+    // 유효한 모드인지 확인
+    if (mode === "gallery" || mode === "slider") {
+      set({ mode });
+    } else {
+      console.warn(`Invalid mode: ${mode}, defaulting to slider`);
+      set({ mode: "slider" });
+    }
+  },
 
   setPageType: (pageType) => set({ pageType }),
 
@@ -34,5 +43,13 @@ export const useHeaderStore = create<HeaderState>((set, get) => ({
       // 다른 모드는 그냥 설정
       set({ mode: newMode });
     }
+  },
+
+  resetToDefault: () => {
+    set({
+      mode: "slider",
+      pageType: "home",
+      isWritePage: false,
+    });
   },
 }));

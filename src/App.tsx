@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./routes";
+import { Toaster } from "./components/ui/shadcn/sonner";
 
 // TanStack Query 클라이언트 생성
 const queryClient = new QueryClient({
@@ -19,6 +20,8 @@ function App() {
       <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>
+
+      <Toaster />
 
       {/* 개발 환경에서만 ReactQuery 디버깅 도구 표시 */}
       <ReactQueryDevtools initialIsOpen={false} />

@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { BasicButton } from "@/components/BasicButton";
 import { BasicDropDown } from "@/components/ui/section1/BasicDropDown";
 import { BasicPopup } from "@/components/BasicPopup";
-import { BasicToast } from "@/components/BasicToast";
 import { useSetFamilyRole } from "@/hooks/api/useFamilyAPI";
 import { useCurrentUser } from "@/hooks/api/useUserAPI";
+import { useToastStore } from "@/context/store/toastStore";
 import { AxiosError } from "axios";
 
 interface LocationState {
@@ -20,8 +20,7 @@ export function MakeConfirmPage() {
   const { familyName, fromLink, fromKakao } = location.state as LocationState;
   const [selectedRole, setSelectedRole] = useState("");
   const [showPopup, setShowPopup] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const { showToast } = useToastStore();
 
   const setFamilyRoleMutation = useSetFamilyRole();
   
@@ -79,11 +78,7 @@ export function MakeConfirmPage() {
         switch (status) {
           case 400:
             // 잘못된 요청 - 토스트 메시지
-            setToastMessage('잘못된 요청입니다.\n입력 정보를 확인해주세요.');
-            setShowToast(true);
-            setTimeout(() => {
-              setShowToast(false);
-            }, 5000);
+            showToast('잘못된 요청입니다.\n입력 정보를 확인해주세요.', 'error');
             setShowPopup(false);
             break;
           case 404:
@@ -93,29 +88,17 @@ export function MakeConfirmPage() {
             break;
           case 500:
             // 서버 오류 - 토스트 메시지
-            setToastMessage('서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
-            setShowToast(true);
-            setTimeout(() => {
-              setShowToast(false);
-            }, 5000);
+            showToast('서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.', 'error');
             setShowPopup(false);
             break;
           default:
             // 기타 에러 - 토스트 메시지
-            setToastMessage('역할 설정에 실패했습니다.\n다시 시도해주세요.');
-            setShowToast(true);
-            setTimeout(() => {
-              setShowToast(false);
-            }, 5000);
+            showToast('역할 설정에 실패했습니다.\n다시 시도해주세요.', 'error');
             setShowPopup(false);
         }
       } else {
         // 기타 에러 - 토스트 메시지
-        setToastMessage('역할 설정에 실패했습니다.\n다시 시도해주세요.');
-        setShowToast(true);
-        setTimeout(() => {
-          setShowToast(false);
-        }, 5000);
+        showToast('역할 설정에 실패했습니다.\n다시 시도해주세요.', 'error');
         setShowPopup(false);
       }
     }
@@ -168,12 +151,6 @@ export function MakeConfirmPage() {
           disabled={setFamilyRoleMutation.isPending}
         />
 
-        {/* 토스트 메시지 */}
-        {showToast && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-            <BasicToast message={toastMessage} />
-          </div>
-        )}
       </div>
     </div>
   );

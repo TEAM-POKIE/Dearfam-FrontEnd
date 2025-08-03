@@ -4,15 +4,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import dearfamLogo from "../../assets/image/dearfam_logo_icon.svg";
 import kakaoLoginButton from "../../assets/image/kakao/kakao_login_medium_wide.png";
 import { useKakaoLogin, authUtils } from "../../hooks/api/useAuthAPI";
-import { BasicToast } from "../../components/BasicToast";
+import { useToastStore } from "@/context/store/toastStore";
 
 export function KakaoInPage() {
     const [isValid, setIsValid] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const [showToast, setShowToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const { showToast } = useToastStore();
     
     const kakaoLoginMutation = useKakaoLogin();
 
@@ -22,15 +21,14 @@ export function KakaoInPage() {
         const error = searchParams.get("error");
         
         if (error) {
-            setToastMessage("카카오 로그인에 실패했습니다.");
-            setShowToast(true);
+            showToast("카카오 로그인에 실패했습니다.", "error");
             return;
         }
         
         if (code) {
             handleKakaoLogin(code);
         }
-    }, [searchParams]);
+    }, [searchParams, showToast]);
 
     // 카카오 로그인 처리
     const handleKakaoLogin = async (code: string) => {
@@ -41,8 +39,7 @@ export function KakaoInPage() {
                 redirectUri: window.location.origin + "/kakao/callback"
             });
             
-            setToastMessage("카카오 로그인이 성공했습니다!");
-            setShowToast(true);
+            showToast("카카오 로그인이 성공했습니다!", "success");
             
             // 성공 시 홈 페이지로 이동
             setTimeout(() => {
@@ -51,8 +48,7 @@ export function KakaoInPage() {
             
         } catch (error) {
             console.error("카카오 로그인 실패:", error);
-            setToastMessage("카카오 로그인에 실패했습니다. 다시 시도해주세요.");
-            setShowToast(true);
+            showToast("카카오 로그인에 실패했습니다. 다시 시도해주세요.", "error");
         } finally {
             setIsLoading(false);
         }
@@ -64,8 +60,7 @@ export function KakaoInPage() {
             // 환경변수 확인
             const KAKAO_REST_KEY = import.meta.env.VITE_KAKAO_REST_KEY;
             if (!KAKAO_REST_KEY) {
-                setToastMessage("카카오 REST API 키가 설정되지 않았습니다. 개발자에게 문의하세요.");
-                setShowToast(true);
+                showToast("카카오 REST API 키가 설정되지 않았습니다. 개발자에게 문의하세요.", "error");
                 return;
             }
 
@@ -76,8 +71,7 @@ export function KakaoInPage() {
             window.location.href = loginUrl;
         } catch (error) {
             console.error("카카오 로그인 URL 생성 실패:", error);
-            setToastMessage("카카오 로그인을 시작할 수 없습니다. 다시 시도해주세요.");
-            setShowToast(true);
+            showToast("카카오 로그인을 시작할 수 없습니다. 다시 시도해주세요.", "error");
         }
     };
 
@@ -145,13 +139,6 @@ export function KakaoInPage() {
                     </div>
                 </div>
             </div>
-            {/* 토스트 메시지 */}
-            {showToast && (
-                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-                    <BasicToast message={toastMessage} />
-                </div>
-            )}
-
         </div>
     );
 }

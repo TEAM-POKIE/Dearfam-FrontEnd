@@ -280,7 +280,9 @@ export const EventCarousel = memo<EventCarouselProps>(
           setSliderValue(newSliderValue);
           return;
         } else {
-          navigate(`/home/memoryDetailPage/${postId}`);
+          if (index !== displayItems.length - 1) {
+            navigate(`/home/memoryDetailPage/${postId}`);
+          }
         }
 
         // 현재 활성 슬라이드인 경우에만 상세 페이지로 이동
@@ -459,7 +461,7 @@ export const EventCarousel = memo<EventCarouselProps>(
                                   <div className="flex justify-center">
                                     <BasicButton
                                       onClick={() => {
-                                        navigate("/write");
+                                        navigate("/home/write");
                                       }}
                                       text="추억 공유하러 가기"
                                       color="main_1"
