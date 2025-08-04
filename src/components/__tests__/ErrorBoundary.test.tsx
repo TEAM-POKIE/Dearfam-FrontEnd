@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect, vi, afterEach, afterAll } from 'vitest';
 import { ErrorBoundary, ErrorFallback } from '../ErrorBoundary';
 
 // 에러를 발생시키는 테스트 컴포넌트

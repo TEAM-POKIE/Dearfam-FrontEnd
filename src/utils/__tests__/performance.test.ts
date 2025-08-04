@@ -30,7 +30,7 @@ mockPerformanceObserver.mockImplementation((callback) => ({
   disconnect: vi.fn(),
   callback,
 }));
-global.PerformanceObserver = mockPerformanceObserver;
+global.PerformanceObserver = mockPerformanceObserver as any;
 
 // Console 모킹
 const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -56,7 +56,7 @@ describe('Performance Utilities', () => {
       const testFunction = vi.fn(() => 'result');
       const measuredFunction = measureFunction(testFunction, 'testFunc');
 
-      const result = measuredFunction('arg1', 'arg2');
+      const result = measuredFunction();
 
       expect(result).toBe('result');
       expect(testFunction).toHaveBeenCalledWith('arg1', 'arg2');
@@ -90,7 +90,7 @@ describe('Performance Utilities', () => {
       });
       const measuredFunction = measureAsyncFunction(asyncFunction, 'asyncFunc');
 
-      const result = await measuredFunction('arg1');
+      const result = await measuredFunction();
 
       expect(result).toBe('async result');
       expect(asyncFunction).toHaveBeenCalledWith('arg1');
@@ -175,7 +175,7 @@ describe('Performance Utilities', () => {
 
     test('메모리 API가 없어도 에러가 발생하지 않는다', () => {
       const originalMemory = mockPerformance.memory;
-      delete mockPerformance.memory;
+      (mockPerformance as any).memory = undefined;
 
       expect(() => trackMemoryUsage()).not.toThrow();
 

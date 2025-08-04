@@ -1,4 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
+import { z } from 'zod';
 import { 
   emailSchema,
   nicknameSchema,
@@ -371,8 +372,8 @@ describe('Environment Validation', () => {
 
 describe('useFormValidation', () => {
   test('필드 검증을 수행한다', () => {
-    const schema = emailSchema;
-    const { validateField } = useFormValidation({ email: schema });
+    const schema = z.object({ email: emailSchema });
+    const { validateField } = useFormValidation(schema);
 
     const validResult = validateField('email', 'test@example.com');
     expect(validResult.isValid).toBe(true);
@@ -384,7 +385,7 @@ describe('useFormValidation', () => {
   });
 
   test('전체 폼 검증을 수행한다', () => {
-    const schema = { email: emailSchema, nickname: nicknameSchema };
+    const schema = z.object({ email: emailSchema, nickname: nicknameSchema });
     const { validateForm } = useFormValidation(schema);
 
     const validData = { email: 'test@example.com', nickname: '홍길동' };

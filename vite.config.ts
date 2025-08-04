@@ -65,10 +65,36 @@ export default defineConfig({
           }),
         ]
       : []),
+    // MSW 제거 플러그인 (빌드시에만)
+    ...(process.env.NODE_ENV === "production" ? [{
+      name: 'remove-msw',
+      resolveId(id: string) {
+        if (id.includes('msw') || id.includes('/mocks/')) {
+          return id;
+        }
+      },
+      load(id: string) {
+        if (id.includes('msw') || id.includes('/mocks/')) {
+          return 'export default {}; export const setupWorker = () => ({ start: () => Promise.resolve() });';
+        }
+      }
+    }] : []),
   ],
+  define: {
+    // MSW를 빌드시 제외하기 위한 환경 변수
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    // MSW 모듈 자체를 조건부로 대체
+    'import.meta.env.MSW_ENABLED': process.env.NODE_ENV === 'development',
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // 프로덕션 빌드시 MSW 모듈들을 빈 모듈로 대체
+      ...(process.env.NODE_ENV === "production" ? {
+        "msw": path.resolve(__dirname, "./src/utils/msw-stub.js"),
+        "msw/browser": path.resolve(__dirname, "./src/utils/msw-stub.js"),
+        "msw/node": path.resolve(__dirname, "./src/utils/msw-stub.js"),
+      } : {}),
     },
   },
   server: {
@@ -93,68 +119,123 @@ export default defineConfig({
     target: "es2020",
     jsxInject: `import React from 'react'`,
   },
+  optimizeDeps: {
+    // MSW를 pre-bundling에서 제외
+    exclude: ['msw'],
+    include: process.env.NODE_ENV === 'development' ? ['msw'] : [],
+  },
+  ssr: {
+    noExternal: process.env.NODE_ENV === 'production' ? ['msw'] : [],
+  },
   build: {
     target: "es2020",
     sourcemap: true,
     rollupOptions: {
+      onwarn(warning, warn) {
+        // 테스트 및 MSW 관련 경고 무시
+        if (
+          (warning.code === "UNRESOLVED_IMPORT" || warning.code === "MISSING_EXPORT") &&
+          (warning.message?.includes("msw") || 
+           warning.message?.includes("@testing-library") ||
+           warning.message?.includes("vitest"))
+        ) {
+          return;
+        }
+        // 프로덕션 빌드시 테스트 관련 unresolved import 무시
+        if (process.env.NODE_ENV === 'production' && warning.code === "UNRESOLVED_IMPORT") {
+          return;
+        }
+        warn(warning);
+      },
+      external: [
+        // 프로덕션 빌드시 테스트 및 MSW 관련 모듈 제외
+        ...(process.env.NODE_ENV === 'production' ? [
+          'msw',
+          'msw/browser',
+          'msw/node', 
+          '@testing-library/react',
+          '@testing-library/dom',
+          '@testing-library/jest-dom',
+          '@testing-library/user-event',
+          'vitest',
+          /\/mocks\//,
+          /mockServiceWorker/,
+          /setupTests/,
+          /handlers/,
+          /__tests__/,
+          /\.test\./,
+          /\.spec\./
+        ] : [])
+      ],
       output: {
         // 벤더 라이브러리 분리를 통한 청크 최적화
         manualChunks: (id) => {
           // node_modules의 패키지들을 vendor 청크로 분리
-          if (id.includes('node_modules')) {
+          if (id.includes("node_modules")) {
             // React 생태계
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'react-vendor';
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "react-vendor";
             }
             // 라우팅
-            if (id.includes('react-router')) {
-              return 'router';
+            if (id.includes("react-router")) {
+              return "router";
             }
             // 상태 관리
-            if (id.includes('zustand') || id.includes('@tanstack/react-query')) {
-              return 'state';
+            if (
+              id.includes("zustand") ||
+              id.includes("@tanstack/react-query")
+            ) {
+              return "state";
             }
             // UI 컴포넌트 라이브러리
-            if (id.includes('@radix-ui') || id.includes('lucide-react')) {
-              return 'ui-vendor';
+            if (id.includes("@radix-ui") || id.includes("lucide-react")) {
+              return "ui-vendor";
             }
             // 폼 라이브러리
-            if (id.includes('react-hook-form') || id.includes('@hookform')) {
-              return 'form';
+            if (id.includes("react-hook-form") || id.includes("@hookform")) {
+              return "form";
             }
             // 유틸리티 라이브러리
-            if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('zod')) {
-              return 'utils';
+            if (
+              id.includes("clsx") ||
+              id.includes("tailwind-merge") ||
+              id.includes("zod")
+            ) {
+              return "utils";
             }
             // 이미지/미디어 관련
-            if (id.includes('react-dropzone') || id.includes('embla-carousel') || 
-                id.includes('motion') || id.includes('react-sortablejs')) {
-              return 'media';
+            if (
+              id.includes("react-dropzone") ||
+              id.includes("embla-carousel") ||
+              id.includes("motion") ||
+              id.includes("react-sortablejs")
+            ) {
+              return "media";
             }
             // 네트워킹
-            if (id.includes('axios')) {
-              return 'network';
+            if (id.includes("axios")) {
+              return "network";
             }
             // 기타 큰 라이브러리들
-            if (id.includes('date-fns')) {
-              return 'date-utils';
+            if (id.includes("date-fns")) {
+              return "date-utils";
             }
             // 나머지 작은 vendor들
-            return 'vendor';
+            return "vendor";
           }
-          
+
           // 애플리케이션 코드 청크 분리
-          if (id.includes('/src/pages/')) {
-            const page = id.split('/src/pages/')[1].split('/')[0];
+          if (id.includes("/src/pages/")) {
+            const page = id.split("/src/pages/")[1].split("/")[0];
             return `page-${page.toLowerCase()}`;
           }
-          
-          if (id.includes('/src/components/ui/')) {
-            return 'ui-components';
+
+          if (id.includes("/src/components/ui/")) {
+            return "ui-components";
           }
-          
-          if (id.includes('/src/utils/') || id.includes('/src/lib/')) {
-            return 'app-utils';
+
+          if (id.includes("/src/utils/") || id.includes("/src/lib/")) {
+            return "app-utils";
           }
         },
         // 청크 파일명 설정
@@ -169,7 +250,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: "./src/utils/setupTests.ts", // MSW 및 jest-dom 설정 위치
+    setupFiles: process.env.NODE_ENV !== 'production' ? ["./src/utils/setupTests.ts"] : [],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

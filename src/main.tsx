@@ -26,16 +26,24 @@ try {
 
 // MSW 초기화 (개발 환경에서만, VITE_DISABLE_MSW가 false일 때)
 if (import.meta.env.DEV && import.meta.env.VITE_DISABLE_MSW !== "true") {
-
-  import("./mocks/browser").then(({ worker }) => {
-    worker
-      .start({
-        onUnhandledRequest: "bypass", // 처리되지 않은 요청은 그대로 통과
-      })
-      .then(() => {
-        console.log("🚀 MSW가 시작되었습니다!");
-      });
-  });
+  try {
+    import("./mocks/browser").then(({ worker }) => {
+      worker
+        .start({
+          onUnhandledRequest: "bypass", // 처리되지 않은 요청은 그대로 통과
+        })
+        .then(() => {
+          console.log("🚀 MSW가 시작되었습니다!");
+        })
+        .catch((error) => {
+          console.warn("MSW 시작 실패:", error);
+        });
+    }).catch((error) => {
+      console.warn("MSW 모듈 로드 실패:", error);
+    });
+  } catch (error) {
+    console.warn("MSW 초기화 실패:", error);
+  }
 }
 
 // 성능 모니터링 시작

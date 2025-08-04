@@ -16,11 +16,15 @@ const mockCanvas = {
     drawImage: vi.fn(),
     imageSmoothingEnabled: true,
     imageSmoothingQuality: 'high',
+    canvas: mockCanvas,
+    getContextAttributes: vi.fn(() => ({})),
+    globalAlpha: 1,
+    globalCompositeOperation: 'source-over',
   })),
   toBlob: vi.fn(),
 };
 
-global.HTMLCanvasElement.prototype.getContext = mockCanvas.getContext;
+global.HTMLCanvasElement.prototype.getContext = mockCanvas.getContext as any;
 Object.defineProperty(global.HTMLCanvasElement.prototype, 'width', {
   get: () => mockCanvas.width,
   set: (value) => { mockCanvas.width = value; },
@@ -262,7 +266,7 @@ describe('Image Utilities', () => {
         }, 5);
       }, 10);
 
-      const compressedFile = await compressImage(file, 0.6, true);
+      const compressedFile = await compressImage(file, 0.6);
 
       expect(compressedFile.type).toBe('image/jpeg');
       expect(mockCanvas.getContext).toHaveBeenCalled();
@@ -280,7 +284,7 @@ describe('Image Utilities', () => {
       });
 
       // getContext가 null을 반환하도록 모킹
-      mockCanvas.getContext.mockReturnValueOnce(null);
+      mockCanvas.getContext.mockReturnValueOnce(null as any);
 
       // FileReader onload 시뮬레이션
       setTimeout(() => {
@@ -309,7 +313,7 @@ describe('Image Utilities', () => {
           mockImage.onload?.();
           // 두 번째 FileReader 호출 (generateBlurPlaceholder)
           setTimeout(() => {
-            mockFileReader.onload?.();
+            mockFileReader.onload?.({ target: { result: 'data:image/jpeg;base64,mock' } } as any);
           }, 10);
         }, 10);
       }, 10);

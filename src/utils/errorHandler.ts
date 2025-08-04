@@ -131,7 +131,7 @@ export class GlobalErrorHandler {
 
   // 에러 중복 처리 방지
   private isDuplicateError(error: Error | ApiError): boolean {
-    const errorKey = "message" in error ? error.message : error.toString();
+    const errorKey = "message" in error ? error.message : String(error);
 
     if (this.errorQueue.has(errorKey)) {
       return true;
