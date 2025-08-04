@@ -99,25 +99,63 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // 벤더 라이브러리 분리를 통한 청크 최적화
-        manualChunks: {
-          // React 코어
-          "react-vendor": ["react", "react-dom"],
-          // 라우팅
-          router: ["react-router-dom"],
-          // 상태 관리
-          state: ["zustand", "@tanstack/react-query"],
-          // UI 라이브러리
-          "ui-vendor": [
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-dropdown-menu",
-            "@radix-ui/react-popover",
-          ],
-          // 유틸리티
-          utils: ["clsx", "tailwind-merge", "zod"],
-          // 폼 관련
-          form: ["react-hook-form", "@hookform/resolvers"],
-          // 이미지/미디어
-          media: ["react-window"],
+        manualChunks: (id) => {
+          // node_modules의 패키지들을 vendor 청크로 분리
+          if (id.includes('node_modules')) {
+            // React 생태계
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            // 라우팅
+            if (id.includes('react-router')) {
+              return 'router';
+            }
+            // 상태 관리
+            if (id.includes('zustand') || id.includes('@tanstack/react-query')) {
+              return 'state';
+            }
+            // UI 컴포넌트 라이브러리
+            if (id.includes('@radix-ui') || id.includes('lucide-react')) {
+              return 'ui-vendor';
+            }
+            // 폼 라이브러리
+            if (id.includes('react-hook-form') || id.includes('@hookform')) {
+              return 'form';
+            }
+            // 유틸리티 라이브러리
+            if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('zod')) {
+              return 'utils';
+            }
+            // 이미지/미디어 관련
+            if (id.includes('react-dropzone') || id.includes('embla-carousel') || 
+                id.includes('motion') || id.includes('react-sortablejs')) {
+              return 'media';
+            }
+            // 네트워킹
+            if (id.includes('axios')) {
+              return 'network';
+            }
+            // 기타 큰 라이브러리들
+            if (id.includes('date-fns')) {
+              return 'date-utils';
+            }
+            // 나머지 작은 vendor들
+            return 'vendor';
+          }
+          
+          // 애플리케이션 코드 청크 분리
+          if (id.includes('/src/pages/')) {
+            const page = id.split('/src/pages/')[1].split('/')[0];
+            return `page-${page.toLowerCase()}`;
+          }
+          
+          if (id.includes('/src/components/ui/')) {
+            return 'ui-components';
+          }
+          
+          if (id.includes('/src/utils/') || id.includes('/src/lib/')) {
+            return 'app-utils';
+          }
         },
         // 청크 파일명 설정
         chunkFileNames: () => {

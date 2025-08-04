@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useState, useRef, useEffect } from "react";
 import settingIcon from "../assets/image/icon_setting.svg";
 import galleryIcon from "../assets/image/icon_gallery.svg";
 import addIcon from "../assets/image/icon_add.svg";

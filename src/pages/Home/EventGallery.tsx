@@ -84,7 +84,7 @@ export const EventGallery = ({ onLoadingChange }: EventGalleryProps) => {
                   <div className="text-h4 text-[#9a9893] mb-[0.62rem] ml-[0.62rem] leading-[2rem] min-h-[2rem]">
                     {yearData.year}
                   </div>
-                  <div className="grid grid-cols-2 gap-[0.62rem]">
+                  <div className="grid grid-cols-2 gap-[0.62rem] ">
                     {yearData.posts.map(
                       (post: TimeOrderMemoryPost["data"][0]["posts"][0]) => (
                         <div
@@ -92,7 +92,7 @@ export const EventGallery = ({ onLoadingChange }: EventGalleryProps) => {
                           onClick={() => {
                             onClickMemoryDetail(post.postId);
                           }}
-                          className="group cursor-pointer block transition-transform duration-500"
+                          className="group cursor-pointer transition-transform duration-500 rounded-[0.94rem] overflow-hidden w-[10.625rem] h-[8.125rem] bg-white flex items-center justify-center"
                           onMouseEnter={(e) => {
                             e.currentTarget.style.transform = "scale(1.05)";
                           }}
@@ -103,7 +103,7 @@ export const EventGallery = ({ onLoadingChange }: EventGalleryProps) => {
                           <ImageWithProfiles
                             imageSrc={post.thumbnailUrl || imageNotFound}
                             imageAlt="메모리 이미지"
-                            imageClassName="object-cover rounded-[0.94rem] w-[10.625rem] h-[8.125rem] "
+                            imageClassName="  object-cover"
                             profileSize="small"
                           />
                         </div>
