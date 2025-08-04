@@ -79,6 +79,11 @@
     "vite": "^6.3.5",
     "vitest": "^3.2.4"
   },
+  "overrides": {
+    "msw": {
+      "typescript": "$typescript"
+    }
+  },
   "msw": {
     "workerDirectory": [
       "public"
