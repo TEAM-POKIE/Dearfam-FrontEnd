@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   useGetMemoryDetail,
   useGetMemoryTimeOrder,
@@ -15,6 +16,7 @@ interface SelectDiaryProps {
 }
 
 export const SelectDiary = ({ onLoadingChange }: SelectDiaryProps) => {
+  const navigate = useNavigate();
   const { data, isLoading, error } = useGetMemoryTimeOrder();
   const [selectedPostIds, setSelectedPostIds] = React.useState<number[]>([]);
   const [showInitialPopup, setShowInitialPopup] = React.useState(false);
@@ -42,7 +44,20 @@ export const SelectDiary = ({ onLoadingChange }: SelectDiaryProps) => {
       generateDiary(selectedPostId, {
         onSuccess: (response) => {
           console.log("그림일기 생성 성공:", response);
-          // 성공 시 처리 로직 추가 (예: 성공 팝업, 페이지 이동 등)
+          // DiaryResult 페이지로 이동하면서 생성된 일기 데이터 전달
+          const contentData = response.data?.data?.content;
+          navigate('/home/goods/diary/result', { 
+            state: { 
+              diaryData: {
+                id: String(selectedPostId),
+                title: contentData?.title || "가족 그림일기",
+                content: contentData?.content || "오늘 하루도 가족과 함께 행복한 시간을 보냈어요.",
+                weather: "sunny", // API에서 제공되지 않으므로 기본값
+                mood: "happy", // API에서 제공되지 않으므로 기본값
+                illustration: contentData?.image_url
+              }
+            }
+          });
         },
         onError: (error) => {
           console.error("그림일기 생성 실패:", error);

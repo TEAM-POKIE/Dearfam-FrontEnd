@@ -6,6 +6,7 @@ import { PictureToVideo } from "@/pages/Goods/PictureToVideo";
 import { PictureDiary } from "@/pages/Goods/PictureDiary";
 
 import { SelectDiary } from "@/pages/Goods/diary/SelectDiary";
+import { DiaryResult } from "@/pages/Goods/diary/DiaryResult";
 
 // 동적 임포트를 통한 코드 스플리팅
 const HomePage = lazy(() =>
@@ -115,6 +116,7 @@ export function AppRoutes() {
         <Route path="goods/pictureToVideo" element={<PictureToVideo />} />
         <Route path="goods/diary" element={<PictureDiary />} />
         <Route path="goods/diary/select" element={<SelectDiary />} />
+        <Route path="goods/diary/result" element={<DiaryResult />} />
       </Route>
 
       <Route
