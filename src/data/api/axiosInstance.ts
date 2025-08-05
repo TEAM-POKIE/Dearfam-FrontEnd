@@ -4,6 +4,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
+import { globalErrorHandler } from "../../utils/errorHandler";
 
 // Axios 설정 타입 확장
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -43,6 +44,18 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
+    // 전역 에러 핸들러를 통해 에러 처리
+    const config = error.config as ExtendedAxiosRequestConfig;
+    const isRetry = config?.headers?.['X-Retry'] === 'true';
+    
+    // 재시도가 아닌 경우에만 에러 핸들러 호출
+    if (!isRetry) {
+      globalErrorHandler.handleError(error, {
+        context: 'axios-interceptor',
+        showToast: true,
+      });
+    }
+
     // 토큰 갱신 로직 임시 비활성화
     // TODO: 나중에 필요할 때 활성화
     /*
@@ -78,16 +91,17 @@ axiosInstance.interceptors.response.use(
 
         // 원래 요청 재시도
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        originalRequest.headers['X-Retry'] = 'true';
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // 토큰 새로고침 실패 시 로그아웃 처리
-        // localStorage.removeItem("accessToken");
-        // localStorage.removeItem("refreshToken");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
 
-        // // 로그인 페이지로 리다이렉트 (필요시)
-        // if (window.location.pathname !== "/login") {
-        //   window.location.href = "/login";
-        // }
+        // 로그인 페이지로 리다이렉트 (필요시)
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
 
         return Promise.reject(refreshError);
       }

@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { devtools, subscribeWithSelector } from 'zustand/middleware';
-import { User } from '../../mocks/types';
+import { create } from "zustand";
+import { devtools, subscribeWithSelector } from "zustand/middleware";
+import { User } from "../../mocks/types";
 
 interface AuthState {
   user: User | null;
@@ -30,53 +30,44 @@ export const useAuthStore = create<AuthStore>()(
       error: null,
 
       // 액션
-      setUser: (user) => set(
-        { 
-          user, 
-          isAuthenticated: !!user,
-          error: null 
-        }, 
-        false, 
-        'auth/setUser'
-      ),
+      setUser: (user) =>
+        set(
+          {
+            user,
+            isAuthenticated: !!user,
+            error: null,
+          },
+          false,
+          "auth/setUser"
+        ),
 
-      setLoading: (isLoading) => set(
-        { isLoading }, 
-        false, 
-        'auth/setLoading'
-      ),
+      setLoading: (isLoading) => set({ isLoading }, false, "auth/setLoading"),
 
-      setError: (error) => set(
-        { error }, 
-        false, 
-        'auth/setError'
-      ),
+      setError: (error) => set({ error }, false, "auth/setError"),
 
-      logout: () => set(
-        { 
-          user: null, 
-          isAuthenticated: false, 
-          error: null 
-        }, 
-        false, 
-        'auth/logout'
-      ),
+      logout: () =>
+        set(
+          {
+            user: null,
+            isAuthenticated: false,
+            error: null,
+          },
+          false,
+          "auth/logout"
+        ),
 
-      clearError: () => set(
-        { error: null }, 
-        false, 
-        'auth/clearError'
-      ),
+      clearError: () => set({ error: null }, false, "auth/clearError"),
 
-      login: (accessToken: string, refreshToken: string, user: User) => set(
-        { 
-          user, 
-          isAuthenticated: true, 
-          error: null 
-        }, 
-        false, 
-        'auth/login'
-      ),
+      login: (accessToken: string, refreshToken: string, user: User) =>
+        set(
+          {
+            user,
+            isAuthenticated: true,
+            error: null,
+          },
+          false,
+          "auth/Loginpage"
+        ),
     }))
   )
 );
@@ -85,4 +76,5 @@ export const useAuthStore = create<AuthStore>()(
 export const useAuthUser = () => useAuthStore((state) => state.user);
 export const useAuthLoading = () => useAuthStore((state) => state.isLoading);
 export const useAuthError = () => useAuthStore((state) => state.error);
-export const useIsAuthenticated = () => useAuthStore((state) => state.isAuthenticated); 
+export const useIsAuthenticated = () =>
+  useAuthStore((state) => state.isAuthenticated);

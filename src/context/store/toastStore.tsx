@@ -1,29 +1,33 @@
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+import { toast } from "sonner";
 
 interface ToastState {
-  message: string;
-  type: 'success' | 'error' | 'info';
-  isVisible: boolean;
-  showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
-  hideToast: () => void;
+  showToast: (message: string, type?: "success" | "error" | "info") => void;
 }
 
 export const useToastStore = create<ToastState>()(
   devtools(
-    (set) => ({
-      message: '',
-      type: 'success',
-      isVisible: false,
-      
-      showToast: (message: string, type: 'success' | 'error' | 'info' = 'success') => {
-        set({ message, type, isVisible: true });
-      },
-      
-      hideToast: () => {
-        set({ isVisible: false });
+    () => ({
+      showToast: (
+        message: string,
+        type: "success" | "error" | "info" = "success"
+      ) => {
+        switch (type) {
+          case "success":
+            toast.success(message);
+            break;
+          case "error":
+            toast.error(message);
+            break;
+          case "info":
+            toast.info(message);
+            break;
+          default:
+            toast(message);
+        }
       },
     }),
-    { name: 'toast-store' }
+    { name: "toast-store" }
   )
-); 
+);

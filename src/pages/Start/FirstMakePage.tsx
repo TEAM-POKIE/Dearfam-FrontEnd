@@ -4,18 +4,17 @@ import { BasicInputBox } from "../../components/ui/section1/BasicInputBox";
 import { useNavigate } from "react-router-dom";
 import { BasicAlert } from "../../components/ui/section1/BasicAlert";
 import { BasicPopup } from "../../components/BasicPopup";
-import { BasicToast } from "../../components/BasicToast";
 import { useCreateFamily } from "../../hooks/api/useFamilyAPI";
+import { useToastStore } from "@/context/store/toastStore";
 import { AxiosError } from "axios";
 
 export function FirstMakePage() {
   const [familyName, setFamilyName] = useState("");
   const [isNameValid, setIsNameValid] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
   const [nameConflictError, setNameConflictError] = useState("");
   const navigate = useNavigate();
+  const { showToast } = useToastStore();
 
   const createFamilyMutation = useCreateFamily();
 
@@ -31,61 +30,48 @@ export function FirstMakePage() {
 
   const handleConfirm = async () => {
     try {
-      const result = await createFamilyMutation.mutateAsync({ familyName: familyName });
-      
+      const result = await createFamilyMutation.mutateAsync({
+        familyName: familyName,
+      });
+
       // 성공 시 역할 선택 페이지로 이동
-      navigate('/MakeConfirmPage', { state: { familyName } });
-      
+      navigate("/MakeConfirmPage", { state: { familyName } });
     } catch (error) {
-      console.error('❌ 가족 생성 실패:', error);
-      
+      console.error("❌ 가족 생성 실패:", error);
+
       if (error instanceof AxiosError) {
         const status = error.response?.status;
-        
+
         switch (status) {
           case 400:
             // 잘못된 요청 - 토스트 메시지
-            setToastMessage('잘못된 요청입니다.\n입력 정보를 확인해주세요.');
-            setShowToast(true);
-            setTimeout(() => {
-              setShowToast(false);
-            }, 5000);
+            showToast("잘못된 요청입니다.\n입력 정보를 확인해주세요.", "error");
             setShowPopup(false);
             break;
           case 409:
             // 가족 이름 중복 - 빨간 글씨로 표시
-            setNameConflictError('이미 존재하는 가족 이름입니다. 다른 이름을 사용해주세요.');
+            setNameConflictError(
+              "이미 존재하는 가족 이름입니다. 다른 이름을 사용해주세요."
+            );
             setShowPopup(false);
             break;
           case 404:
             // 사용자 없음 - LoginPage로 리다이렉트
-            navigate('/LoginPage?error=user-not-found', { replace: true });
+            navigate("/LoginPage?error=user-not-found", { replace: true });
             break;
           case 500:
             // 서버 오류 - 토스트 메시지
-            setToastMessage('서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
-            setShowToast(true);
-            setTimeout(() => {
-              setShowToast(false);
-            }, 5000);
+            showToast("서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.", "error");
             setShowPopup(false);
             break;
           default:
             // 기타 에러 - 토스트 메시지
-            setToastMessage('가족 생성에 실패했습니다.\n다시 시도해주세요.');
-            setShowToast(true);
-            setTimeout(() => {
-              setShowToast(false);
-            }, 5000);
+            showToast("가족 생성에 실패했습니다.\n다시 시도해주세요.", "error");
             setShowPopup(false);
         }
       } else {
         // 기타 에러 - 토스트 메시지
-        setToastMessage('가족 생성에 실패했습니다.\n다시 시도해주세요.');
-        setShowToast(true);
-        setTimeout(() => {
-          setShowToast(false);
-        }, 5000);
+        showToast("가족 생성에 실패했습니다.\n다시 시도해주세요.", "error");
         setShowPopup(false);
       }
     }
@@ -97,7 +83,9 @@ export function FirstMakePage() {
         <div className="flex flex-col w-[350px] px-[10px] mx-[20px] mt-[6.25rem]">
           <h2 className="text-h3 mb-[0.63rem]">가족 이름 작성</h2>
           <div>
-            <p className="text-body2 text-gray-3">우리 가족의 이름을 작성해주세요.</p>
+            <p className="text-body2 text-gray-3">
+              우리 가족의 이름을 작성해주세요.
+            </p>
             <p className="text-body2 text-gray-3">ex. (유기농 패밀리)</p>
           </div>
         </div>
@@ -118,9 +106,7 @@ export function FirstMakePage() {
             {!isNameValid && (
               <BasicAlert message="가족명은 10자 이내로 작성해주세요." />
             )}
-            {nameConflictError && (
-              <BasicAlert message={nameConflictError} />
-            )}
+            {nameConflictError && <BasicAlert message={nameConflictError} />}
           </div>
         </div>
 
@@ -149,12 +135,6 @@ export function FirstMakePage() {
           disabled={createFamilyMutation.isPending}
         />
 
-        {/* 토스트 메시지 */}
-        {showToast && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-            <BasicToast message={toastMessage} />
-          </div>
-        )}
       </div>
     </div>
   );

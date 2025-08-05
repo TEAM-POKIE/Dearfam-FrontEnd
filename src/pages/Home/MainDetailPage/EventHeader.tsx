@@ -12,7 +12,7 @@ import { useToastStore } from "@/context/store/toastStore";
 import { useEffect } from "react";
 
 interface EventHeaderProps {
-  data: number;
+  data: string;
   postId: number;
 }
 
@@ -44,7 +44,7 @@ export const EventHeader = ({ data, postId }: EventHeaderProps) => {
           alt="프로필"
           className="w-[1.875rem] h-[1.875rem]"
         />
-        <div>{data}</div>
+        <div className="text-body1 text-gray-2">{data}</div>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

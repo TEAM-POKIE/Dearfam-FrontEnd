@@ -4,18 +4,16 @@ import { useState, useEffect } from "react";
 import { BasicInputBox } from "@/components/ui/section1/BasicInputBox";
 import BasicButton from "@/components/BasicButton";
 import { BasicAlert } from "@/components/ui/section1/BasicAlert";
-import BasicPopup from "@/components/BasicPopup";
 import { useCurrentUser } from "@/hooks/api/useUserAPI";
 import { useUpdateNickname } from "@/hooks/api/useUserAPI";
-import { BasicToast } from "@/components/BasicToast";
+import { useToastStore } from "@/context/store/toastStore";
 
 export function NameChangePage() {
   const navigate = useNavigate();
   const [nickname, setNickname] = useState("");
   const [isValid, setIsValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const { showToast } = useToastStore();
 
   // 현재 사용자 정보 가져오기
   const { data: userData } = useCurrentUser();
@@ -59,15 +57,13 @@ export function NameChangePage() {
     try {
       // 닉네임 변경 API 호출
       await updateNicknameMutation.mutateAsync(nickname);
-      
-                   // 성공 시 Setting 페이지로 리다이렉트 (토스트 메시지와 함께)
-             navigate('/SettingPage?message=nickname-changed', { replace: true });
+
+      // 성공 시 toast 표시 후 Setting 페이지로 이동
+      showToast("닉네임 변경이 완료되었어요!", "success");
+      navigate("/SettingPage", { replace: true });
     } catch (error) {
-      setToastMessage('닉네임 변경에 실패했습니다.\n다시 시도해주세요.');
-      setShowToast(true);
-      setTimeout(() => {
-        setShowToast(false);
-      }, 5000);
+      console.error("닉네임 변경 실패:", error);
+      showToast("닉네임 변경에 실패했습니다.", "error");
     }
   };
 
@@ -146,21 +142,20 @@ export function NameChangePage() {
         <div className="absolute bottom-[3.5rem] w-full flex justify-center">
           <div className="mx-[1.25rem]">
             <BasicButton
-              text={updateNicknameMutation.isPending ? "변경 중..." : "닉네임 변경하기"}
+              text={
+                updateNicknameMutation.isPending
+                  ? "변경 중..."
+                  : "닉네임 변경하기"
+              }
               color={isValid && nickname.trim() ? "main_1" : "gray_3"}
               size={350}
               onClick={handleNameChange}
-              disabled={!isValid || !nickname.trim() || updateNicknameMutation.isPending}
+              disabled={
+                !isValid || !nickname.trim() || updateNicknameMutation.isPending
+              }
             />
           </div>
         </div>
-
-        {/* 토스트 메시지 */}
-        {showToast && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-            <BasicToast message={toastMessage} />
-          </div>
-        )}
       </div>
     </div>
   );

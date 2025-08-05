@@ -1,28 +1,22 @@
 import dearfamLogo from "@/assets/image/dearfam_logo_icon.svg";
 import { BasicButton } from "@/components/BasicButton";
-import { BasicToast } from "@/components/BasicToast";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useToastStore } from "@/context/store/toastStore";
 
 export function StartPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const { showToast } = useToastStore();
 
   useEffect(() => {
     // URL 파라미터에서 메시지 확인
     const message = searchParams.get('message');
     
     if (message === 'no-family') {
-      setToastMessage('아직 가족이 설정되지 않은 것 같아요,\n가족을 만들어 보세요!');
-      setShowToast(true);
-      // 5초 후 toast 숨기기
-      setTimeout(() => {
-        setShowToast(false);
-      }, 5000);
+      showToast('아직 가족이 설정되지 않은 것 같아요,\n가족을 만들어 보세요!', 'info');
     }
-  }, [searchParams]);
+  }, [searchParams, showToast]);
 
   return (
     <div className="flex justify-center items-center h-app bg-bg-1 select-none">
@@ -69,13 +63,6 @@ export function StartPage() {
             />
           </div>
         </div>
-
-        {/* 토스트 메시지 */}
-        {showToast && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-            <BasicToast message={toastMessage} />
-          </div>
-        )}
       </div>
     </div>
   );

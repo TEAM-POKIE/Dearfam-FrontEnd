@@ -2,16 +2,15 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import dearfamLogo from "../../assets/image/dearfam_logo_icon.svg";
 import { BasicButton } from "../../components/BasicButton";
 import { KakaoLoginButton } from "../../components/KakaoLoginButton";
-import { BasicToast } from "../../components/BasicToast";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "@/context/store/authStore";
+import { useToastStore } from "@/context/store/toastStore";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { login, logout } = useAuthStore();
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const { showToast } = useToastStore();
 
   useEffect(() => {
     // URL 파라미터에서 메시지 확인
@@ -59,25 +58,15 @@ export default function LoginPage() {
       }
       
       // 에러 메시지를 toast로 표시
-      setToastMessage(errorMessage);
-      setShowToast(true);
-      // 5초 후 toast 숨기기
-      setTimeout(() => {
-        setShowToast(false);
-      }, 5000);
+      showToast(errorMessage, 'error');
     } else if (message === 'logout-success') {
       // 로그아웃 성공 메시지 표시
-      setToastMessage('정상적으로 로그아웃 되었습니다.');
-      setShowToast(true);
-      // 5초 후 toast 숨기기
-      setTimeout(() => {
-        setShowToast(false);
-      }, 5000);
+      showToast('정상적으로 로그아웃 되었습니다.', 'success');
       
       // URL에서 파라미터 제거
       navigate('/LoginPage', { replace: true });
     }
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, showToast]);
 
   return (
     <div className="flex justify-center items-center h-app bg-bg-1 select-none">
@@ -107,13 +96,6 @@ export default function LoginPage() {
             동의하게 됩니다.
           </p>
         </div>
-
-        {/* 토스트 메시지 */}
-        {showToast && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-            <BasicToast message={toastMessage} />
-          </div>
-        )}
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ export const ImageWithProfiles: React.FC<ImageWithProfilesProps> = ({
   }, [imageSrc]);
 
   return (
-    <div className="flex justify-center  w-full ">
+    <div className="flex justify-center w-full h-full">
       {!isImageLoaded && !isImageError && (
         <div className="relative">
           <Skeleton className={` ${imageClassName}`} />
@@ -67,7 +67,7 @@ export const ImageWithProfiles: React.FC<ImageWithProfilesProps> = ({
         </div>
       )}
       <img
-        className={`  ${imageClassName} ${
+        className={`${imageClassName} ${
           isImageError ? "object-cover" : "object-cover"
         }`}
         src={isImageError ? imageNotFound : imageSrc}

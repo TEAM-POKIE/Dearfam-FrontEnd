@@ -27,7 +27,7 @@ export const SemiHeader = (props: {
         <button onClick={handleBackClick} className="z-10">
           <img src={backButtonIcon} alt="뒤로가기" />
         </button>
-        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-gray-2 text-h4">
+        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-gray-2 text-h4 overflow-hidden text-ellipsis whitespace-nowrap">
           {props.title}
         </h1>
         <button onClick={handleExitClick} className="ml-auto z-10">
