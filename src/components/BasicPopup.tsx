@@ -53,9 +53,11 @@ export const BasicPopup: React.FC<PopupProps> = ({
           <h4 className="text-h4 text-center whitespace-pre-line">{title}</h4>
 
           <div>
-            <div className="text-neutral-600 text-center">
+            <div className=" text-center">
               {typeof content === "string" ? (
-                <p className="text-body3 whitespace-pre-line">{content}</p>
+                <p className="text-body3 text-gray-3 whitespace-pre-line">
+                  {content}
+                </p>
               ) : (
                 content
               )}
@@ -67,7 +69,7 @@ export const BasicPopup: React.FC<PopupProps> = ({
             onClick={onButtonClick || onClose}
             color="main_1"
             size={290}
-            textStyle="text-h4"
+            textStyle="text-body3"
             disabled={disabled}
           />
         </div>

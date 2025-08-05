@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { usePutLiked } from "@/data/api/memory-post/memory";
 import { RecentMemoryPost } from "@/data/api/memory-post/type";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMemoryStore } from "@/context/store/memoryStore";
 
 interface EventCarouselProps {
   showLastItem?: boolean;
@@ -48,6 +49,7 @@ export const EventCarousel = memo<EventCarouselProps>(
 
     const { mutate: putLiked } = usePutLiked();
     const queryClient = useQueryClient();
+    const { setTotalPostCount } = useMemoryStore();
 
     // 컴포넌트 마운트 시 최신 데이터 가져오기
     useEffect(() => {
@@ -161,8 +163,7 @@ export const EventCarousel = memo<EventCarouselProps>(
 
       // RecentMemoryPost 타입 사용
       const posts: RecentMemoryPost[] = memoryPostsData.data;
-      console.log(posts);
-
+      setTotalPostCount(posts.length);
       return posts.map((post: RecentMemoryPost) => ({
         id: post.postId || 0,
         title: post.title || "",
@@ -172,7 +173,7 @@ export const EventCarousel = memo<EventCarouselProps>(
         liked: post.liked || false,
         commentCount: post.commentCount || 0,
       }));
-    }, [memoryPostsData]);
+    }, [memoryPostsData, setTotalPostCount]);
 
     // 좋아요 상태 초기화
     useEffect(() => {

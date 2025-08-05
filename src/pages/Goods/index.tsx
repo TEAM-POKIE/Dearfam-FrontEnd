@@ -2,8 +2,10 @@ import { BasicLoading } from "@/components/BasicLoading";
 import { useState, useEffect } from "react";
 import { GoodsBanner } from "./GoodsBanner";
 import { ButtonContainer } from "./components/Button_container";
+import { useNavigate } from "react-router-dom";
 
 export function GoodsPage() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
   // 컴포넌트가 마운트되면 로딩 완료
@@ -32,11 +34,17 @@ export function GoodsPage() {
           title="사진을 동영상으로 !"
           content="사진이 움직일 수 있다면?
         원하는 사진을 골라 움직이게 만들어보세요 !"
+          onClick={() => {
+            navigate("/home/goods/pictureToVideo");
+          }}
         />
         <ButtonContainer
           title="우리 가족의 이야기를 그림 일기로 !"
           content="동심으로 돌아가 바라보는 우리 가족의
 추얷들이 궁금하지 않나요 ?"
+          onClick={() => {
+            navigate("/home/goods/diary");
+          }}
         />
       </div>
     </div>
