@@ -1,5 +1,6 @@
 import { BasicLoading } from "@/components/BasicLoading";
 import { useState, useEffect } from "react";
+import { SelectGallery } from "./SelectGallery";
 
 export function BookshelfPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -22,9 +23,5 @@ export function BookshelfPage() {
     );
   }
 
-  return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-1">책장</h1>
-    </div>
-  );
+  return <SelectGallery />;
 }

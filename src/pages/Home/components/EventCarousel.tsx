@@ -383,7 +383,7 @@ export const EventCarousel = memo<EventCarouselProps>(
       : transformedItems;
 
     return (
-      <div className="w-full flex flex-col justify-center items-center h-[29.25rem] mt-[3.75rem] mb-[2.81rem]">
+      <div className="w-full flex flex-col justify-center items-center h-[29.25rem] mt-[1.87rem] mb-[2.81rem]">
         <div className="relative w-full">
           <Carousel className="w-full" setApi={setApi}>
             <CarouselContent className="w-full  -mx-0 flex items-center gap-x-2 h-full">

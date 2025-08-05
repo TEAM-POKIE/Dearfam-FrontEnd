@@ -9,6 +9,7 @@ import {
 } from "@/data/api/memory-post/memory";
 import { memo } from "react";
 import React from "react";
+import { Banner } from "./Banner";
 
 const HomePage = memo(function HomePage() {
   const { mode, setMode } = useHeaderStore();
@@ -72,6 +73,7 @@ const HomePage = memo(function HomePage() {
       {mode === "gallery" && <EventGallery />}
       {mode === "slider" && (
         <div>
+          <Banner />
           <EventSlideContainer memoryPostsData={memoryPostsData} />
           <HomeSlider />
         </div>

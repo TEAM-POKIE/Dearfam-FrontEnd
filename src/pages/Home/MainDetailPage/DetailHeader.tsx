@@ -99,7 +99,7 @@ export const DetailHeader = ({
   };
 
   return (
-    <div className="px-5 py-3 flex justify-between items-center">
+    <div className="px-[1.25rem] flex justify-between items-center h-[2.5rem]">
       <img
         src={isLiked ? heartActive : heartDefault}
         alt="heart"

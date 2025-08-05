@@ -17,16 +17,28 @@ export const AddFamillyButton: React.FC<AddFamillyButtonProps> = React.memo(
       <button
         key={id}
         onClick={onClick}
-        className="flex flex-col items-center motion-spring-gentle hover:scale-105 active:scale-95"
+        className="flex flex-col items-center motion-spring-gentle hover:scale-105 active:scale-95 gap-[0.37rem]"
         aria-pressed={isSelected}
       >
         <div>
           {profileImage ? (
-            <img
-              src={profileImage}
-              alt={name}
-              className="w-full h-full rounded-full object-cover"
-            />
+            isSelected ? (
+              <div className="relative flex items-center justify-center border-[1.5px] border-main-1 rounded-full w-[48px] h-[48px]">
+                <img
+                  src={profileImage}
+                  alt={name}
+                  className="w-[46px] h-[46px] rounded-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className=" flex items-center justify-center rounded-full  w-[48px] h-[48px] border-[1.5px] border-white">
+                <img
+                  src={profileImage}
+                  alt={name}
+                  className="w-[46.5px] h-[46.5px] rounded-full object-cover "
+                />
+              </div>
+            )
           ) : (
             <img
               className="w-[3rem]"
@@ -35,7 +47,8 @@ export const AddFamillyButton: React.FC<AddFamillyButtonProps> = React.memo(
             />
           )}
         </div>
-        <span className="text-gray-3">{name}</span>
+
+        <span className="text-gray-3 text-[0.9rem] font-[400]">{name}</span>
       </button>
     );
   }

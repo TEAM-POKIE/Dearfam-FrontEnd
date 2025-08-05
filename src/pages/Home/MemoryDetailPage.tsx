@@ -15,25 +15,15 @@ export function MemoryDetailPage() {
   const { postId } = useParams();
   const queryClient = useQueryClient();
 
-  // postId 디버깅
-  console.log(`🔍 URL params:`, useParams());
-  console.log(`🔍 postId 값:`, postId, typeof postId);
-  console.log(`🔍 현재 URL:`, window.location.pathname);
-
   const { data: memoryDetail, isLoading } = useGetMemoryDetail(
     postId ? Number(postId) : null
   );
 
   const [userNickname, setUserNickname] = useState<string | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(false);
-
-  console.log(
-    `📄 MemoryDetailPage 렌더링: postId=${postId}, isLoading=${isLoading}, liked=${memoryDetail?.data?.liked}`
-  );
-
+  console.log(memoryDetail?.data?.memoryDate);
   // 컴포넌트 마운트 시 해당 게시물의 최신 데이터 가져오기
   useEffect(() => {
-    console.log(`🔄 MemoryDetailPage 마운트: postId=${postId}`);
     if (postId) {
       queryClient.invalidateQueries({
         queryKey: ["memory-post", "detail", Number(postId)],
@@ -61,15 +51,6 @@ export function MemoryDetailPage() {
     };
     fetchUserData();
   }, [memoryDetail?.data?.writerId]);
-
-  // 데이터 변화 추적
-  useEffect(() => {
-    if (memoryDetail?.data) {
-      console.log(
-        `📊 MemoryDetailPage 데이터 업데이트: postId=${postId}, liked=${memoryDetail.data.liked}, title=${memoryDetail.data.title}`
-      );
-    }
-  }, [memoryDetail, postId]);
 
   // postId가 없으면 에러 표시
   if (!postId) {
@@ -163,7 +144,10 @@ export function MemoryDetailPage() {
           liked={memoryDetail.data.liked}
           participantFamilyMember={memoryDetail.data.participantFamilyMember}
         />
-        <DetailContent data={memoryDetail.data.content} />
+        <DetailContent
+          data={memoryDetail.data.content}
+          date={memoryDetail.data.memoryDate}
+        />
         <div className="border-t-[0.0625rem] border-gray-3">
           <CommentContainer postId={Number(postId)} />
         </div>
