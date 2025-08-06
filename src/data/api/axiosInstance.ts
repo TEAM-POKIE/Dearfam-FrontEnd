@@ -12,10 +12,9 @@ interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   // _retry?: boolean; // 토큰 갱신 관련 - 임시 비활성화
 }
 
-
 const axiosInstance = axios.create({
   baseURL: import.meta.env.DEV ? "" : import.meta.env.VITE_API_URL,
-  timeout: 10000, // 10초로 증가
+  timeout: 1000000, // 10초로 증가
   withCredentials: true,
 });
 
@@ -23,7 +22,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
-    
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -46,12 +45,12 @@ axiosInstance.interceptors.response.use(
   async (error: AxiosError) => {
     // 전역 에러 핸들러를 통해 에러 처리
     const config = error.config as ExtendedAxiosRequestConfig;
-    const isRetry = config?.headers?.['X-Retry'] === 'true';
-    
+    const isRetry = config?.headers?.["X-Retry"] === "true";
+
     // 재시도가 아닌 경우에만 에러 핸들러 호출
     if (!isRetry) {
       globalErrorHandler.handleError(error, {
-        context: 'axios-interceptor',
+        context: "axios-interceptor",
         showToast: true,
       });
     }
@@ -107,7 +106,7 @@ axiosInstance.interceptors.response.use(
       }
     }
     */
-    
+
     return Promise.reject(error);
   }
 );

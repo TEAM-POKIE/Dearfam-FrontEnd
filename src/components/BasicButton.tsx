@@ -36,6 +36,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   const colorStyles = {
     main_1: "bg-main-1 text-white hover:bg-main-1/90",
     main_2: "bg-main-2 text-white hover:bg-main-2/90",
+    main_2_80: "bg-main-2_80 text-white hover:bg-main-2_80/90",
     main_3: "bg-main-3 text-white hover:bg-main-3/90",
     gray_3: "bg-gray-3 text-white hover:bg-neutral-700",
     gray_4: "bg-gray-4 text-white hover:bg-neutral-600",

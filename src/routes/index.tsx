@@ -2,6 +2,11 @@ import { Routes, Route, Outlet } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { AppLayout } from "../AppLayout";
 import { AuthGuard } from "@/components/AuthGuard";
+import { PictureToVideo } from "@/pages/Goods/PictureToVideo";
+import { PictureDiary } from "@/pages/Goods/PictureDiary";
+
+import { SelectDiary } from "@/pages/Goods/diary/SelectDiary";
+import { DiaryResult } from "@/pages/Goods/diary/DiaryResult";
 
 // 동적 임포트를 통한 코드 스플리팅
 const HomePage = lazy(() =>
@@ -98,7 +103,7 @@ export function AppRoutes() {
     <Routes>
       {/* 1. SplashPage - AuthGuard 적용 */}
       <Route path="/" element={<SplashPage />} />
-      
+
       <Route path="/home" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="memoryDetailPage/:postId" element={<MemoryDetailPage />} />
@@ -108,6 +113,10 @@ export function AppRoutes() {
         <Route path="edit/:postId" element={<EditPage />} />
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
+        <Route path="goods/pictureToVideo" element={<PictureToVideo />} />
+        <Route path="goods/diary" element={<PictureDiary />} />
+        <Route path="goods/diary/select" element={<SelectDiary />} />
+        <Route path="goods/diary/result" element={<DiaryResult />} />
       </Route>
 
       <Route
@@ -122,7 +131,9 @@ export function AppRoutes() {
       <Route
         path="/Start"
         element={
-          <AuthGuard mode="nofam"> {/* AuthGuard 적용 */}
+          <AuthGuard mode="nofam">
+            {" "}
+            {/* AuthGuard 적용 */}
             <Suspense fallback={<PageLoadingSpinner />}>
               <StartPage />
             </Suspense>
