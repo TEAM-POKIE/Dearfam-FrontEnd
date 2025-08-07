@@ -25,7 +25,7 @@ export const useGetFamilyMembers = () => {
     gcTime: 10 * 60 * 1000, // 10분간 캐시
     retry: 3,
     refetchOnWindowFocus: false,
-    enabled: !familyData, // 이미 데이터가 있으면 API 호출 안함
+    enabled: true, // 항상 활성화하여 데이터가 없을 때 API 호출
   });
 
   // 쿼리 결과를 전역 상태와 동기화

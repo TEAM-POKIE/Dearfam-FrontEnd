@@ -14,11 +14,13 @@ export const AddFamPopup = ({
   onClose,
   familyMembers = [],
   onConfirm,
+  isLoading = false,
 }: {
   isOpen: boolean;
   onClose: () => void;
   familyMembers: FamilyMember[];
   onConfirm?: (selectedMembers: number[]) => void;
+  isLoading?: boolean;
 }) => {
   const { participantFamilyMemberIds, setParticipantIds } = useWritePostStore();
   const { isAnimating, shouldRender, closeWithAnimation } = usePopupAnimation(
@@ -98,33 +100,44 @@ export const AddFamPopup = ({
             함께했던 가족을 선택해주세요.
           </h4>
 
-          <div className="w-full flex flex-col gap-[1.25rem]">
-            {getMemberRows(familyMembers).map((group, idx) => (
-              <div
-                key={idx}
-                className={`${
-                  group.length === 3
-                    ? "grid grid-cols-3"
-                    : group.length === 2
-                    ? "grid grid-cols-2"
-                    : "grid grid-cols-1"
-                } justify-items-center gap-x-[${GRID_GAP}]`}
-              >
-                {group.map((member) => (
-                  <AddFamillyButton
-                    key={member.familyMemberId}
-                    id={member.familyMemberId.toString()}
-                    name={member.familyMemberNickname}
-                    profileImage={member.familyMemberProfileImage}
-                    isSelected={participantFamilyMemberIds.includes(
-                      member.familyMemberId
-                    )}
-                    onClick={memberClickHandlers[member.familyMemberId]}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex flex-col items-center gap-4 py-8">
+              <div className="text-body3 text-gray-3">가족 정보를 불러오는 중...</div>
+            </div>
+          ) : familyMembers.length === 0 ? (
+            <div className="flex flex-col items-center gap-4 py-8">
+              <div className="text-body3 text-gray-3">등록된 가족이 없습니다.</div>
+              <div className="text-body4 text-gray-4">가족 페이지에서 가족을 추가해주세요.</div>
+            </div>
+          ) : (
+            <div className="w-full flex flex-col gap-[1.25rem]">
+              {getMemberRows(familyMembers).map((group, idx) => (
+                <div
+                  key={idx}
+                  className={`${
+                    group.length === 3
+                      ? "grid grid-cols-3"
+                      : group.length === 2
+                      ? "grid grid-cols-2"
+                      : "grid grid-cols-1"
+                  } justify-items-center gap-x-[${GRID_GAP}]`}
+                >
+                  {group.map((member) => (
+                    <AddFamillyButton
+                      key={member.familyMemberId}
+                      id={member.familyMemberId.toString()}
+                      name={member.familyMemberNickname}
+                      profileImage={member.familyMemberProfileImage}
+                      isSelected={participantFamilyMemberIds.includes(
+                        member.familyMemberId
+                      )}
+                      onClick={memberClickHandlers[member.familyMemberId]}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
 
           <BasicButton
             text="선택하기"
@@ -136,6 +149,7 @@ export const AddFamPopup = ({
             size={290}
             textStyle="text-body3 text-[#FFFFFF]"
             animation="gentle"
+            disabled={isLoading || familyMembers.length === 0}
           />
         </div>
       </div>

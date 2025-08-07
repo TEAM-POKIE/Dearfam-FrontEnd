@@ -21,7 +21,7 @@ export function MemoryDetailPage() {
 
   const [userNickname, setUserNickname] = useState<string | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(false);
-  console.log(memoryDetail?.data?.memoryDate);
+  console.log("memoryDetail?.data?.memoryDate", memoryDetail?.data);
   // 컴포넌트 마운트 시 해당 게시물의 최신 데이터 가져오기
   useEffect(() => {
     if (postId) {
@@ -142,7 +142,7 @@ export function MemoryDetailPage() {
         <DetailHeader
           postId={Number(postId)}
           liked={memoryDetail.data.liked}
-          participantFamilyMember={memoryDetail.data.participantFamilyMember}
+          participantFamilyMember={memoryDetail.data.participantFamilyMembers}
         />
         <DetailContent
           data={memoryDetail.data.content}
