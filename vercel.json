@@ -3,10 +3,5 @@
   "buildCommand": "VITE_DISABLE_MSW=true VITE_API_URL=https://api.dearfam.store VITE_KAKAO_REST_KEY=b956f73ff12c8fa6ccedb096fa8c2f22 npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
-  "framework": "vite",
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  "framework": "vite"
 }
