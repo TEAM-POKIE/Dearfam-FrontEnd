@@ -184,6 +184,7 @@ export const useDeleteMemoryPost = () => {
     },
   });
 };
+
 export const useGetMemoryDetail = (postId: number | null) => {
   return useQuery({
     queryKey: ["memory-post", "detail", postId],
