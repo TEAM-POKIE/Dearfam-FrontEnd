@@ -96,6 +96,8 @@ export default defineConfig({
         "msw/node": path.resolve(__dirname, "./src/utils/msw-stub.js"),
       } : {}),
     },
+    // 파일 확장자 해결 순서 명시
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
   },
   server: {
     // 개발 서버 설정
