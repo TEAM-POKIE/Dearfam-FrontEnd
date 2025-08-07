@@ -5,7 +5,7 @@
   "installCommand": "npm ci",
   "framework": "vite",
   "functions": {
-    "app/api/**/*.ts": {
+    "api/**/*.ts": {
       "runtime": "nodejs18.x"
     }
   }
