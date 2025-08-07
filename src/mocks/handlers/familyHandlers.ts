@@ -66,22 +66,56 @@ const getFamilyMembersByFamilyId = http.get(
 // 사용자의 가족 구성원 리스트 조회 - GET /family/members
 const getFamilyMembers = http.get("/api/v1/family/members", ({ request }) => {
   const authHeader = request.headers.get("Authorization");
-  
+
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return HttpResponse.json({ success: false, message: "인증 토큰이 필요합니다.", code: "UNAUTHORIZED" }, { status: 401 });
+    return HttpResponse.json(
+      {
+        success: false,
+        message: "인증 토큰이 필요합니다.",
+        code: "UNAUTHORIZED",
+      },
+      { status: 401 }
+    );
   }
-  
+
   const token = authHeader.replace("Bearer ", "");
-  
+
   // 특정 토큰에 따라 404 에러 반환 (가족이 없는 경우 시뮬레이션)
   if (token === "test-no-family-token") {
-    return HttpResponse.json({ success: false, message: "가족을 찾을 수 없습니다.", code: "FAMILY_NOT_FOUND" }, { status: 404 });
+    return HttpResponse.json(
+      {
+        success: false,
+        message: "가족을 찾을 수 없습니다.",
+        code: "FAMILY_NOT_FOUND",
+      },
+      { status: 404 }
+    );
   }
-  
-  // 정상적인 경우 가족 구성원 반환
-  const response: ApiResponse<FamilyMember[]> = {
+
+  // 실제 API 응답 형식에 맞게 데이터 변환
+  const familyMembers = mockUsers.map((user, index) => ({
+    familyMemberId: user.id,
+    familyMemberNickname: user.userNickname,
+    familyMemberRole: user.userFamilyRole,
+    familyMemberProfileImage: user.profileImage,
+  }));
+
+  const response: ApiResponse<{
+    familyId: number;
+    familyName: string;
+    familyMembers: Array<{
+      familyMemberId: number;
+      familyMemberNickname: string;
+      familyMemberRole: string;
+      familyMemberProfileImage: string;
+    }>;
+  }> = {
     success: true,
-    data: mockFamilyMembers,
+    data: {
+      familyId: 1,
+      familyName: "김씨네 가족",
+      familyMembers,
+    },
     message: "사용자의 가족 구성원 조회가 완료되었습니다.",
   };
 

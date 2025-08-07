@@ -41,6 +41,7 @@ export const DetailHeader = ({
     console.log(
       `📝 DetailHeader props 변경: postId=${postId}, liked=${liked} -> isLiked=${isLiked}`
     );
+    console.log("참여자 프로필", participantFamilyMember);
     setIsLiked(liked);
   }, [liked, postId]);
 
