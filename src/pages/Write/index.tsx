@@ -40,8 +40,9 @@ export function WritePage() {
     if (isSuccess) {
       showToast("게시글이 성공적으로 작성되었습니다! 🎉", "success");
       resetForm();
-      // 즉시 이전 페이지로 이동
-      navigate(-1);
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
     } else if (isError) {
       showToast("게시글 작성에 실패했습니다. 다시 시도해주세요.", "error");
     }
