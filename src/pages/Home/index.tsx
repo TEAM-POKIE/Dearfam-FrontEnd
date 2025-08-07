@@ -6,7 +6,7 @@ import { EventGallery } from "./EventGallery";
 import {
   useGetMemoryRecentPosts,
   useGetMemoryTimeOrder,
-} from "@/data/api/memory-post/memory";
+} from "@/data/api/memory-post/Memory";
 import { memo } from "react";
 import React from "react";
 import { Banner } from "./Banner";

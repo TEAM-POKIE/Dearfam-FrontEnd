@@ -84,7 +84,7 @@ export const PictureToVideoMain = ({ content }: { content: string }) => {
         isOpen={isPickerOpen}
         onClose={handleClosePicker}
         acceptedFileTypes={["image/*"]}
-        maxFiles={10}
+        maxFiles={1}
         title="사진을 동영상화"
       />
     </div>

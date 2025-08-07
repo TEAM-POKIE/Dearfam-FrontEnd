@@ -31,7 +31,7 @@ export function GoodsPage() {
       <GoodsBanner />
       <div className="flex flex-col gap-[1.25rem]">
         <ButtonContainer
-          title="사진을 동영상으로 !"
+          title="사진을 동영상화"
           content="사진이 움직일 수 있다면?
         원하는 사진을 골라 움직이게 만들어보세요 !"
           onClick={() => {

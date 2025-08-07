@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   useDeleteMemoryComment,
   useGetMemoryComment,
-} from "@/data/api/memory-post/memory";
+} from "@/data/api/memory-post/Memory";
 import { useEffect, useRef } from "react";
 
 interface Comment {

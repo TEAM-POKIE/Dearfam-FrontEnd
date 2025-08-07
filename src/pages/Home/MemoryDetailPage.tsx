@@ -5,7 +5,7 @@ import { EventHeader } from "./MainDetailPage/EventHeader";
 import { SemiHeader } from "@/components/SemiHeader";
 import { ImageSlider } from "./MainDetailPage/ImageSlider";
 import { useParams } from "react-router-dom";
-import { useGetMemoryDetail } from "@/data/api/memory-post/memory";
+import { useGetMemoryDetail } from "@/data/api/memory-post/Memory";
 import { DetailHeader } from "./MainDetailPage/DetailHeader";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";

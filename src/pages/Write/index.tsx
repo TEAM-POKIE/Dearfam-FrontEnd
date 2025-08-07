@@ -7,7 +7,7 @@ import BasicButton from "@/components/BasicButton";
 import ConfirmPopup from "@/components/ConfirmPopup";
 import { BasicLoading } from "@/components/BasicLoading";
 import { useWritePostStore } from "@/context/store/writePostStore";
-import { usePostMemoryPost } from "@/data/api/memory-post/memory";
+import { usePostMemoryPost } from "@/data/api/memory-post/Memory";
 import { useToastStore } from "@/context/store/toastStore";
 
 export function WritePage() {

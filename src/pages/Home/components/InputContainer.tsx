@@ -1,6 +1,6 @@
 import IconSend from "../../../assets/image/section2/icon_send.svg";
 import { Input } from "@/components/ui/shadcn/input";
-import { usePostMemoryComment } from "@/data/api/memory-post/memory";
+import { usePostMemoryComment } from "@/data/api/memory-post/Memory";
 import { useState } from "react";
 
 export const InputContainer = ({ postId }: { postId: number }) => {

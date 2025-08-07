@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { GetRecentMemoryPostsResponse } from "../../data/api/memory-post/memory";
+import { GetRecentMemoryPostsResponse } from "../../data/api/memory-post/Memory";
 
 export const memoryHandlers = [
   // GET /memory-post/recent

@@ -11,7 +11,7 @@ import { useToastStore } from "@/context/store/toastStore";
 import {
   usePutMemoryPost,
   useGetMemoryDetail,
-} from "@/data/api/memory-post/memory";
+} from "@/data/api/memory-post/Memory";
 
 export function EditPage() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);

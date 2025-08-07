@@ -17,6 +17,15 @@ interface PictureToVideoStore {
   isModalOpen: boolean;
   currentTab: 'local' | 'camera' | 'library' | 'drive';
   
+  // 화면 단계 관리
+  currentStep: 'selection' | 'generation' | 'result';
+  
+  // 사용자 요청 관리
+  userRequest: string;
+  
+  // 영상 결과 관리
+  videoResultUrl: string;
+  
   // 로딩 상태
   isLoading: boolean;
   loadingMessage: string;
@@ -32,6 +41,15 @@ interface PictureToVideoStore {
   closeModal: () => void;
   setCurrentTab: (tab: 'local' | 'camera' | 'library' | 'drive') => void;
   
+  // 단계 관리
+  setCurrentStep: (step: 'selection' | 'generation' | 'result') => void;
+  
+  // 요청 관리
+  setUserRequest: (request: string) => void;
+  
+  // 영상 결과 관리
+  setVideoResultUrl: (url: string) => void;
+  
   // 로딩 상태 관리
   setLoading: (loading: boolean, message?: string) => void;
 }
@@ -43,13 +61,16 @@ export const usePictureToVideoStore = create<PictureToVideoStore>((set, get) => 
   selectedFiles: [],
   isModalOpen: false,
   currentTab: 'local',
+  currentStep: 'selection',
+  userRequest: '',
+  videoResultUrl: '',
   isLoading: false,
   loadingMessage: '',
 
   // File management actions
   addFiles: (files: PictureFile[]) => {
     const { selectedFiles } = get();
-    const remainingSlots = Math.max(0, 10 - selectedFiles.length);
+    const remainingSlots = Math.max(0, 1 - selectedFiles.length); // 최대 1개로 변경
     const filesToAdd = files.slice(0, remainingSlots);
     
     set({
@@ -99,6 +120,15 @@ export const usePictureToVideoStore = create<PictureToVideoStore>((set, get) => 
   openModal: () => set({ isModalOpen: true }),
   closeModal: () => set({ isModalOpen: false }),
   setCurrentTab: (tab) => set({ currentTab: tab }),
+
+  // Step management actions
+  setCurrentStep: (step) => set({ currentStep: step }),
+
+  // Request management actions
+  setUserRequest: (request) => set({ userRequest: request }),
+
+  // Video result management actions
+  setVideoResultUrl: (url) => set({ videoResultUrl: url }),
 
   // Loading state management
   setLoading: (loading: boolean, message?: string) => set({

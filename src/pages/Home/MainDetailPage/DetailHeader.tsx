@@ -2,7 +2,7 @@ import heartActive from "../../../assets/image/section2/icon_hearrt_active.svg";
 import heartDefault from "../../../assets/image/section2/icon_hearrt_default.svg";
 import { useQueryClient } from "@tanstack/react-query";
 import defaultProfile from "../../../assets/image/style_icon_profile.svg";
-import { usePutLiked } from "@/data/api/memory-post/memory";
+import { usePutLiked } from "@/data/api/memory-post/Memory";
 import { useState, useEffect } from "react";
 
 interface FamilyMember {

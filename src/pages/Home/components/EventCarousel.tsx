@@ -15,7 +15,7 @@ import BasicButton from "@/components/BasicButton";
 import { useCarouselStore } from "@/context/store/carouselStore";
 import { useSliderStore } from "@/context/store/sliderStore";
 import { useNavigate } from "react-router-dom";
-import { usePutLiked } from "@/data/api/memory-post/memory";
+import { usePutLiked } from "@/data/api/memory-post/Memory";
 import { RecentMemoryPost } from "@/data/api/memory-post/type";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMemoryStore } from "@/context/store/memoryStore";

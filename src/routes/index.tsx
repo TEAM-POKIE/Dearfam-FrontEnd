@@ -4,6 +4,10 @@ import { AppLayout } from "../AppLayout";
 import { AuthGuard } from "@/components/AuthGuard";
 import { PictureToVideo } from "@/pages/Goods/PictureToVideo";
 import { PictureDiary } from "@/pages/Goods/PictureDiary";
+import { VideoGenerationStep } from "@/pages/Goods/video/VideoGenerationStep";
+import { VideoPromptPage } from "@/pages/Goods/VideoPromptPage";
+import { VideoProcessingPage } from "@/pages/Goods/VideoProcessingPage";
+import { VideoResultPage } from "@/pages/Goods/VideoResultPage";
 
 import { SelectDiary } from "@/pages/Goods/diary/SelectDiary";
 import { DiaryResult } from "@/pages/Goods/diary/DiaryResult";
@@ -114,6 +118,10 @@ export function AppRoutes() {
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
         <Route path="goods/pictureToVideo" element={<PictureToVideo />} />
+        <Route path="goods/videoGeneration" element={<VideoGenerationStep />} />
+        <Route path="goods/videoPrompt" element={<VideoPromptPage />} />
+        <Route path="goods/videoProcessing" element={<VideoProcessingPage />} />
+        <Route path="goods/videoResult" element={<VideoResultPage />} />
         <Route path="goods/diary" element={<PictureDiary />} />
         <Route path="goods/diary/select" element={<SelectDiary />} />
         <Route path="goods/diary/result" element={<DiaryResult />} />

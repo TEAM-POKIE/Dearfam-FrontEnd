@@ -4,7 +4,7 @@ import BasicPopup from "@/components/BasicPopup";
 import { useMemoryStore } from "@/context/store/memoryStore";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetMemoryTimeOrder } from "@/data/api/memory-post/memory";
+import { useGetMemoryTimeOrder } from "@/data/api/memory-post/Memory";
 import { TimeOrderMemoryPost } from "@/data/api/memory-post/type";
 
 export const DiaryMain = ({ content }: { content: string }) => {
