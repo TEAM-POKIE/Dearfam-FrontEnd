@@ -1,1 +1,1 @@
-export * from "./Memory.js";
+export * from "./Memory";
