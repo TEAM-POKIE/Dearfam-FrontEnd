@@ -4,7 +4,7 @@ import { ImageWithProfiles } from "../Home/components/ImageWithProfiles";
 import {
   useGetMemoryDetail,
   useGetMemoryTimeOrder,
-} from "@/data/api/memory-post/memory";
+} from "@/data/api/memory-post/Memory";
 import { TimeOrderMemoryPost } from "@/data/api/memory-post/type";
 
 interface SelectGalleryProps {

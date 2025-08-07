@@ -14,7 +14,7 @@ interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.DEV ? "" : import.meta.env.VITE_API_URL,
-  timeout: 1000000, // 10초로 증가
+  timeout: 300000, // 5분
   withCredentials: true,
 });
 

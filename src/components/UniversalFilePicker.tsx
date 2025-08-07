@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Upload, Camera, Image, Cloud } from 'lucide-react';
 import { usePictureToVideoStore } from '@/context/store/pictureToVideoStore';
 import { LocalFilePicker } from './filePickers/LocalFilePicker';
@@ -30,6 +31,7 @@ export const UniversalFilePicker = ({
   maxFiles = 10,
   title = '파일 선택'
 }: UniversalFilePickerProps) => {
+  const navigate = useNavigate();
   const { currentTab, setCurrentTab, selectedFiles } = usePictureToVideoStore();
   const [isClosing, setIsClosing] = useState(false);
 
@@ -128,7 +130,10 @@ export const UniversalFilePicker = ({
                 {selectedFiles.length}개 파일 선택됨
               </div>
               <button
-                onClick={handleClose}
+                onClick={() => {
+                  navigate('/home/goods/videoGeneration');
+                  handleClose();
+                }}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 완료

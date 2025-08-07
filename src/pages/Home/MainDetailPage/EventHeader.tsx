@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/shadcn/dropdown-menu";
-import { useDeleteMemoryPost } from "@/data/api/memory-post/memory";
+import { useDeleteMemoryPost } from "@/data/api/memory-post/Memory";
 import { useNavigate } from "react-router-dom";
 import { useToastStore } from "@/context/store/toastStore";
 import { useEffect } from "react";

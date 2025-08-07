@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import {
   useGetMemoryDetail,
   useGetMemoryTimeOrder,
-} from "@/data/api/memory-post/memory";
-import { usePostDiaryGenerate } from "@/data/api/diary/diary";
+} from "@/data/api/memory-post/Memory";
+import { usePostDiaryGenerate } from "@/data/api/diary/Diary";
 import { SemiHeader } from "@/components/SemiHeader";
 import BasicPopup from "@/components/BasicPopup";
 import BasicButton from "@/components/BasicButton";
@@ -46,17 +46,19 @@ export const SelectDiary = ({ onLoadingChange }: SelectDiaryProps) => {
           console.log("그림일기 생성 성공:", response);
           // DiaryResult 페이지로 이동하면서 생성된 일기 데이터 전달
           const contentData = response.data?.data?.content;
-          navigate('/home/goods/diary/result', { 
-            state: { 
+          navigate("/home/goods/diary/result", {
+            state: {
               diaryData: {
                 id: String(selectedPostId),
                 title: contentData?.title || "가족 그림일기",
-                content: contentData?.content || "오늘 하루도 가족과 함께 행복한 시간을 보냈어요.",
+                content:
+                  contentData?.content ||
+                  "오늘 하루도 가족과 함께 행복한 시간을 보냈어요.",
                 weather: "sunny", // API에서 제공되지 않으므로 기본값
                 mood: "happy", // API에서 제공되지 않으므로 기본값
-                illustration: contentData?.image_url
-              }
-            }
+                illustration: contentData?.image_url,
+              },
+            },
           });
         },
         onError: (error) => {

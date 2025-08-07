@@ -4,7 +4,7 @@ import addFamPlus from "../../../assets/image/section3/icon_add_fam_plus.svg";
 import checkIcon from "../../../assets/image/section2/icon_check.svg";
 import addFamProfileBeige from "../../../assets/image/section2/icon_add_fam_profile_beige.svg";
 import AddFamPopup from "./AddFamPopup";
-import { useFamilyMembers } from "@/data/api/family/family";
+import { useFamilyMembers } from "@/data/api/family/Family";
 import { useWritePostStore } from "@/context/store/writePostStore";
 
 const AddFam = memo(function AddFam() {

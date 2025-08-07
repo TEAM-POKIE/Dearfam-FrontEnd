@@ -54,6 +54,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         !path.includes("/memoryDetailPage") &&
         !path.includes("/edit") &&
         !path.includes("/goods/pictureToVideo") &&
+        !path.includes("/goods/videoGeneration") &&
+        !path.includes("/goods/videoPrompt") &&
         !path.includes("/goods/diary") && <HeaderBar />}
       <main className="flex-grow overflow-y-auto  [&::-webkit-scrollbar]:hidden ">
         {children}
@@ -62,6 +64,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         !path.includes("/write") &&
         !path.includes("/edit") &&
         !path.includes("/goods/pictureToVideo") &&
+        !path.includes("/goods/videoGeneration") &&
+        !path.includes("/goods/videoPrompt") &&
         !path.includes("/goods/diary") && (
           <div className=" fixed bottom-0 left-0 right-0  m-auto w-[24.375rem] ">
             <BottomNavbar activeItem={getActiveNavItem()} />
