@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import LogoImage from "@/assets/image/section5/dearfam_logo_goods.svg";
 import BasicButton from "@/components/BasicButton";
 import { UniversalFilePicker } from "@/components/UniversalFilePicker";
 import { usePictureToVideoStore } from "@/context/store/pictureToVideoStore";
 
 export const PictureToVideoMain = ({ content }: { content: string }) => {
+  const navigate = useNavigate();
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const { selectedFiles, clearFiles } = usePictureToVideoStore();
 
@@ -19,6 +21,13 @@ export const PictureToVideoMain = ({ content }: { content: string }) => {
   const handleClearFiles = () => {
     clearFiles();
   };
+
+  // 파일이 선택되면 VideoGenerationStep으로 이동
+  useEffect(() => {
+    if (selectedFiles.length > 0) {
+      navigate("/home/goods/videoGeneration/step");
+    }
+  }, [selectedFiles, navigate]);
 
   return (
     <div className="flex flex-col items-center justify-between h-full pb-[3.44rem]">

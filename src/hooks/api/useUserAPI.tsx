@@ -90,7 +90,7 @@ export const useUpdateNickname = () => {
       // 사용자 관련 모든 캐시 무효화
       queryClient.invalidateQueries({ queryKey: userQueryKeys.all });
     },
-    onError: (error) => {
+    onError: () => {
       // 에러 로그 제거 - 컴포넌트에서 처리
     },
   });
@@ -176,7 +176,7 @@ export const useUpdateProfileImage = () => {
       // 사용자 관련 모든 캐시 무효화
       queryClient.invalidateQueries({ queryKey: userQueryKeys.all });
     },
-    onError: (error) => {
+    onError: () => {
       // 에러 로그 제거 - 컴포넌트에서 처리
     },
   });

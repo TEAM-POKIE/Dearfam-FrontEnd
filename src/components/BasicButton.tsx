@@ -4,7 +4,14 @@ interface BasicButtonProps {
   text: string;
   textStyle?: string;
   onClick?: () => void;
-  color?: "main_1" | "main_2" | "main_3" | "gray_3" | "gray_4" | "bg-bg-3";
+  color?:
+    | "main_1"
+    | "main_2"
+    | "main_2_80"
+    | "main_3"
+    | "gray_3"
+    | "gray_4"
+    | "bg-bg-3";
   size?: number;
   fullWidth?: boolean;
   disabled?: boolean;

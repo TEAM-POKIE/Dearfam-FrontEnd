@@ -3,12 +3,16 @@ import { useNavigate } from "react-router-dom";
 import BasicButton from "@/components/BasicButton";
 import { usePictureToVideoStore } from "@/context/store/pictureToVideoStore";
 import { SemiHeader } from "@/components/SemiHeader";
+import { usePostAnimatePhotoGenerate, type AnimatePhotoResponse } from "@/data/api/animate/AnimatePhoto";
 
 export const VideoPromptPage = () => {
   const navigate = useNavigate();
-  const { selectedFiles, clearFiles, setUserRequest } =
+  const { selectedFiles, clearFiles, setUserRequest, setVideoResultUrl } =
     usePictureToVideoStore();
   const [promptText, setPromptText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const animatePhotoMutation = usePostAnimatePhotoGenerate();
 
   const selectedImage = selectedFiles[0];
 
@@ -21,10 +25,62 @@ export const VideoPromptPage = () => {
     navigate("/home/goods/pictureToVideo");
   };
 
-  const handleStartGeneration = () => {
-    if (promptText.trim()) {
-      setUserRequest(promptText.trim());
-      navigate("/home/goods/videoProcessing");
+  const handleStartGeneration = async () => {
+    if (!promptText.trim() || !selectedImage) {
+      return;
+    }
+
+    setIsLoading(true);
+    setUserRequest(promptText.trim());
+
+    // 처리 페이지로 먼저 이동
+    navigate("/home/goods/videoProcessing");
+
+    try {
+      console.log("=== 영상 생성 API 호출 시작 ===");
+      console.log("프롬프트:", promptText.trim());
+      console.log("이미지 파일:", selectedImage.file);
+
+      // 실제 AnimatePhoto API 호출
+      const response: AnimatePhotoResponse = await animatePhotoMutation.mutateAsync({
+        request: {
+          actionPrompt: promptText.trim(),
+        },
+        image: selectedImage.file,
+      });
+
+      console.log("=== API 응답 성공 ===");
+      console.log("전체 응답:", response);
+      console.log("응답 데이터:", response.data);
+      console.log("응답 데이터의 data:", response.data?.data);
+      console.log("animatePhotoTempUrl:", response.data?.data?.animatePhotoTempUrl);
+
+      // API 응답에서 동영상 URL 추출 (axios response 구조 고려)
+      const videoUrl = response.data?.data?.animatePhotoTempUrl;
+      
+      if (videoUrl) {
+        // Store에 결과 URL 저장
+        setVideoResultUrl(videoUrl);
+        
+        // 결과 페이지로 이동
+        setTimeout(() => {
+          navigate("/home/goods/videoResult");
+        }, 2000); // 로딩 시간을 위해 2초 대기
+      } else {
+        throw new Error("동영상 URL을 받아올 수 없습니다.");
+      }
+    } catch (error) {
+      console.error("=== 영상 생성 실패 ===");
+      console.error("에러:", error);
+      if (error.response) {
+        console.error("응답 상태:", error.response.status);
+        console.error("응답 데이터:", error.response.data);
+      }
+      
+      alert("영상 생성에 실패했습니다. 다시 시도해주세요.");
+      navigate(-1); // 이전 페이지로 돌아가기
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -90,11 +146,11 @@ export const VideoPromptPage = () => {
       {/* Bottom Buttons */}
       <div className="px-[1.25rem] space-y-[1.25rem] mb-[3.5rem]">
         <BasicButton
-          text="영상 제작할래요"
-          color={!promptText.trim() ? "bg-bg-3" : "main_1"}
+          text={isLoading ? "영상 생성 중..." : "영상 제작할래요"}
+          color={!promptText.trim() || isLoading ? "bg-bg-3" : "main_1"}
           size={350}
           onClick={handleStartGeneration}
-          disabled={!promptText.trim()}
+          disabled={!promptText.trim() || isLoading}
         />
       </div>
     </div>

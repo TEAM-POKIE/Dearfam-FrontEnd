@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ApiResponse, Family, FamilyMember, FamilyMembersResponse, FamilyCreateResponse } from "../../mocks/types";
+import { ApiResponse, FamilyMember, FamilyMembersResponse, FamilyCreateResponse } from "../../mocks/types";
 import axiosInstance from "../../data/api/axiosInstance";
 
 // API 기본 URL - 환경변수 사용
@@ -145,7 +145,7 @@ export const useSetFamilyRole = () => {
   return useMutation({
     mutationFn: familyAPI.setFamilyRole,
     retry: false, // 재시도 비활성화 - 에러 시 중복 요청 방지
-    onSuccess: (data) => {
+    onSuccess: () => {
       // 성공 시 가족 구성원 캐시 무효화
       queryClient.invalidateQueries({ queryKey: familyQueryKeys.members() });
       // 성공 로그는 컴포넌트에서 처리하므로 여기서는 제거

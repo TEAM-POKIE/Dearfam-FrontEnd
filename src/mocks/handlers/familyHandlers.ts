@@ -93,7 +93,7 @@ const getFamilyMembers = http.get("/api/v1/family/members", ({ request }) => {
   }
 
   // 실제 API 응답 형식에 맞게 데이터 변환
-  const familyMembers = mockUsers.map((user, index) => ({
+  const familyMembers = mockUsers.map((user) => ({
     familyMemberId: user.id,
     familyMemberNickname: user.userNickname,
     familyMemberRole: user.userFamilyRole,

@@ -22,11 +22,6 @@ interface KakaoLoginResponse {
   isNewUser: boolean;
 }
 
-interface TokenRefreshResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
 
 
 // API 함수들

@@ -1,4 +1,3 @@
-import { rest } from "msw";
 import { ApiResponse } from "../types";
 
 // 토큰 새로고침 - POST /auth/refresh

@@ -12,6 +12,28 @@ interface AnimatePhotoRequest {
   image: File; // File 객체
 }
 
+interface AnimatePhotoSaveRequest {
+  tempVideoUrl: string;
+}
+
+// Axios 응답 구조를 고려한 타입 정의
+interface AnimatePhotoApiData {
+  code: number;
+  message: string;
+  data: {
+    animatePhotoId: number;
+    animatePhotoTempUrl: string;
+  };
+}
+
+interface AnimatePhotoResponse {
+  data: AnimatePhotoApiData;
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  config: Record<string, unknown>;
+}
+
 // File을 Base64 문자열로 변환하는 헬퍼 함수
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -28,7 +50,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 };
 
 export const usePostAnimatePhotoGenerate = () => {
-  return useMutation({
+  return useMutation<AnimatePhotoResponse, Error, AnimatePhotoRequest>({
     mutationKey: ["animate", "photo", "generate"],
     mutationFn: async ({ request, image }: AnimatePhotoRequest) => {
       const formData = new FormData();
@@ -55,10 +77,52 @@ export const usePostAnimatePhotoGenerate = () => {
       console.log("Access Token:", localStorage.getItem("accessToken"));
       console.log("API URL:", `${API_BASE_URL}/animate-photo/generate`);
 
-      return axios.post(`${API_BASE_URL}/animate-photo/generate`, formData);
+      return axios.post(`${API_BASE_URL}/animate-photo/generate`, formData, {
+        timeout: 300000,
+      });
+    },
+  });
+};
+
+export const usePostAnimatePhotoSave = () => {
+  return useMutation<AnimatePhotoResponse, Error, AnimatePhotoSaveRequest>({
+    mutationKey: ["animate", "photo", "save"],
+    mutationFn: async (request: AnimatePhotoSaveRequest) => {
+      // API 스펙에 따라 JSON으로 전송
+      console.log("=== AnimatePhotoSave API 호출 ===");
+      console.log("Request:", request);
+      console.log("tempVideoUrl:", request.tempVideoUrl);
+      console.log("API URL:", `${API_BASE_URL}/animate-photo/save`);
+      console.log("Access Token:", localStorage.getItem("accessToken"));
+
+      return axios.post(
+        `${API_BASE_URL}/animate-photo/save`,
+        request, // JSON 객체로 직접 전송
+        {
+          timeout: 300000,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    },
+    onSuccess: (data) => {
+      console.log("AnimatePhotoSave Success:", data);
+    },
+    onError: (error) => {
+      console.error("AnimatePhotoSave Error:", error);
     },
   });
 };
 
 // File을 Base64로 변환하는 유틸리티 함수 내보내기
 export { fileToBase64 };
+
+// 타입 내보내기
+export type {
+  AnimatePhotoRequest,
+  AnimatePhotoSaveRequest,
+  AnimatePhotoResponse,
+  AnimatePhotoApiData,
+  RequestObject,
+};
