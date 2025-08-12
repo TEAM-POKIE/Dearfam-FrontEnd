@@ -49,6 +49,17 @@ const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
+export const usePostDiarySave = () => {
+  return useMutation<AnimatePhotoResponse, Error, AnimatePhotoRequest>({
+    mutationKey: ["diary", "save"],
+    mutationFn: async (request: AnimatePhotoRequest) => {
+      return axios.post(`${API_BASE_URL}/diary/save`, request, {
+        timeout: 300000,
+      });
+    },
+  });
+};
+
 export const usePostAnimatePhotoGenerate = () => {
   return useMutation<AnimatePhotoResponse, Error, AnimatePhotoRequest>({
     mutationKey: ["animate", "photo", "generate"],

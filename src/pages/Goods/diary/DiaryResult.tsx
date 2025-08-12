@@ -2,6 +2,9 @@ import * as React from "react";
 import { useLocation } from "react-router-dom";
 import { SemiHeader } from "@/components/SemiHeader";
 import BasicButton from "@/components/BasicButton";
+import html2canvas from "html2canvas";
+import { saveAs } from "file-saver";
+import { loadMediaAsBase64 } from "@/utils/mediaDownload";
 import cloud from "../../../assets/image/section5/icon_cloud_sun.svg";
 import sun from "../../../assets/image/section5/icon_sun.svg";
 import rain from "../../../assets/image/section5/icon_umbrella.svg";
@@ -21,6 +24,8 @@ export const DiaryResult = () => {
   const location = useLocation();
   const [imageLoading, setImageLoading] = React.useState(true);
   const [imageError, setImageError] = React.useState(false);
+  const [isCapturing, setIsCapturing] = React.useState(false);
+  const templateRef = React.useRef<HTMLDivElement>(null);
 
   // SelectDiary에서 전달받은 그림일기 데이터
   const diaryData = location.state?.diaryData as DiaryData;
@@ -90,6 +95,121 @@ export const DiaryResult = () => {
     }
   }, [finalDiaryData.illustration]);
 
+  // 공통 유틸리티를 사용한 이미지 로드
+  const loadImageWithCorsCache = async (
+    src: string
+  ): Promise<string | null> => {
+    try {
+      console.log("공통 유틸리티로 이미지 로드 시작:", src);
+      return await loadMediaAsBase64(src);
+    } catch (error) {
+      console.warn("이미지 base64 변환 실패:", error);
+      return null;
+    }
+  };
+
+  // 템플릿 이미지 저장 함수 (최적화된 버전)
+  const handleSaveAsImage = async () => {
+    if (!templateRef.current) return;
+
+    setIsCapturing(true);
+
+    try {
+      // 웹폰트가 로드될 때까지 대기
+      const docAny = document as unknown as {
+        fonts?: { ready: Promise<void> };
+      };
+      if (docAny.fonts?.ready) {
+        await docAny.fonts.ready.catch(() => undefined);
+      }
+
+      // 이미지 로딩이 완료될 때까지 대기
+      if (finalDiaryData.illustration && (imageLoading || imageError)) {
+        alert("이미지 로딩이 완료된 후 다시 시도해주세요.");
+        return;
+      }
+
+      // 이미지가 있는 경우 CORS 처리
+      let safeImageBase64: string | null = null;
+      const imgElement = templateRef.current.querySelector(
+        'img[alt="그림일기 이미지"]'
+      ) as HTMLImageElement;
+      const originalSrc = imgElement?.src;
+
+      if (finalDiaryData.illustration && !imageError && imgElement) {
+        console.log("CORS 우회를 위한 이미지 처리 시작");
+        safeImageBase64 = await loadImageWithCorsCache(
+          finalDiaryData.illustration
+        );
+
+        if (safeImageBase64) {
+          imgElement.src = safeImageBase64;
+          await new Promise((resolve) => setTimeout(resolve, 300)); // DOM 업데이트 대기
+        }
+      }
+
+      // html2canvas로 템플릿 캡처
+      const { width, height } = templateRef.current.getBoundingClientRect();
+      const canvas = await html2canvas(templateRef.current, {
+        scale: 3, // 고해상도
+        useCORS: false,
+        allowTaint: false,
+        backgroundColor: "#F5F2E8",
+        width,
+        height,
+        logging: false,
+        foreignObjectRendering: false,
+        letterRendering: true, // 텍스트 품질 향상
+        imageTimeout: 15000,
+        removeContainer: true,
+      });
+
+      // 원본 이미지 src 복원
+      if (imgElement && originalSrc) {
+        imgElement.src = originalSrc;
+      }
+
+      // 파일명 생성 (일기 날짜 기반)
+      const filename = `dearfam_diary_${dateInfo.year}${String(
+        dateInfo.month
+      ).padStart(2, "0")}${String(dateInfo.day).padStart(2, "0")}.png`;
+
+      // Blob으로 변환하여 파일 저장
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            saveAs(blob, filename);
+            alert(
+              `🎉 그림일기가 성공적으로 저장되었습니다!\n파일명: ${filename}`
+            );
+          } else {
+            throw new Error("Canvas to Blob 변환 실패");
+          }
+        },
+        "image/png",
+        0.95 // 품질 최적화
+      );
+    } catch (error) {
+      console.error("이미지 저장 중 오류:", error);
+
+      // 더 자세한 에러 메시지
+      let errorMessage = "이미지 저장 중 오류가 발생했습니다.";
+      if (error instanceof Error) {
+        if (error.message.includes("CORS")) {
+          errorMessage =
+            "이미지 권한 문제로 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        } else if (error.message.includes("Canvas")) {
+          errorMessage =
+            "이미지 변환 중 오류가 발생했습니다. 템플릿을 확인하고 다시 시도해주세요.";
+        }
+      }
+
+      alert(errorMessage);
+    } finally {
+      setIsCapturing(false);
+    }
+  };
+
   const handleNext = () => {
     // 다음 단계로 이동
     console.log("다음 단계로 이동:", {
@@ -119,7 +239,10 @@ export const DiaryResult = () => {
         </div>
 
         {/* 단일 템플릿 */}
-        <div className="w-full  px-[0.75rem] py-[0.76rem] mb-[3rem] bg-bg-2 rounded-[0.30175rem] h-[29.11638rem]">
+        <div
+          ref={templateRef}
+          className="w-full px-[0.75rem] py-[0.76rem] mb-[3rem] bg-bg-2 rounded-[0.30175rem] h-[29.11638rem]"
+        >
           <div className="w-full  h-full  border-[2.414px] border-main-2 rounded-[0.30175rem]">
             <div className=" text-[1.2rem] font-OwnglyphMinhyeChae flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem]">
               <span>{dateInfo.year}</span>
@@ -187,7 +310,18 @@ export const DiaryResult = () => {
       </div>
 
       {/* 하단 고정 버튼 */}
-      <div className="flex-shrink-0 px-[1.5rem] pb-[3rem]">
+      <div className="flex-shrink-0 px-[1.5rem] pb-[3rem] space-y-[0.75rem]">
+        <button
+          onClick={handleSaveAsImage}
+          disabled={isCapturing}
+          className={`w-full h-[3.5rem] rounded-[0.625rem] border-2 border-main-2 bg-transparent text-main-2 text-body1 font-medium transition-all duration-200 ${
+            isCapturing
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-main-2 hover:text-white active:scale-95"
+          }`}
+        >
+          {isCapturing ? "이미지 저장 중..." : "이미지 저장"}
+        </button>
         <BasicButton
           text="다음"
           color="main_2_80"

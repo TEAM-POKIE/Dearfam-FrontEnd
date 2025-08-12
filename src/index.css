@@ -991,6 +991,8 @@
       var(--line-color) var(--line-gap)
     );
     background-repeat: repeat;
+    /* 캔버스 렌더링 시 배경색 누락 방지 */
+    background-color: #ddd5bf; /* bg-bg-2와 유사 (템플릿 컨테이너 배경) */
   }
 
   /* 줄 개수에 맞춘 고정 높이 블록 */

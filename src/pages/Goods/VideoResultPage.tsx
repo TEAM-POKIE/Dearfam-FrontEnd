@@ -6,6 +6,7 @@ import { SemiHeader } from "@/components/SemiHeader";
 import PlayIcon from "@/assets/image/section5/icon_play.svg";
 
 import { usePictureToVideoStore } from "@/context/store/pictureToVideoStore";
+import { downloadMediaWithCorsCache } from "@/utils/mediaDownload";
 
 export const VideoResultPage = () => {
   const navigate = useNavigate();
@@ -75,25 +76,12 @@ export const VideoResultPage = () => {
     );
   };
 
-  const downloadVideoFromUrl = async (url: string, filename: string): Promise<void> => {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename;
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    
-    // Clean up
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(blobUrl);
+  // 기본 파일명 생성 함수
+  const buildFileName = (url: string): string => {
+    const fromUrl = url.split("?")[0].split("/").pop();
+    if (fromUrl && fromUrl.includes(".")) return fromUrl;
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
+    return `dearfam-video-${ts}.mp4`;
   };
 
   const handleGallery = async () => {
@@ -106,16 +94,13 @@ export const VideoResultPage = () => {
       console.log("비디오 URL:", animatePhotoUrl);
 
       // 파일명 생성
-      const buildFileName = (url: string) => {
-        const fromUrl = url.split("?")[0].split("/").pop();
-        if (fromUrl && fromUrl.includes(".")) return fromUrl;
-        const ts = new Date().toISOString().replace(/[:.]/g, "-");
-        return `dearfam-video-${ts}.mp4`;
-      };
       const filename = buildFileName(animatePhotoUrl);
 
-      // Fetch를 사용한 안정적인 다운로드
-      await downloadVideoFromUrl(animatePhotoUrl, filename);
+      // CORS 캐시 우회 방식으로 다운로드
+      await downloadMediaWithCorsCache(animatePhotoUrl, { 
+        filename,
+        timeout: 60000 // 동영상은 용량이 클 수 있으므로 타임아웃 연장
+      });
 
       // 성공 메시지
       if (isMobileDevice()) {
@@ -126,30 +111,12 @@ export const VideoResultPage = () => {
         alert("다운로드가 완료되었어요! Downloads 폴더를 확인하세요.");
       }
 
-      console.log("=== 기기 저장 처리 완료 (자동 다운로드) ===");
+      console.log("=== 동영상 다운로드 완료 ===");
     } catch (error) {
       console.error("Error saving video:", error);
-
-      // 에러 타입에 따른 구체적인 메시지 제공
-      let errorMessage = "저장 중 오류가 발생했습니다. 다시 시도해주세요.";
-
-      if (error instanceof Error) {
-        if (
-          error.message.includes("CORS") ||
-          error.message.includes("Access-Control")
-        ) {
-          errorMessage =
-            "동영상 다운로드 권한 문제가 발생했습니다. 잠시 후 다시 시도해주세요.";
-        } else if (error.message.includes("timeout")) {
-          errorMessage =
-            "다운로드 시간이 초과되었습니다. 네트워크 상태를 확인하고 다시 시도해주세요.";
-        } else if (error.message.includes("network")) {
-          errorMessage = "네트워크 연결을 확인하고 다시 시도해주세요.";
-        } else if (error.message.includes("HTTP error")) {
-          errorMessage = "동영상 파일에 접근할 수 없습니다. 다시 시도해주세요.";
-        }
-      }
-
+      
+      // 유틸리티에서 이미 구체적인 에러 메시지를 제공하므로 그대로 사용
+      const errorMessage = error instanceof Error ? error.message : "저장 중 오류가 발생했습니다. 다시 시도해주세요.";
       alert(errorMessage);
     } finally {
       setIsSaving(false);
