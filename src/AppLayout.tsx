@@ -49,13 +49,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   }, [location.pathname, setPageType, setIsWritePage, setMode]);
 
   return (
-    <div className="mobile-container flex flex-col align-middle m-auto">
+    <div className="mobile-container flex flex-col align-middle m-auto ">
       {!isWritePage &&
         !path.includes("/memoryDetailPage") &&
         !path.includes("/edit") &&
         !path.includes("/goods/pictureToVideo") &&
         !path.includes("/goods/videoGeneration") &&
         !path.includes("/goods/videoPrompt") &&
+        !path.includes("/goods/videoResult") &&
         !path.includes("/goods/diary") && <HeaderBar />}
       <main className="flex-grow overflow-y-auto  [&::-webkit-scrollbar]:hidden ">
         {children}
@@ -66,6 +67,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         !path.includes("/goods/pictureToVideo") &&
         !path.includes("/goods/videoGeneration") &&
         !path.includes("/goods/videoPrompt") &&
+        !path.includes("/goods/videoResult") &&
         !path.includes("/goods/diary") && (
           <div className=" fixed bottom-0 left-0 right-0  m-auto w-[24.375rem] ">
             <BottomNavbar activeItem={getActiveNavItem()} />

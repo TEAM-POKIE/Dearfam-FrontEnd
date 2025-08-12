@@ -4,13 +4,13 @@ import { AppLayout } from "../AppLayout";
 import { AuthGuard } from "@/components/AuthGuard";
 import { PictureToVideo } from "@/pages/Goods/PictureToVideo";
 import { PictureDiary } from "@/pages/Goods/PictureDiary";
-import { VideoGenerationStep } from "@/pages/Goods/video/VideoGenerationStep";
 import { VideoPromptPage } from "@/pages/Goods/VideoPromptPage";
 import { VideoProcessingPage } from "@/pages/Goods/VideoProcessingPage";
 import { VideoResultPage } from "@/pages/Goods/VideoResultPage";
 
 import { SelectDiary } from "@/pages/Goods/diary/SelectDiary";
 import { DiaryResult } from "@/pages/Goods/diary/DiaryResult";
+import { VideoGenerationStep } from "@/pages/Goods/video/VideoGenerationStep";
 
 // 동적 임포트를 통한 코드 스플리팅
 const HomePage = lazy(() =>
@@ -118,7 +118,8 @@ export function AppRoutes() {
         <Route path="goods" element={<GoodsPage />} />
         <Route path="family" element={<FamilyPage />} />
         <Route path="goods/pictureToVideo" element={<PictureToVideo />} />
-        <Route path="goods/videoGeneration" element={<VideoGenerationStep />} />
+        <Route path="goods/videoGeneration" element={<PictureToVideo />} />
+        <Route path="goods/videoGeneration/step" element={<VideoGenerationStep />} />
         <Route path="goods/videoPrompt" element={<VideoPromptPage />} />
         <Route path="goods/videoProcessing" element={<VideoProcessingPage />} />
         <Route path="goods/videoResult" element={<VideoResultPage />} />

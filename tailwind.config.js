@@ -1,4 +1,5 @@
 // tailwind.config.js
+
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"], // Tailwind를 적용할 파일 경로
   theme: {
@@ -36,6 +37,7 @@ module.exports = {
       },
       fontFamily: {
         pretendard: ["Pretendard", "sans-serif"],
+        OwnglyphMinhyeChae: ["OwnglyphMinhyeChae", "sans-serif"],
       },
       fontSize: {
         h1: ["2rem", { fontWeight: "700" }], // 32px, bold

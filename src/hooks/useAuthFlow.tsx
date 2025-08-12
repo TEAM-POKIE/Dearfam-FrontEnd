@@ -7,7 +7,6 @@ import { useCurrentUser } from '@/hooks/api/useUserAPI';
 import { useFamilyMembers, familyQueryKeys } from '@/hooks/api/useFamilyAPI';
 import { userQueryKeys } from '@/hooks/api/useUserAPI';
 
-type AuthMode = 'yesfam' | 'nofam';
 
 // 환경 변수 설정 확인 함수
 const isEnvironmentConfigured = (): boolean => {

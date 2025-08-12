@@ -22,7 +22,7 @@ export const KakaoCallback: React.FC = () => {
     const handleCallback = async () => {
       const code = searchParams.get('code');
       const error = searchParams.get('error');
-      const state = searchParams.get('state');
+      const _state = searchParams.get('state');
 
       // 에러가 있으면 즉시 리다이렉트
       if (error) {
@@ -54,7 +54,7 @@ export const KakaoCallback: React.FC = () => {
       try {
         // TanStack Query 뮤테이션 실행
         const redirectUri = `${window.location.origin}/kakao/callback`;
-        const result = await kakaoLoginMutation.mutateAsync({
+        await kakaoLoginMutation.mutateAsync({
           code,
           redirectUri,
         });

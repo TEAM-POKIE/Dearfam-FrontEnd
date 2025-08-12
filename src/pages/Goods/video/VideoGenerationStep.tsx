@@ -1,21 +1,19 @@
-import { useState } from "react";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import BasicButton from "@/components/BasicButton";
 import { usePictureToVideoStore } from "@/context/store/pictureToVideoStore";
 import { SemiHeader } from "@/components/SemiHeader";
-import { usePostAnimatePhotoGenerate } from "@/data/api/animate/AnimatePhoto";
-import { VideoResult } from "./VideoResult";
+
+//  import { VideoResultPage } from "../VideoResultPage";
 
 export const VideoGenerationStep = () => {
   const navigate = useNavigate();
   const { selectedFiles, clearFiles } = usePictureToVideoStore();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
-  const [videoResult, setVideoResult] = useState<string | null>(null);
 
   const selectedImage = selectedFiles[0];
-  const animatePhotoMutation = usePostAnimatePhotoGenerate();
 
   const handleBack = () => {
     navigate(-1);
@@ -27,59 +25,13 @@ export const VideoGenerationStep = () => {
   };
 
   const handleGoToPromptInput = () => {
-    navigate('/home/goods/videoPrompt');
-  };
-
-  const handleGenerateVideo = async () => {
-    setIsGenerating(true);
-    setGenerationProgress(0);
-
-    // 시뮬레이션된 진행률 업데이트
-    const progressInterval = setInterval(() => {
-      setGenerationProgress((prev) => {
-        if (prev >= 95) {
-          clearInterval(progressInterval);
-          return 95;
-        }
-        return prev + 5;
-      });
-    }, 200);
-
-    try {
-      // 실제 AnimatePhoto API 호출 - request와 이미지 파일 전송
-      const response = await animatePhotoMutation.mutateAsync({
-        request: "기본 영상 제작",
-        image: selectedImage.file
-      });
-      
-      clearInterval(progressInterval);
-      setGenerationProgress(100);
-
-      // API 응답에서 animatePhotoTempURL 추출
-      const animatePhotoUrl = response.data?.data?.animatePhotoTempURL;
-      
-      if (animatePhotoUrl) {
-        setTimeout(() => {
-          setIsGenerating(false);
-          setVideoResult(animatePhotoUrl);
-        }, 1000);
-      } else {
-        throw new Error("동영상 URL을 받아올 수 없습니다.");
-      }
-    } catch (error) {
-      console.error("Video generation failed:", error);
-      clearInterval(progressInterval);
-      setIsGenerating(false);
-      setGenerationProgress(0);
-      // 에러 처리 - 사용자에게 에러 메시지 표시
-      alert("동영상 생성에 실패했습니다. 다시 시도해주세요.");
-    }
+    navigate("/home/goods/videoPrompt");
   };
 
   // 동영상 생성 완료 시 결과 화면 표시
-  if (videoResult) {
-    return <VideoResult animatePhotoUrl={videoResult} />;
-  }
+  // if (videoResult) {
+  //   return <VideoResultPage />;
+  // }
 
   if (!selectedImage) {
     return (
@@ -91,7 +43,9 @@ export const VideoGenerationStep = () => {
         />
         <div className="flex items-center justify-center flex-1">
           <div className="text-center">
-            <p className="text-body2 text-gray-3 mb-4">선택된 사진이 없습니다.</p>
+            <p className="text-body2 text-gray-3 mb-4">
+              선택된 사진이 없습니다.
+            </p>
             <BasicButton
               text="사진 선택하기"
               color="main_2_80"
