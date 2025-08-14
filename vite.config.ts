@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import * as path from "path";
+import * as fs from "fs";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type ViteDevServer } from "vite";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -66,44 +67,56 @@ export default defineConfig({
         ]
       : []),
     // MSW 제거 플러그인 (빌드시에만)
-    ...(process.env.NODE_ENV === "production" ? [{
-      name: 'remove-msw',
-      resolveId(id: string) {
-        if (id.includes('msw') || id.includes('/mocks/')) {
-          return id;
-        }
-      },
-      load(id: string) {
-        if (id.includes('msw') || id.includes('/mocks/')) {
-          return 'export default {}; export const setupWorker = () => ({ start: () => Promise.resolve() });';
-        }
-      }
-    }] : []),
+    ...(process.env.NODE_ENV === "production"
+      ? [
+          {
+            name: "remove-msw",
+            resolveId(id: string) {
+              if (id.includes("msw") || id.includes("/mocks/")) {
+                return id;
+              }
+            },
+            load(id: string) {
+              if (id.includes("msw") || id.includes("/mocks/")) {
+                return "export default {}; export const setupWorker = () => ({ start: () => Promise.resolve() });";
+              }
+            },
+          },
+        ]
+      : []),
   ],
   define: {
     // MSW를 빌드시 제외하기 위한 환경 변수
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    "process.env.NODE_ENV": JSON.stringify(
+      process.env.NODE_ENV || "development"
+    ),
     // MSW 모듈 자체를 조건부로 대체
-    'import.meta.env.MSW_ENABLED': process.env.NODE_ENV === 'development',
+    "import.meta.env.MSW_ENABLED": process.env.NODE_ENV === "development",
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
       // 프로덕션 빌드시 MSW 모듈들을 빈 모듈로 대체
-      ...(process.env.NODE_ENV === "production" ? {
-        "msw": path.resolve(__dirname, "./src/utils/msw-stub.js"),
-        "msw/browser": path.resolve(__dirname, "./src/utils/msw-stub.js"),
-        "msw/node": path.resolve(__dirname, "./src/utils/msw-stub.js"),
-      } : {}),
+      ...(process.env.NODE_ENV === "production"
+        ? {
+            msw: path.resolve(__dirname, "./src/utils/msw-stub.js"),
+            "msw/browser": path.resolve(__dirname, "./src/utils/msw-stub.js"),
+            "msw/node": path.resolve(__dirname, "./src/utils/msw-stub.js"),
+          }
+        : {}),
     },
     // 파일 확장자 해결 순서 명시
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
+    extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json"],
   },
   server: {
     // 개발 서버 설정
     host: true,
     port: 5173,
     open: false, // 자동으로 브라우저 열지 않음
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, "cert/key.pem")),
+      cert: fs.readFileSync(path.resolve(__dirname, "cert/cert.pem")),
+    },
     // HMR 설정
     hmr: {
       overlay: true, // 에러 오버레이 표시
@@ -123,11 +136,11 @@ export default defineConfig({
   },
   optimizeDeps: {
     // MSW를 pre-bundling에서 제외
-    exclude: ['msw'],
-    include: process.env.NODE_ENV === 'development' ? ['msw'] : [],
+    exclude: ["msw"],
+    include: process.env.NODE_ENV === "development" ? ["msw"] : [],
   },
   ssr: {
-    noExternal: process.env.NODE_ENV === 'production' ? ['msw'] : [],
+    noExternal: process.env.NODE_ENV === "production" ? ["msw"] : [],
   },
   build: {
     target: "es2020",
@@ -136,38 +149,44 @@ export default defineConfig({
       onwarn(warning, warn) {
         // 테스트 및 MSW 관련 경고 무시
         if (
-          (warning.code === "UNRESOLVED_IMPORT" || warning.code === "MISSING_EXPORT") &&
-          (warning.message?.includes("msw") || 
-           warning.message?.includes("@testing-library") ||
-           warning.message?.includes("vitest"))
+          (warning.code === "UNRESOLVED_IMPORT" ||
+            warning.code === "MISSING_EXPORT") &&
+          (warning.message?.includes("msw") ||
+            warning.message?.includes("@testing-library") ||
+            warning.message?.includes("vitest"))
         ) {
           return;
         }
         // 프로덕션 빌드시 테스트 관련 unresolved import 무시
-        if (process.env.NODE_ENV === 'production' && warning.code === "UNRESOLVED_IMPORT") {
+        if (
+          process.env.NODE_ENV === "production" &&
+          warning.code === "UNRESOLVED_IMPORT"
+        ) {
           return;
         }
         warn(warning);
       },
       external: [
         // 프로덕션 빌드시 테스트 및 MSW 관련 모듈 제외
-        ...(process.env.NODE_ENV === 'production' ? [
-          'msw',
-          'msw/browser',
-          'msw/node', 
-          '@testing-library/react',
-          '@testing-library/dom',
-          '@testing-library/jest-dom',
-          '@testing-library/user-event',
-          'vitest',
-          /\/mocks\//,
-          /mockServiceWorker/,
-          /setupTests/,
-          /handlers/,
-          /__tests__/,
-          /\.test\./,
-          /\.spec\./
-        ] : [])
+        ...(process.env.NODE_ENV === "production"
+          ? [
+              "msw",
+              "msw/browser",
+              "msw/node",
+              "@testing-library/react",
+              "@testing-library/dom",
+              "@testing-library/jest-dom",
+              "@testing-library/user-event",
+              "vitest",
+              /\/mocks\//,
+              /mockServiceWorker/,
+              /setupTests/,
+              /handlers/,
+              /__tests__/,
+              /\.test\./,
+              /\.spec\./,
+            ]
+          : []),
       ],
       output: {
         // 벤더 라이브러리 분리를 통한 청크 최적화
@@ -252,7 +271,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: process.env.NODE_ENV !== 'production' ? ["./src/utils/setupTests.ts"] : [],
+    setupFiles:
+      process.env.NODE_ENV !== "production"
+        ? ["./src/utils/setupTests.ts"]
+        : [],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
