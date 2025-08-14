@@ -9,6 +9,7 @@ import cloud from "../../../assets/image/section5/icon_cloud_sun.svg";
 import sun from "../../../assets/image/section5/icon_sun.svg";
 import rain from "../../../assets/image/section5/icon_umbrella.svg";
 import snow from "../../../assets/image/section5/icon_snowflake.svg";
+import { Grid } from "lucide-react";
 
 interface DiaryData {
   id: string;
@@ -96,17 +97,18 @@ export const DiaryResult = () => {
   }, [finalDiaryData.illustration]);
 
   // 공통 유틸리티를 사용한 이미지 로드
-  const loadImageWithCorsCache = async (
-    src: string
-  ): Promise<string | null> => {
-    try {
-      console.log("공통 유틸리티로 이미지 로드 시작:", src);
-      return await loadMediaAsBase64(src);
-    } catch (error) {
-      console.warn("이미지 base64 변환 실패:", error);
-      return null;
-    }
-  };
+  // const loadImageWithCorsCache = async (
+  //   src: string
+  // ): Promise<string | null> => {
+  //   try {
+  //     console.log("공통 유틸리티로 이미지 로드 시작:", src);
+  //     return await loadMediaAsBase64(src);
+  //   } catch (error) {
+  //     console.log("이미지 로드 실패:");
+  //     console.warn("이미지 base64 변환 실패:", error);
+  //     return null;
+  //   }
+  // };
 
   // 템플릿 이미지 저장 함수 (최적화된 버전)
   const handleSaveAsImage = async () => {
@@ -129,30 +131,30 @@ export const DiaryResult = () => {
         return;
       }
 
-      // 이미지가 있는 경우 CORS 처리
-      let safeImageBase64: string | null = null;
-      const imgElement = templateRef.current.querySelector(
-        'img[alt="그림일기 이미지"]'
-      ) as HTMLImageElement;
-      const originalSrc = imgElement?.src;
+      // // 이미지가 있는 경우 CORS 처리
+      // let safeImageBase64: string | null = null;
+      // const imgElement = templateRef.current.querySelector(
+      //   'img[alt="그림일기 이미지"]'
+      // ) as HTMLImageElement;
+      // const originalSrc = imgElement?.src;
 
-      if (finalDiaryData.illustration && !imageError && imgElement) {
-        console.log("CORS 우회를 위한 이미지 처리 시작");
-        safeImageBase64 = await loadImageWithCorsCache(
-          finalDiaryData.illustration
-        );
+      // if (finalDiaryData.illustration && !imageError && imgElement) {
+      //   console.log("CORS 우회를 위한 이미지 처리 시작");
+      //   // safeImageBase64 = await loadImageWithCorsCache(
+      //   //   finalDiaryData.illustration
+      //   // );
 
-        if (safeImageBase64) {
-          imgElement.src = safeImageBase64;
-          await new Promise((resolve) => setTimeout(resolve, 300)); // DOM 업데이트 대기
-        }
-      }
+      //   if (safeImageBase64) {
+      //     imgElement.src = safeImageBase64;
+      //     await new Promise((resolve) => setTimeout(resolve, 300)); // DOM 업데이트 대기
+      //   }
+      // }
 
       // html2canvas로 템플릿 캡처
       const { width, height } = templateRef.current.getBoundingClientRect();
       const canvas = await html2canvas(templateRef.current, {
         scale: 3, // 고해상도
-        useCORS: false,
+        useCORS: true,
         allowTaint: false,
         backgroundColor: "#F5F2E8",
         width,
@@ -164,10 +166,10 @@ export const DiaryResult = () => {
         removeContainer: true,
       });
 
-      // 원본 이미지 src 복원
-      if (imgElement && originalSrc) {
-        imgElement.src = originalSrc;
-      }
+      // // 원본 이미지 src 복원
+      // if (imgElement && originalSrc) {
+      //   imgElement.src = originalSrc;
+      // }
 
       // 파일명 생성 (일기 날짜 기반)
       const filename = `dearfam_diary_${dateInfo.year}${String(
@@ -275,7 +277,7 @@ export const DiaryResult = () => {
                     </div>
                   )}
                   <img
-                    src={finalDiaryData.illustration}
+                    src="https://cdn.dearfam.store/posts/post-58/62c3d5a7-7e47-4694-b0ce-cda3eebb1ad7.png"
                     alt="그림일기 이미지"
                     className={`h-full w-[12.80819rem] object-cover ${
                       imageLoading ? "opacity-0" : "opacity-100"
@@ -298,12 +300,8 @@ export const DiaryResult = () => {
               )}
             </div>
             {/* 텍스트 영역: 항상 줄 배경 표시, 고정 줄 개수에 맞춰 높이 설정 */}
-            <div className="border-t-[2.414px] border-main-2 bg-bg-2">
-              <div className="w-full lined-paper lined-block px-[0.63rem] py-[0.27rem]">
-                <div className="font-OwnglyphMinhyeChae text-[1.2rem] preserve-newlines leading-[1.94rem]">
-                  {finalDiaryData.content}
-                </div>
-              </div>
+            <div className="ㅎrid border-t-[2.414px] border-main-2 bg-bg-2  font-OwnglyphMinhyeChae text-[1.2rem]  leading-[1.94rem]">
+              {finalDiaryData.content}
             </div>
           </div>
         </div>
