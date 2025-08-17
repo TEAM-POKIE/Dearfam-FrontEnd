@@ -10,7 +10,12 @@ interface BasicDropDownProps {
   placeholder?: string;
 }
 
-export function BasicDropDown({ value, onChange, options, placeholder }: BasicDropDownProps) {
+export function BasicDropDown({
+  value,
+  onChange,
+  options,
+  placeholder,
+}: BasicDropDownProps) {
   const isSelected = value === options[0];
 
   return (
@@ -18,11 +23,11 @@ export function BasicDropDown({ value, onChange, options, placeholder }: BasicDr
       className={`
         flex
         items-center
-        w-[clamp(12.5rem,56.41vw,21.875rem)]
-        h-[clamp(2.5rem,8vw,3.125rem)]
-        px-[clamp(0.5rem,3.2vw,1.25rem)]
-        py-[clamp(0.25rem,1.6vw,0.625rem)]
-        rounded-[1rem]
+       
+   
+        px-[1.25rem]
+        py-[0.94rem]
+        rounded-[0.875rem]
         bg-bg-2
         cursor-pointer
         focus:outline-none

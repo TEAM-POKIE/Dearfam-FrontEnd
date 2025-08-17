@@ -7,7 +7,7 @@ interface PopupProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  content: string | React.ReactNode;
+  content?: string | React.ReactNode;
   buttonText: string;
   onButtonClick?: () => void;
   disabled?: boolean;
@@ -27,7 +27,7 @@ export const BasicPopup: React.FC<PopupProps> = ({
   isOpen,
   onClose,
   title = "title",
-  content = "this is content. this is content. this is content. this is content. this is content. this is content. this is content. this is content. this is content. ",
+  content,
   buttonText = "buttonText",
   onButtonClick,
   disabled = false,
@@ -52,17 +52,19 @@ export const BasicPopup: React.FC<PopupProps> = ({
         <div className="w-full flex flex-col items-center gap-[1.88rem]">
           <h4 className="text-h4 text-center whitespace-pre-line">{title}</h4>
 
-          <div>
-            <div className=" text-center">
-              {typeof content === "string" ? (
-                <p className="text-body3 text-gray-3 whitespace-pre-line">
-                  {content}
-                </p>
-              ) : (
-                content
-              )}
+          {content && (
+            <div>
+              <div className=" text-center">
+                {typeof content === "string" ? (
+                  <p className="text-body3 text-gray-3 whitespace-pre-line">
+                    {content}
+                  </p>
+                ) : (
+                  content
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <BasicButton
             text={buttonText}
