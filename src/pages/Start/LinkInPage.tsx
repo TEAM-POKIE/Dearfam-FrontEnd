@@ -29,53 +29,51 @@ export function LinkInPage() {
   };
 
   return (
-    <div className="flex justify-center items-center h-app bg-bg-1 select-none">
-      <div className="mobile-container flex flex-col items-center relative">
-        <div className="flex flex-col w-[350px] px-[10px] mx-[20px] mt-[6.25rem]">
-          <h2 className="text-h3 mb-[0.63rem]">링크로 가족 페이지 입장</h2>
-          <div>
-            <p className="text-body2 text-gray-3">방장에게 링크를 공유받아,</p>
-            <p className="text-body2 text-gray-3">가족 페이지에 입장해보세요</p>
-          </div>
+    <div className="mobile-container flex flex-col items-center relative px-[1.25rem] m-auto">
+      <div className="flex flex-col w-full  mt-[6.25rem]">
+        <h2 className="text-h3 mb-[0.63rem]">링크로 가족 페이지 입장</h2>
+        <div>
+          <p className="text-body2 text-gray-3">방장에게 링크를 공유받아,</p>
+          <p className="text-body2 text-gray-3">가족 페이지에 입장해보세요</p>
         </div>
-
-        <div className="mx-[20px] mt-[5.56rem]">
-          <BasicInputBox
-            placeholder="링크를 작성해주세요"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-          />
-          <div className="h-[3.75rem] flex items-center justify-center">
-            {!isValid && link && (
-              <BasicAlert message="올바르지 않은 참여 링크 입니다." />
-            )}
-          </div>
-        </div>
-
-        {/* 버튼 */}
-        <div className="w-full flex justify-center mt-[17.06rem]">
-          <div className="mx-[1.25rem]">
-            <BasicButton
-              text="입장하기"
-              color={isValid ? "main_1" : "gray_3"}
-              size={350}
-              onClick={handleNext}
-              disabled={!isValid}
-              textStyle="text-h4"
-            />
-          </div>
-        </div>
-
-        {/* 확인 팝업 */}
-        <BasicPopup
-          isOpen={showPopup}
-          onClose={() => setShowPopup(false)}
-          title={`${managerName}님의\n${familyName}에 입장하시겠습니까?`}
-          content={`참여를 원하는 가족 페이지인지\n다시 한번 확인해주세요.`}
-          buttonText="입장하기"
-          onButtonClick={handleJoin}
-        />
       </div>
+
+      <div className="w-full mt-[5.56rem]">
+        <BasicInputBox
+          placeholder="링크를 작성해주세요"
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
+        />
+        <div className="h-[3.75rem] flex items-center justify-center">
+          {!isValid && link && (
+            <BasicAlert message="올바르지 않은 참여 링크 입니다." />
+          )}
+        </div>
+      </div>
+
+      {/* 버튼 */}
+      <div className="w-full flex justify-center absolute bottom-[5.63rem]  ">
+        <div className="px-[1.25rem]">
+          <BasicButton
+            text="입장하기"
+            color={isValid ? "main_1" : "bg_bg_3"}
+            size={350}
+            onClick={handleNext}
+            disabled={!isValid}
+            textStyle="text-h4"
+          />
+        </div>
+      </div>
+
+      {/* 확인 팝업 */}
+      <BasicPopup
+        isOpen={showPopup}
+        onClose={() => setShowPopup(false)}
+        title={`${managerName}님의\n${familyName}에 입장하시겠습니까?`}
+        content={`참여를 원하는 가족 페이지인지\n다시 한번 확인해주세요.`}
+        buttonText="입장하기"
+        onButtonClick={handleJoin}
+      />
     </div>
   );
 }

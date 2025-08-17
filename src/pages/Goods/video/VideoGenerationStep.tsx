@@ -25,7 +25,7 @@ export const VideoGenerationStep = () => {
   };
 
   const handleGoToPromptInput = () => {
-    navigate("/home/goods/videoPrompt");
+    navigate("/goods/videoPrompt");
   };
 
   // 동영상 생성 완료 시 결과 화면 표시

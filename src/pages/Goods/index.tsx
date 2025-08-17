@@ -35,7 +35,7 @@ export function GoodsPage() {
           content="사진이 움직일 수 있다면?
         원하는 사진을 골라 움직이게 만들어보세요 !"
           onClick={() => {
-            navigate("/home/goods/pictureToVideo");
+            navigate("/goods/pictureToVideo");
           }}
         />
         <ButtonContainer
@@ -43,7 +43,7 @@ export function GoodsPage() {
           content="동심으로 돌아가 바라보는 우리 가족의
 추얷들이 궁금하지 않나요 ?"
           onClick={() => {
-            navigate("/home/goods/diary");
+            navigate("/goods/diary");
           }}
         />
       </div>

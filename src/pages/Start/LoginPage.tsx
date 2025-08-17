@@ -68,7 +68,7 @@ export default function LoginPage() {
   }, [searchParams, navigate, showToast]);
 
   return (
-    <div className="flex justify-center items-center h-app bg-bg-1 select-none">
+    <div className="flex justify-center items-center  bg-bg-1 select-none">
       <div className="mobile-container flex flex-col items-center relative w-full max-w-md px-4">
         {/* 로고와 텍스트 */}
         <div className="flex flex-col items-center mt-[8rem] mb-[8rem] w-full">

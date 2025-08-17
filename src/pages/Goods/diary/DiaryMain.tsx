@@ -63,7 +63,7 @@ export const DiaryMain = ({ content }: { content: string }) => {
           buttonText="게시글 더 쓰러 갈래요"
           onClose={() => setShowPopup(false)}
           onButtonClick={() => {
-            navigate("/home/write");
+            navigate("/write");
           }}
           title="게시글 최소 6개 필요"
           content="그림 일기 굿즈를 생성하기 위해서는

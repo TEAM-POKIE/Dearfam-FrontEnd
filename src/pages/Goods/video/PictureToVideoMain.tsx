@@ -25,7 +25,7 @@ export const PictureToVideoMain = ({ content }: { content: string }) => {
   // 파일이 선택되면 VideoGenerationStep으로 이동
   useEffect(() => {
     if (selectedFiles.length > 0) {
-      navigate("/home/goods/videoGeneration/step");
+      navigate("/goods/videoGeneration/step");
     }
   }, [selectedFiles, navigate]);
 

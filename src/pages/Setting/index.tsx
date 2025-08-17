@@ -8,6 +8,7 @@ import { useCurrentUser, useUpdateProfileImage } from "@/hooks/api/useUserAPI";
 import { useFamilyMembers } from "@/hooks/api/useFamilyAPI";
 import { useToastStore } from "@/context/store/toastStore";
 import { useQueryClient } from "@tanstack/react-query";
+import { SemiHeader } from "@/components/SemiHeader";
 
 // ArrowLeft 및 ChevronRight는 추후 Component로 정의해야함
 
@@ -56,7 +57,7 @@ export function SettingPage() {
       showToast("닉네임 변경이 완료되었어요!", "success");
 
       // URL에서 파라미터 제거
-      navigate("/SettingPage", { replace: true });
+      navigate("/setting", { replace: true });
     }
   }, [searchParams, navigate, showToast]);
 
@@ -148,18 +149,11 @@ export function SettingPage() {
   };
 
   return (
-    <div className="flex justify-center items-center h-app bg-bg-1">
-      <div className="mobile-container flex flex-col items-center overflow-hidden">
-        {/* 헤더 */}
-        <div className="w-full flex items-center justify-center relative py-4">
-          <button className="absolute left-4" onClick={() => navigate(-1)}>
-            <ArrowLeft size={24} color="#000000" />
-          </button>
-          <h1 className="text-h4 font-bold">설정</h1>
-        </div>
-
+    <div className="flex flex-col  overflow-hidden">
+      <SemiHeader title="설정" onBackClick={() => navigate(-1)} />
+      <div className="flex flex-col items-center overflow-hidden">
         {/* 프로필 섹션 */}
-        <div className="w-full py-6">
+        <div className="w-full py-[1.88rem]">
           <div className="mx-5 flex items-center">
             <div className="relative">
               <div className="w-[72px] h-[72px] rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
@@ -215,7 +209,7 @@ export function SettingPage() {
           <div className="w-full my-[0.66rem]">
             <button
               className="w-full px-6 h-[1.75rem] flex justify-between items-center"
-              onClick={() => navigate("/NameChangePage")}
+              onClick={() => navigate("/setting/name-change")}
             >
               <span className="text-body4 text-black">닉네임 변경</span>
               <ChevronRight width="1.75rem" height="1.75rem" color="#828282" />

@@ -47,7 +47,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
     main_3: "bg-main-3 text-white hover:bg-main-3/90",
     gray_3: "bg-gray-3 text-white hover:bg-neutral-700",
     gray_4: "bg-gray-4 text-white hover:bg-neutral-600",
-    "bg-bg-3": "bg-bg-3 text-white hover:bg-bg-3/90",
+    bg_bg_3: "bg-bg-3 text-white hover:bg-bg-3/90",
   };
 
   const textStyleMap: Record<string, string> = {

@@ -60,7 +60,7 @@ export function NameChangePage() {
 
       // 성공 시 toast 표시 후 Setting 페이지로 이동
       showToast("닉네임 변경이 완료되었어요!", "success");
-      navigate("/SettingPage", { replace: true });
+      navigate("/setting", { replace: true });
     } catch (error) {
       console.error("닉네임 변경 실패:", error);
       showToast("닉네임 변경에 실패했습니다.", "error");

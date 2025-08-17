@@ -4,12 +4,10 @@ import { SemiHeader } from "@/components/SemiHeader";
 import BasicButton from "@/components/BasicButton";
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
-import { loadMediaAsBase64 } from "@/utils/mediaDownload";
 import cloud from "../../../assets/image/section5/icon_cloud_sun.svg";
 import sun from "../../../assets/image/section5/icon_sun.svg";
 import rain from "../../../assets/image/section5/icon_umbrella.svg";
 import snow from "../../../assets/image/section5/icon_snowflake.svg";
-import { Grid } from "lucide-react";
 
 interface DiaryData {
   id: string;
@@ -27,6 +25,11 @@ export const DiaryResult = () => {
   const [imageError, setImageError] = React.useState(false);
   const [isCapturing, setIsCapturing] = React.useState(false);
   const templateRef = React.useRef<HTMLDivElement>(null);
+  const textAreaRef = React.useRef<HTMLDivElement>(null);
+  const [lineTops, setLineTops] = React.useState<number[]>([]);
+  const BASELINE_OFFSET_PX = 3; // 글자를 조금 위로 올려 자연스럽게 보정
+  const CAPTURE_EXTRA_BOTTOM_PX = 8; // 저장 시에만 하단 여백 추가
+  const CAPTURE_BASELINE_LIFT_PX = -10; // 저장 시 베이스라인을 추가로 위로 이동
 
   // SelectDiary에서 전달받은 그림일기 데이터
   const diaryData = location.state?.diaryData as DiaryData;
@@ -96,6 +99,29 @@ export const DiaryResult = () => {
     }
   }, [finalDiaryData.illustration]);
 
+  // 밑줄 위치를 디바이스 픽셀 그리드에 정렬하여 두께가 일정해 보이도록 계산
+  React.useLayoutEffect(() => {
+    const element = textAreaRef.current;
+    if (!element) return;
+
+    const computeLineTops = () => {
+      const dpr = window.devicePixelRatio || 1;
+      const style = window.getComputedStyle(element);
+      const parsed = parseFloat(style.lineHeight);
+      const lineHeightPx = Number.isFinite(parsed) ? parsed : 31; // fallback
+      const lines = 5; // 마지막 하단 라인까지 표시
+      const tops = Array.from({ length: lines }, (_, i) => {
+        const rawTop = lineHeightPx * (i + 1);
+        return Math.round(rawTop * dpr) / dpr; // 픽셀 스냅
+      });
+      setLineTops(tops);
+    };
+
+    computeLineTops();
+    window.addEventListener("resize", computeLineTops);
+    return () => window.removeEventListener("resize", computeLineTops);
+  }, []);
+
   // 공통 유틸리티를 사용한 이미지 로드
   // const loadImageWithCorsCache = async (
   //   src: string
@@ -115,6 +141,10 @@ export const DiaryResult = () => {
     if (!templateRef.current) return;
 
     setIsCapturing(true);
+    // 상태 반영 후 한 프레임 대기하여 레이아웃 업데이트 보장
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve())
+    );
 
     try {
       // 웹폰트가 로드될 때까지 대기
@@ -152,8 +182,9 @@ export const DiaryResult = () => {
 
       // html2canvas로 템플릿 캡처
       const { width, height } = templateRef.current.getBoundingClientRect();
+      const captureScale = window.devicePixelRatio || 1;
       const canvas = await html2canvas(templateRef.current, {
-        scale: 3, // 고해상도
+        scale: captureScale,
         useCORS: true,
         allowTaint: false,
         backgroundColor: "#F5F2E8",
@@ -161,7 +192,7 @@ export const DiaryResult = () => {
         height,
         logging: false,
         foreignObjectRendering: false,
-        letterRendering: true, // 텍스트 품질 향상
+        // html2canvas 옵션: 타입에 없는 속성 제거
         imageTimeout: 15000,
         removeContainer: true,
       });
@@ -245,7 +276,7 @@ export const DiaryResult = () => {
           ref={templateRef}
           className="w-full px-[0.75rem] py-[0.76rem] mb-[3rem] bg-bg-2 rounded-[0.30175rem] h-[29.11638rem]"
         >
-          <div className="w-full  h-full  border-[2.414px] border-main-2 rounded-[0.30175rem]">
+          <div className="w-full h-full border-[2.414px] border-main-2 rounded-[0.30175rem] relative z-20">
             <div className=" text-[1.2rem] font-OwnglyphMinhyeChae flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem]">
               <span>{dateInfo.year}</span>
               <span>년</span>
@@ -300,8 +331,39 @@ export const DiaryResult = () => {
               )}
             </div>
             {/* 텍스트 영역: 항상 줄 배경 표시, 고정 줄 개수에 맞춰 높이 설정 */}
-            <div className="ㅎrid border-t-[2.414px] border-main-2 bg-bg-2  font-OwnglyphMinhyeChae text-[1.2rem]  leading-[1.94rem]">
-              {finalDiaryData.content}
+            <div
+              ref={textAreaRef}
+              className="border-t-[2.414px] border-main-2 bg-bg-2 font-OwnglyphMinhyeChae text-[1.2rem] leading-[1.94rem] min-h-[120px] px-[0.6rem] relative"
+            >
+              {/* 실제 텍스트 내용 */}
+              <div
+                className="relative z-10"
+                style={{
+                  transform: `translateY(${
+                    (isCapturing ? CAPTURE_BASELINE_LIFT_PX : 0) +
+                    BASELINE_OFFSET_PX
+                  }px)`,
+                  paddingBottom: `calc(1rem + ${Math.abs(
+                    BASELINE_OFFSET_PX
+                  )}px + ${isCapturing ? CAPTURE_EXTRA_BOTTOM_PX : 0}px)`,
+                }}
+              >
+                {finalDiaryData.content}
+              </div>
+
+              <div className="absolute inset-0 pointer-events-none">
+                {lineTops.map((top, index) => (
+                  <div
+                    key={index}
+                    className="absolute w-full "
+                    style={{
+                      top: `${top}px`,
+                      height: 2,
+                      backgroundColor: "#9a7a50",
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

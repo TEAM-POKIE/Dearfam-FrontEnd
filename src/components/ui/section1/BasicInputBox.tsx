@@ -29,11 +29,11 @@ export function BasicInputBox({
       <input
         className={`
           border
-          px-[clamp(0.5rem,3.2vw,1.25rem)]
-          py-[clamp(0.25rem,2.4vw,0.9375rem)]
-          ${fullWidth ? "w-full" : "w-[clamp(12.5rem,56.41vw,21.875rem)]"}
+          px-[1.25rem]
+          py-[0.94rem]
+          w-full
           border-gray-300
-          rounded-[0.88rem]
+          rounded-[0.875rem]
           bg-bg-2
           placeholder:text-gray-4
           placeholder:text-body2         

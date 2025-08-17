@@ -69,7 +69,7 @@ const HomePage = memo(function HomePage() {
   }
 
   return (
-    <div className="h-full">
+    <div className="min-h-full pb-[120px]">
       {mode === "gallery" && <EventGallery />}
       {mode === "slider" && (
         <div>

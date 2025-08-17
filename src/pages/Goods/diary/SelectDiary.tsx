@@ -46,7 +46,7 @@ export const SelectDiary = ({ onLoadingChange }: SelectDiaryProps) => {
           console.log("그림일기 생성 성공:", response);
           // DiaryResult 페이지로 이동하면서 생성된 일기 데이터 전달
           const contentData = response.data?.data?.content;
-          navigate("/home/goods/diary/result", {
+          navigate("/goods/diary/result", {
             state: {
               diaryData: {
                 id: String(selectedPostId),

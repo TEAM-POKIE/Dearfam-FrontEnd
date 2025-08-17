@@ -38,25 +38,25 @@ export function BottomNavbar({ activeItem }: BottomNavbarProps) {
       id: "bookshelf",
       label: "책장",
       icon: bookcaseIcon,
-      path: "/home/bookshelf",
+      path: "/bookshelf",
     },
     {
       id: "write",
       label: "작성",
       icon: writeIcon,
-      path: "/home/write",
+      path: "/write",
     },
     {
       id: "goods",
       label: "굿즈",
       icon: goodsIcon,
-      path: "/home/goods",
+      path: "/goods",
     },
     {
       id: "family",
       label: "가족",
       icon: famIcon,
-      path: "/home/family",
+      path: "/family",
     },
   ];
 
