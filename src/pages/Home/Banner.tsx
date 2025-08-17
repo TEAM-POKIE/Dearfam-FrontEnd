@@ -23,7 +23,7 @@ export const Banner = () => {
             src={banner1}
             alt="banner1"
             onClick={() => {
-              navigate("/home/goods");
+              navigate("/goods");
             }}
           />
         </CarouselItem>
@@ -32,7 +32,7 @@ export const Banner = () => {
             src={banner2}
             alt="banner2"
             onClick={() => {
-              navigate("/home/goods");
+              navigate("/goods");
             }}
           />
         </CarouselItem>

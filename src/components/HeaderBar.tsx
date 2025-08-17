@@ -61,7 +61,7 @@ export function HeaderBar() {
   const handleSettingClick = () => {
     handleIconClick("setting");
     resetIndex(); // 설정 페이지로 이동할 때 인덱스 초기화
-    navigate("/SettingPage");
+    navigate("/setting");
   };
 
   return (

@@ -57,7 +57,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         !path.includes("/goods/videoGeneration") &&
         !path.includes("/goods/videoPrompt") &&
         !path.includes("/goods/videoResult") &&
-        !path.includes("/goods/diary") && <HeaderBar />}
+        !path.includes("/goods/diary") &&
+        !path.includes("/setting") && <HeaderBar />}
+
       <main className="flex-grow overflow-y-auto  [&::-webkit-scrollbar]:hidden ">
         {children}
       </main>
@@ -67,6 +69,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         !path.includes("/goods/pictureToVideo") &&
         !path.includes("/goods/videoGeneration") &&
         !path.includes("/goods/videoPrompt") &&
+        !path.includes("/setting") &&
         !path.includes("/goods/videoResult") &&
         !path.includes("/goods/diary") && (
           <div className=" fixed bottom-0 left-0 right-0  m-auto w-[24.375rem] ">

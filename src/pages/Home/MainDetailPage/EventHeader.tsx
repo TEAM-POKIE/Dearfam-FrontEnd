@@ -75,7 +75,7 @@ export const EventHeader = ({ data, postId }: EventHeaderProps) => {
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => navigate(`/home/edit/${postId}`)}
+            onClick={() => navigate(`/write/edit/${postId}`)}
           >
             수정하기
           </DropdownMenuItem>

@@ -462,7 +462,7 @@ export const EventCarousel = memo<EventCarouselProps>(
                                   <div className="flex justify-center">
                                     <BasicButton
                                       onClick={() => {
-                                        navigate("/home/write");
+                                        navigate("/write");
                                       }}
                                       text="추억 공유하러 가기"
                                       color="main_1"

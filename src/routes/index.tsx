@@ -107,27 +107,53 @@ export function AppRoutes() {
     <Routes>
       {/* 1. SplashPage - AuthGuard 적용 */}
       <Route path="/" element={<SplashPage />} />
-
+      
+      {/* Home routes */}
       <Route path="/home" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="memoryDetailPage/:postId" element={<MemoryDetailPage />} />
-        <Route path="daily" element={<DailyPage />} />
-        <Route path="bookshelf" element={<BookshelfPage />} />
-        <Route path="write" element={<WritePage />} />
-        <Route path="edit/:postId" element={<EditPage />} />
-        <Route path="goods" element={<GoodsPage />} />
-        <Route path="family" element={<FamilyPage />} />
-        <Route path="goods/pictureToVideo" element={<PictureToVideo />} />
-        <Route path="goods/videoGeneration" element={<PictureToVideo />} />
-        <Route path="goods/videoGeneration/step" element={<VideoGenerationStep />} />
-        <Route path="goods/videoPrompt" element={<VideoPromptPage />} />
-        <Route path="goods/videoProcessing" element={<VideoProcessingPage />} />
-        <Route path="goods/videoResult" element={<VideoResultPage />} />
-        <Route path="goods/diary" element={<PictureDiary />} />
-        <Route path="goods/diary/select" element={<SelectDiary />} />
-        <Route path="goods/diary/result" element={<DiaryResult />} />
       </Route>
 
+      {/* Daily routes */}
+      <Route path="/daily" element={<Layout />}>
+        <Route index element={<DailyPage />} />
+      </Route>
+
+      {/* Bookshelf routes */}
+      <Route path="/bookshelf" element={<Layout />}>
+        <Route index element={<BookshelfPage />} />
+      </Route>
+
+      {/* Write routes */}
+      <Route path="/write" element={<Layout />}>
+        <Route index element={<WritePage />} />
+        <Route path="edit/:postId" element={<EditPage />} />
+      </Route>
+
+      {/* Goods routes */}
+      <Route path="/goods" element={<Layout />}>
+        <Route index element={<GoodsPage />} />
+        <Route path="pictureToVideo" element={<PictureToVideo />} />
+        <Route path="videoGeneration" element={<PictureToVideo />} />
+        <Route path="videoGeneration/step" element={<VideoGenerationStep />} />
+        <Route path="videoPrompt" element={<VideoPromptPage />} />
+        <Route path="videoProcessing" element={<VideoProcessingPage />} />
+        <Route path="videoResult" element={<VideoResultPage />} />
+        <Route path="diary" element={<PictureDiary />} />
+        <Route path="diary/select" element={<SelectDiary />} />
+        <Route path="diary/result" element={<DiaryResult />} />
+      </Route>
+
+      {/* Family routes */}
+      <Route path="/family" element={<Layout />}>
+        <Route index element={<FamilyPage />} />
+      </Route>
+
+      {/* Setting routes */}
+      <Route path="/setting" element={<Layout />}>
+        <Route index element={<SettingPage />} />
+        <Route path="name-change" element={<NameChangePage />} />
+      </Route>
       <Route
         path="/LoginPage"
         element={
@@ -149,7 +175,6 @@ export function AppRoutes() {
           </AuthGuard>
         }
       />
-
       <Route
         path="/StartPage"
         element={
@@ -190,7 +215,6 @@ export function AppRoutes() {
           </Suspense>
         }
       />
-
       <Route
         path="/kakao/callback"
         element={
@@ -212,23 +236,6 @@ export function AppRoutes() {
         element={
           <Suspense fallback={<PageLoadingSpinner />}>
             <SplashPage />
-          </Suspense>
-        }
-      />
-
-      <Route
-        path="/SettingPage"
-        element={
-          <Suspense fallback={<PageLoadingSpinner />}>
-            <SettingPage />
-          </Suspense>
-        }
-      />
-      <Route
-        path="/NameChangePage"
-        element={
-          <Suspense fallback={<PageLoadingSpinner />}>
-            <NameChangePage />
           </Suspense>
         }
       />

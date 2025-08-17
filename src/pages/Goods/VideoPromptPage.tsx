@@ -22,7 +22,7 @@ export const VideoPromptPage = () => {
 
   const handleRetry = () => {
     clearFiles();
-    navigate("/home/goods/pictureToVideo");
+    navigate("/goods/pictureToVideo");
   };
 
   const handleStartGeneration = async () => {
@@ -34,7 +34,7 @@ export const VideoPromptPage = () => {
     setUserRequest(promptText.trim());
 
     // 처리 페이지로 먼저 이동
-    navigate("/home/goods/videoProcessing");
+    navigate("/goods/videoProcessing");
 
     try {
       console.log("=== 영상 생성 API 호출 시작 ===");
@@ -64,7 +64,7 @@ export const VideoPromptPage = () => {
         
         // 결과 페이지로 이동
         setTimeout(() => {
-          navigate("/home/goods/videoResult");
+          navigate("/goods/videoResult");
         }, 2000); // 로딩 시간을 위해 2초 대기
       } else {
         throw new Error("동영상 URL을 받아올 수 없습니다.");

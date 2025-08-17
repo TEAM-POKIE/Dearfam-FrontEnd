@@ -50,7 +50,7 @@ export const VideoResultPage = () => {
   }, [animatePhotoUrl]);
 
   const handleBack = () => {
-    navigate("/home/goods/pictureToVideo");
+    navigate("/goods/pictureToVideo");
   };
 
   const handlePlayPause = () => {
@@ -124,7 +124,7 @@ export const VideoResultPage = () => {
   };
 
   const handleCreateNew = () => {
-    navigate("/home/goods/pictureToVideo");
+    navigate("/goods/pictureToVideo");
   };
 
   if (!animatePhotoUrl) {
