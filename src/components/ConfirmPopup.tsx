@@ -86,7 +86,7 @@ export const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
         }}
       ></div>
       <div
-        className="flex justify-center bg-white relative z-10 rounded-[clamp(0.75rem,1.92vw,1.25rem)] w-[clamp(15.625rem,70vw,21.875rem)] p-[clamp(0.75rem,2.88vw,1.875rem)]"
+        className="flex justify-center bg-white relative z-10 rounded-[1.25rem] px-[1.88rem]  pt-[3.12em] pb-[1.25rem]"
         style={{
           transition:
             "all 550ms linear(0, 0.1654, 0.4677, 0.7368, 0.9162, 1.0096, 1.043, 1.0437, 1.0315, 1.0177, 1.0074, 1.0012, 0.9985, 1, 0.9982, 0.9989, 0.9995, 1)",
@@ -96,13 +96,13 @@ export const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
       >
         <button
           onClick={onClose}
-          className="absolute top-[clamp(0.75rem,1.92vw,1.25rem)] right-[clamp(0.75rem,1.92vw,1.25rem)] text-main-3 hover:text-neutral-600"
+          className="absolute top-[1.25rem] right-[1.87rem] text-main-3 hover:text-neutral-600"
           aria-label="Close"
         >
           <img src={exitIcon} alt="exitIcon" />
         </button>
 
-        <div className="w-full flex flex-col items-center gap-[clamp(1rem,2.88vw,1.875rem)]">
+        <div className="w-full flex flex-col items-center gap-[1.88rem]">
           <h4 className="text-h4 text-center whitespace-pre-line">{title}</h4>
 
           <div>

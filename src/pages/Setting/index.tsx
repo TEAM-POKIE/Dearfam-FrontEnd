@@ -150,7 +150,7 @@ export function SettingPage() {
 
   return (
     <div className="flex flex-col  overflow-hidden">
-      <SemiHeader title="설정" exit={true} onBackClick={() => navigate(-1)} />
+      <SemiHeader title="설정" onBackClick={() => navigate(-1)} />
       <div className="flex flex-col items-center overflow-hidden">
         {/* 프로필 섹션 */}
         <div className="w-full py-[1.88rem]">

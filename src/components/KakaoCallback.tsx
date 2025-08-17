@@ -86,10 +86,10 @@ export const KakaoCallback: React.FC = () => {
   // 카카오 로그인 처리 중일 때 로딩 표시
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-app bg-bg-1 select-none">
-        <div className="mobile-container flex flex-col items-center relative">
+      <div className="mobile-container flex flex-col align-middle m-auto bg-bg-1 select-none">
+        <div className="flex flex-col justify-center items-center min-h-screen">
           {/* 로고와 텍스트 */}
-          <div className="flex flex-col items-center mt-[8rem] mb-[8rem]">
+          <div className="flex flex-col items-center mb-8">
             <img src={dearfamLogo} alt="Dearfam Logo" className="w-32 h-32 mb-6" />
             <div className="text-center">
               <h1 className="text-h2 text-main-2 mb-2">DearFam</h1>
@@ -98,10 +98,8 @@ export const KakaoCallback: React.FC = () => {
           </div>
 
           {/* 로딩 스피너 */}
-          <div className="w-full flex flex-col gap-4 justify-center">
-            <div className="mx-[1.25rem] flex justify-center">
-              <BasicLoading text="" size={30} />
-            </div>
+          <div className="flex justify-center">
+            <BasicLoading text="" size={30} />
           </div>
         </div>
       </div>
@@ -112,10 +110,10 @@ export const KakaoCallback: React.FC = () => {
   if (isKakaoLoginComplete) {
     return (
       <AuthGuard mode="yesfam">
-        <div className="flex justify-center items-center h-app bg-bg-1 select-none">
-          <div className="mobile-container flex flex-col items-center relative">
+        <div className="mobile-container flex flex-col align-middle m-auto bg-bg-1 select-none">
+          <div className="flex flex-col justify-center items-center min-h-screen">
             {/* 로고와 텍스트 */}
-            <div className="flex flex-col items-center mt-[8rem] mb-[8rem]">
+            <div className="flex flex-col items-center mb-8">
               <img src={dearfamLogo} alt="Dearfam Logo" className="w-32 h-32 mb-6" />
               <div className="text-center">
                 <h1 className="text-h2 text-main-2 mb-2">DearFam</h1>
@@ -124,10 +122,8 @@ export const KakaoCallback: React.FC = () => {
             </div>
 
             {/* 로딩 스피너 */}
-            <div className="w-full flex flex-col gap-4 justify-center">
-              <div className="mx-[1.25rem] flex justify-center">
-                <BasicLoading text="" size={30} />
-              </div>
+            <div className="flex justify-center">
+              <BasicLoading text="" size={30} />
             </div>
           </div>
         </div>

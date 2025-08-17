@@ -35,21 +35,21 @@ export const BasicPopup: React.FC<PopupProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-50 ">
       <div
         className="fixed inset-0 bg-black opacity-60"
         onClick={onClose}
       ></div>
-      <div className="flex justify-center bg-white relative z-10 rounded-[clamp(0.75rem,1.92vw,1.25rem)] w-[clamp(15.625rem,70vw,21.875rem)] p-[clamp(0.75rem,2.88vw,1.875rem)]">
+      <div className="flex justify-center bg-white relative z-10 rounded-[1.25rem] px-[1.88rem]  pt-[3.12em] pb-[1.25rem]">
         <button
           onClick={onClose}
-          className="absolute top-[clamp(0.75rem,1.92vw,1.25rem)] right-[clamp(0.75rem,1.92vw,1.25rem)] text-main-3 hover:text-neutral-600"
+          className="absolute top-[1.25rem] right-[1.87rem] text-main-3 hover:text-neutral-600"
           aria-label="Close"
         >
           <img src={exitIcon} alt="exitIcon" />
         </button>
 
-        <div className="w-full flex flex-col items-center gap-[clamp(1rem,2.88vw,1.875rem)]">
+        <div className="w-full flex flex-col items-center gap-[1.88rem]">
           <h4 className="text-h4 text-center whitespace-pre-line">{title}</h4>
 
           <div>
