@@ -72,13 +72,14 @@ export const resizeImage = async (
 // 이미지 포맷 최적화 (WebP 지원 검사 및 변환)
 export const optimizeImageFormat = async (
   file: File,
-  targetFormat: 'webp' | 'jpeg' | 'png' = 'webp',
+  targetFormat: "webp" | "jpeg" | "png" = "webp",
   quality: number = 0.8
 ): Promise<File> => {
   // WebP 지원 검사
   const supportsWebP = await checkWebPSupport();
-  const finalFormat = targetFormat === 'webp' && !supportsWebP ? 'jpeg' : targetFormat;
-  
+  const finalFormat =
+    targetFormat === "webp" && !supportsWebP ? "jpeg" : targetFormat;
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -96,7 +97,7 @@ export const optimizeImageFormat = async (
         ctx?.drawImage(img, 0, 0);
 
         const mimeType = `image/${finalFormat}`;
-        
+
         canvas.toBlob(
           (blob) => {
             if (!blob) {
@@ -135,7 +136,8 @@ export const checkWebPSupport = (): Promise<boolean> => {
     webP.onload = webP.onerror = () => {
       resolve(webP.height === 2);
     };
-    webP.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
+    webP.src =
+      "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA";
   });
 };
 
@@ -165,7 +167,7 @@ export const compressImage = async (
 
         // 이미지 품질 향상을 위한 설정
         ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
+        ctx.imageSmoothingQuality = "high";
         ctx.drawImage(img, 0, 0);
 
         canvas.toBlob(
@@ -205,7 +207,7 @@ export const generateResponsiveImages = async (
   quality: number = 0.8
 ): Promise<{ size: number; file: File }[]> => {
   const results: { size: number; file: File }[] = [];
-  
+
   for (const size of sizes) {
     try {
       const resizedFile = await resizeImage(file, size, size, quality);
@@ -214,7 +216,7 @@ export const generateResponsiveImages = async (
       console.warn(`Failed to generate ${size}px version:`, error);
     }
   }
-  
+
   return results;
 };
 
@@ -225,15 +227,15 @@ export const generateBlurPlaceholder = async (
   quality: number = 0.1
 ): Promise<string> => {
   const smallImage = await resizeImage(file, size, size, quality);
-  
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(smallImage);
-    
+
     reader.onload = () => {
       resolve(reader.result as string);
     };
-    
+
     reader.onerror = () => {
       reject(new Error("Failed to generate blur placeholder"));
     };
@@ -241,7 +243,9 @@ export const generateBlurPlaceholder = async (
 };
 
 // 이미지 메타데이터 추출
-export const extractImageMetadata = (file: File): Promise<{
+export const extractImageMetadata = (
+  file: File
+): Promise<{
   width: number;
   height: number;
   size: number;
@@ -305,4 +309,30 @@ export const validateImage = (
   }
 
   return { isValid: true };
+};
+
+// API 서버를 통한 이미지 프록시 URL 생성
+export const getImageProxyUrl = (url?: string): string | undefined => {
+  if (!url) return undefined;
+
+  // 이미 프록시 URL인 경우 그대로 사용
+  if (url.includes("/proxy/fetch") || url.includes("/api/")) return url;
+
+  // 외부 URL인 경우 API 서버의 프록시 엔드포인트 사용
+  if (url.startsWith("http")) {
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
+    const proxyUrl = `${API_BASE_URL}/${encodeURIComponent(url)}`;
+    
+    console.log("🚀 API Server Request Details:");
+    console.log("📍 Original URL:", url);
+    console.log("🖼️ Generated API proxy URL:", proxyUrl);
+    console.log("🌐 API Base URL:", API_BASE_URL);
+    console.log("🔗 Encoded URL parameter:", encodeURIComponent(url));
+    console.log("📤 Making direct request to API server...");
+    
+    return proxyUrl;
+  }
+
+  // 기타 경우 원본 URL 사용
+  return url;
 };
