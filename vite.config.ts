@@ -50,11 +50,110 @@ function consoleLogPlugin() {
   };
 }
 
+// CORS 우회를 위한 프록시 플러그인
+function corsProxyPlugin() {
+  return {
+    name: "cors-proxy",
+    configureServer(server: ViteDevServer) {
+      // 테스트 엔드포인트
+      server.middlewares.use(
+        "/proxy/test",
+        (req: IncomingMessage, res: ServerResponse, next: () => void) => {
+          if (req.method === "GET") {
+            console.log('✅ Proxy plugin is working!');
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ 
+              status: "OK", 
+              message: "Proxy plugin is active",
+              timestamp: new Date().toISOString()
+            }));
+          } else {
+            next();
+          }
+        }
+      );
+
+      // 실제 프록시 엔드포인트
+      server.middlewares.use(
+        "/proxy/fetch",
+        async (req: IncomingMessage, res: ServerResponse, next: () => void) => {
+          console.log(`📥 Proxy request received: ${req.method} ${req.url}`);
+          
+          if (req.method === "GET") {
+            try {
+              const url = new URL(req.url!, `http://${req.headers.host}`);
+              const targetUrl = url.searchParams.get("url");
+              
+              if (!targetUrl) {
+                console.log('❌ Missing url parameter');
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "Missing url parameter" }));
+                return;
+              }
+
+              const decodedUrl = decodeURIComponent(targetUrl);
+              console.log(`🔄 Fetching: ${decodedUrl}`);
+
+              // fetch를 사용하여 외부 리소스 요청
+              const response = await fetch(decodedUrl, {
+                method: 'GET',
+                headers: {
+                  'User-Agent': 'Mozilla/5.0 (compatible; DearFam-Proxy/1.0)',
+                },
+              });
+
+              console.log(`📡 Response status: ${response.status}`);
+
+              if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+              }
+
+              // CORS 헤더 설정
+              res.setHeader('Access-Control-Allow-Origin', '*');
+              res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+              res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+              res.setHeader('Content-Type', response.headers.get('content-type') || 'application/octet-stream');
+              
+              // 응답 스트림 파이프
+              const buffer = await response.arrayBuffer();
+              res.writeHead(200);
+              res.end(Buffer.from(buffer));
+
+              console.log(`✅ Successfully proxied ${buffer.byteLength} bytes`);
+
+            } catch (error) {
+              console.error('❌ Proxy error:', error);
+              res.writeHead(500, { 
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*'
+              });
+              res.end(JSON.stringify({ 
+                error: "Proxy request failed",
+                details: error instanceof Error ? error.message : String(error)
+              }));
+            }
+          } else if (req.method === "OPTIONS") {
+            // CORS preflight 처리
+            console.log('🔄 CORS preflight request');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            res.writeHead(200);
+            res.end();
+          } else {
+            next();
+          }
+        }
+      );
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
     react(),
-    // 개발 환경에서만 콘솔 로그 플러그인 활성화
-    ...(process.env.NODE_ENV === "development" ? [consoleLogPlugin()] : []),
+    // 개발 환경에서만 콘솔 로그 플러그인과 프록시 플러그인 활성화
+    ...(process.env.NODE_ENV === "development" ? [consoleLogPlugin(), corsProxyPlugin()] : []),
     // 번들 분석 도구 (빌드 시에만)
     ...(process.env.ANALYZE
       ? [

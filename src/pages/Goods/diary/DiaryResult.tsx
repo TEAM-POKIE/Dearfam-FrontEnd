@@ -4,6 +4,7 @@ import { SemiHeader } from "@/components/SemiHeader";
 import BasicButton from "@/components/BasicButton";
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
+import { getImageProxyUrl } from "@/utils/imageUtils";
 import cloud from "../../../assets/image/section5/icon_cloud_sun.svg";
 import sun from "../../../assets/image/section5/icon_sun.svg";
 import rain from "../../../assets/image/section5/icon_umbrella.svg";
@@ -94,6 +95,11 @@ export const DiaryResult = () => {
   // 이미지가 변경될 때마다 로딩 상태 리셋
   React.useEffect(() => {
     if (finalDiaryData.illustration) {
+      console.log("🔄 Image loading started for:", finalDiaryData.illustration);
+      console.log(
+        "🔗 Using proxy URL:",
+        getImageProxyUrl(finalDiaryData.illustration)
+      );
       setImageLoading(true);
       setImageError(false);
     }
@@ -278,13 +284,22 @@ export const DiaryResult = () => {
         >
           <div className="w-full h-full border-[2.414px] border-main-2 rounded-[0.30175rem] relative z-20">
             <div className=" text-[1.2rem] font-OwnglyphMinhyeChae flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem]">
-              <span>{dateInfo.year}</span>
-              <span>년</span>
-              <span>{dateInfo.month}</span>
-              <span>월</span>
-              <span>{dateInfo.day}</span>
-              <span>일</span>
-              <span className="ml-[0.95rem] mr-[0.93rem]">날씨</span>
+              <div
+                className="flex items-center gap-[0.5rem]"
+                style={{
+                  transform: isCapturing
+                    ? "translateY(-10px)"
+                    : "translateY(0px)",
+                }}
+              >
+                <span>{dateInfo.year}</span>
+                <span>년</span>
+                <span>{dateInfo.month}</span>
+                <span>월</span>
+                <span>{dateInfo.day}</span>
+                <span>일</span>
+                <span className="ml-[0.95rem] mr-[0.93rem]">날씨</span>
+              </div>
               <div className="flex items-center gap-[0.45rem] ">
                 <img className="w-[1.2rem] h-[1.2rem]" src={sun} alt="sun" />
                 <img
@@ -308,16 +323,31 @@ export const DiaryResult = () => {
                     </div>
                   )}
                   <img
-                    src="https://cdn.dearfam.store/posts/post-58/62c3d5a7-7e47-4694-b0ce-cda3eebb1ad7.png"
+                    src={getImageProxyUrl(finalDiaryData.illustration)}
                     alt="그림일기 이미지"
+                    onLoadStart={() => {
+                      console.log(
+                        "📥 Image loading started for src:",
+                        getImageProxyUrl(finalDiaryData.illustration)
+                      );
+                    }}
                     className={`h-full w-[12.80819rem] object-cover ${
                       imageLoading ? "opacity-0" : "opacity-100"
                     } transition-opacity duration-300`}
                     onLoad={() => {
+                      console.log(
+                        "✅ Image loaded successfully:",
+                        getImageProxyUrl(finalDiaryData.illustration)
+                      );
                       setImageLoading(false);
                       setImageError(false);
                     }}
-                    onError={() => {
+                    onError={(e) => {
+                      console.error(
+                        "❌ Image loading failed:",
+                        getImageProxyUrl(finalDiaryData.illustration)
+                      );
+                      console.error("❌ Error details:", e);
                       setImageLoading(false);
                       setImageError(true);
                     }}
@@ -333,7 +363,7 @@ export const DiaryResult = () => {
             {/* 텍스트 영역: 항상 줄 배경 표시, 고정 줄 개수에 맞춰 높이 설정 */}
             <div
               ref={textAreaRef}
-              className="border-t-[2.414px] border-main-2 bg-bg-2 font-OwnglyphMinhyeChae text-[1.2rem] leading-[1.94rem] min-h-[120px] px-[0.6rem] relative"
+              className="border-t-[2.414px] border-main-2 bg-bg-2 font-OwnglyphMinhyeChae text-[1.2rem] leading-[1.94rem] max-h-[120px] min-h-[120px] px-[0.6rem] relative"
             >
               {/* 실제 텍스트 내용 */}
               <div
